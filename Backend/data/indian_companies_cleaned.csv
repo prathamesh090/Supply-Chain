@@ -1,0 +1,1004 @@
+gstin,company_name,pan,state,city,status,country
+33EECVI1562R1ZQ,Star Traders Pvt Ltd,EECVI1562R,Delhi,New Delhi,Inactive,India
+36MEWFX3278H1ZR,PQR Foods Pvt Ltd,MEWFX3278H,West Bengal,Howrah,Active,India
+29PVZYP0172F1Z2,United Solutions Pvt Ltd,PVZYP0172F,Kerala,Kochi,Active,India
+23TRXKO7004W1ZP,XYZ Textiles Pvt Ltd,TRXKO7004W,Rajasthan,Udaipur,Active,India
+15WMTXA6563M1ZP,Prime Textiles Pvt Ltd,WMTXA6563M,Rajasthan,Udaipur,Inactive,India
+31MBZHD1793W1Z1,XYZ Chemicals Pvt Ltd,MBZHD1793W,Kerala,Thiruvananthapuram,Inactive,India
+28YKDUT0965V1ZY,LMN Textiles Pvt Ltd,YKDUT0965V,Kerala,Thiruvananthapuram,Active,India
+25WMBWS6804R1ZZ,United Chemicals Pvt Ltd,WMBWS6804R,West Bengal,Howrah,Inactive,India
+13EOCBP1443B1ZV,PQR Industries Pvt Ltd,EOCBP1443B,Telangana,Hyderabad,Inactive,India
+19RNPND0839E1ZF,PQR Industries Pvt Ltd,RNPND0839E,West Bengal,Howrah,Inactive,India
+29SMRTH2961J1Z7,Star Foods Pvt Ltd,SMRTH2961J,Karnataka,Mysuru,Active,India
+33YAALC5429I1ZJ,Global Chemicals Pvt Ltd,YAALC5429I,Gujarat,Vadodara,Inactive,India
+28RYVFV7988M1ZO,PQR Chemicals Pvt Ltd,RYVFV7988M,Telangana,Hyderabad,Active,India
+26GNQAB4124W1Z6,ABC Traders Pvt Ltd,GNQAB4124W,West Bengal,Kolkata,Inactive,India
+10UGFCP3393S1ZH,Eastern Solutions Pvt Ltd,UGFCP3393S,Karnataka,Mysuru,Active,India
+27XCRYU4388V1ZT,Global Traders Pvt Ltd,XCRYU4388V,West Bengal,Howrah,Inactive,India
+17BDYDH8073D1ZP,Techno Enterprises Pvt Ltd,BDYDH8073D,Gujarat,Surat,Inactive,India
+10TAFMM4249B1Z6,Global Logistics Pvt Ltd,TAFMM4249B,Maharashtra,Mumbai,Inactive,India
+15NUVSQ0160B1ZC,Prime Logistics Pvt Ltd,NUVSQ0160B,Kerala,Kochi,Active,India
+11XOGNB7768O1ZF,ABC Traders Pvt Ltd,XOGNB7768O,Gujarat,Vadodara,Active,India
+32RECRH5388H1ZU,ABC Exports Pvt Ltd,RECRH5388H,Gujarat,Ahmedabad,Active,India
+12HIDNT2127Y1Z1,Star Engineering Pvt Ltd,HIDNT2127Y,Tamil Nadu,Chennai,Active,India
+34BRXNC4545C1Z9,Prime Textiles Pvt Ltd,BRXNC4545C,Karnataka,Mysuru,Active,India
+34OUTWQ9391O1ZJ,Global Exports Pvt Ltd,OUTWQ9391O,Maharashtra,Pune,Active,India
+16JYIUZ2257X1ZY,LMN Textiles Pvt Ltd,JYIUZ2257X,Maharashtra,Mumbai,Active,India
+22IEDQB3938X1Z8,LMN Exports Pvt Ltd,IEDQB3938X,West Bengal,Howrah,Active,India
+32WZAKC0866A1Z4,Prime Foods Pvt Ltd,WZAKC0866A,Delhi,New Delhi,Active,India
+20FSZNM2527S1Z3,LMN Textiles Pvt Ltd,FSZNM2527S,Telangana,Hyderabad,Active,India
+24NLQUO6833E1ZD,PQR Traders Pvt Ltd,NLQUO6833E,Rajasthan,Udaipur,Inactive,India
+26KOIJK5265S1ZF,XYZ Industries Pvt Ltd,KOIJK5265S,Uttar Pradesh,Lucknow,Inactive,India
+28LJZCU4443V1ZY,LMN Exports Pvt Ltd,LJZCU4443V,Uttar Pradesh,Noida,Inactive,India
+24ZDLFO2416X1Z5,XYZ Exports Pvt Ltd,ZDLFO2416X,Telangana,Hyderabad,Inactive,India
+13XNRDT3194X1Z8,ABC Chemicals Pvt Ltd,XNRDT3194X,Karnataka,Bengaluru,Inactive,India
+18YRKQU0789E1ZC,Techno Enterprises Pvt Ltd,YRKQU0789E,Tamil Nadu,Coimbatore,Inactive,India
+35QYGGA7481Q1ZH,Star Logistics Pvt Ltd,QYGGA7481Q,Telangana,Hyderabad,Active,India
+11OCTHB7108T1Z8,PQR Industries Pvt Ltd,OCTHB7108T,Gujarat,Surat,Inactive,India
+23MZRBT3279K1ZM,United Engineering Pvt Ltd,MZRBT3279K,Uttar Pradesh,Noida,Inactive,India
+32JOLEE3170A1ZT,ABC Industries Pvt Ltd,JOLEE3170A,Delhi,New Delhi,Inactive,India
+22BDIKB2835B1Z5,Global Chemicals Pvt Ltd,BDIKB2835B,Rajasthan,Udaipur,Active,India
+16ADIOR7583E1ZX,United Industries Pvt Ltd,ADIOR7583E,Delhi,New Delhi,Inactive,India
+33QYQYF8402N1ZP,Prime Exports Pvt Ltd,QYQYF8402N,Maharashtra,Mumbai,Active,India
+12IELXA9734B1Z4,United Solutions Pvt Ltd,IELXA9734B,West Bengal,Kolkata,Inactive,India
+13DLDRC8160T1Z9,United Enterprises Pvt Ltd,DLDRC8160T,Rajasthan,Udaipur,Active,India
+13UQOFA6661U1ZC,Prime Industries Pvt Ltd,UQOFA6661U,Uttar Pradesh,Noida,Active,India
+19LFBJJ1223T1ZC,Star Logistics Pvt Ltd,LFBJJ1223T,Uttar Pradesh,Kanpur,Active,India
+37RBOGD5197S1Z5,PQR Traders Pvt Ltd,RBOGD5197S,Tamil Nadu,Chennai,Active,India
+26INUGQ5122A1Z9,ABC Engineering Pvt Ltd,INUGQ5122A,Gujarat,Ahmedabad,Inactive,India
+13BINQY7460I1ZS,Global Textiles Pvt Ltd,BINQY7460I,Telangana,Hyderabad,Active,India
+21SIXCX3724P1ZC,XYZ Solutions Pvt Ltd,SIXCX3724P,Telangana,Hyderabad,Active,India
+27JFPXF7678M1ZQ,Prime Industries Pvt Ltd,JFPXF7678M,Karnataka,Mysuru,Active,India
+19TMYRI0604O1ZB,Star Logistics Pvt Ltd,TMYRI0604O,West Bengal,Kolkata,Inactive,India
+25IZCVZ8737V1ZP,ABC Traders Pvt Ltd,IZCVZ8737V,Telangana,Hyderabad,Active,India
+27DKSDO3059L1ZE,United Traders Pvt Ltd,DKSDO3059L,Karnataka,Mysuru,Active,India
+15XXAHI4047F1ZU,Global Industries Pvt Ltd,XXAHI4047F,Karnataka,Bengaluru,Inactive,India
+22ATSRP4206E1ZK,PQR Solutions Pvt Ltd,ATSRP4206E,Delhi,New Delhi,Inactive,India
+23LKMPC3130Z1ZZ,Global Exports Pvt Ltd,LKMPC3130Z,Telangana,Hyderabad,Active,India
+27UJIPK5558S1ZJ,Eastern Enterprises Pvt Ltd,UJIPK5558S,Delhi,New Delhi,Active,India
+30VTKUP9617K1Z7,Eastern Foods Pvt Ltd,VTKUP9617K,Telangana,Hyderabad,Active,India
+35MEEFD9946F1ZU,United Textiles Pvt Ltd,MEEFD9946F,Gujarat,Surat,Active,India
+11SOTWJ1613W1ZQ,Prime Industries Pvt Ltd,SOTWJ1613W,Tamil Nadu,Coimbatore,Active,India
+14XPGWC9274F1ZB,Prime Logistics Pvt Ltd,XPGWC9274F,West Bengal,Howrah,Active,India
+36ZLQZX4466M1Z8,Star Textiles Pvt Ltd,ZLQZX4466M,Delhi,New Delhi,Inactive,India
+23DBAVC7102J1ZD,PQR Textiles Pvt Ltd,DBAVC7102J,Kerala,Thiruvananthapuram,Active,India
+22GPUFJ9817L1ZH,United Exports Pvt Ltd,GPUFJ9817L,Delhi,New Delhi,Inactive,India
+11NVFXD5782A1ZS,Eastern Foods Pvt Ltd,NVFXD5782A,Tamil Nadu,Chennai,Inactive,India
+12GHUGI1230T1ZG,ABC Textiles Pvt Ltd,GHUGI1230T,Rajasthan,Jaipur,Active,India
+12SQHBJ0821T1ZM,LMN Foods Pvt Ltd,SQHBJ0821T,Karnataka,Bengaluru,Active,India
+17HKDNQ9006H1ZS,Prime Engineering Pvt Ltd,HKDNQ9006H,Tamil Nadu,Coimbatore,Inactive,India
+12COZYO0763F1ZI,United Chemicals Pvt Ltd,COZYO0763F,Tamil Nadu,Chennai,Active,India
+19CQRUQ9619C1Z8,United Industries Pvt Ltd,CQRUQ9619C,Gujarat,Ahmedabad,Active,India
+22IVQRX0093S1Z2,Star Traders Pvt Ltd,IVQRX0093S,Uttar Pradesh,Lucknow,Active,India
+24GHRGC4861N1ZH,Eastern Exports Pvt Ltd,GHRGC4861N,Rajasthan,Jaipur,Active,India
+31EYYPY4954B1ZF,Global Logistics Pvt Ltd,EYYPY4954B,Karnataka,Mysuru,Active,India
+30PNPFW8134Y1Z3,LMN Industries Pvt Ltd,PNPFW8134Y,Kerala,Kochi,Active,India
+13JZLVR3207F1ZF,Prime Exports Pvt Ltd,JZLVR3207F,Uttar Pradesh,Noida,Inactive,India
+17CDKEX5536G1ZI,LMN Enterprises Pvt Ltd,CDKEX5536G,Telangana,Hyderabad,Inactive,India
+36KXPIW6699C1ZJ,Global Traders Pvt Ltd,KXPIW6699C,Telangana,Hyderabad,Active,India
+15PWLVJ3265C1ZI,Techno Exports Pvt Ltd,PWLVJ3265C,Maharashtra,Nagpur,Active,India
+24DCUOD3937S1Z1,Eastern Industries Pvt Ltd,DCUOD3937S,Gujarat,Surat,Active,India
+27RUHWC9582P1ZG,Eastern Foods Pvt Ltd,RUHWC9582P,Karnataka,Mysuru,Active,India
+11YOUPN3432K1ZK,PQR Exports Pvt Ltd,YOUPN3432K,Telangana,Hyderabad,Inactive,India
+27NIGNJ1525W1ZO,XYZ Engineering Pvt Ltd,NIGNJ1525W,Tamil Nadu,Chennai,Inactive,India
+18NNSCP4135L1ZF,PQR Enterprises Pvt Ltd,NNSCP4135L,West Bengal,Howrah,Active,India
+20RWZKC1427K1ZI,PQR Textiles Pvt Ltd,RWZKC1427K,Karnataka,Mysuru,Active,India
+22BNHHZ8719C1ZM,Global Industries Pvt Ltd,BNHHZ8719C,Maharashtra,Pune,Active,India
+11JPLDD4007O1ZA,Eastern Solutions Pvt Ltd,JPLDD4007O,Gujarat,Vadodara,Active,India
+11LUEXS0379T1ZI,XYZ Enterprises Pvt Ltd,LUEXS0379T,Telangana,Hyderabad,Active,India
+15PZDML9927V1ZB,Techno Enterprises Pvt Ltd,PZDML9927V,West Bengal,Kolkata,Active,India
+13TDAIC9095X1ZZ,Techno Logistics Pvt Ltd,TDAIC9095X,Telangana,Hyderabad,Inactive,India
+34WQBSB5837N1ZL,XYZ Logistics Pvt Ltd,WQBSB5837N,Tamil Nadu,Chennai,Inactive,India
+17KUYLP7943K1ZL,XYZ Chemicals Pvt Ltd,KUYLP7943K,Tamil Nadu,Chennai,Inactive,India
+16NHRQB6425R1ZN,XYZ Engineering Pvt Ltd,NHRQB6425R,Maharashtra,Nagpur,Inactive,India
+31MZWFT4833S1ZR,Techno Exports Pvt Ltd,MZWFT4833S,Karnataka,Mysuru,Inactive,India
+13VJBFA3298S1Z6,LMN Chemicals Pvt Ltd,VJBFA3298S,Gujarat,Vadodara,Inactive,India
+25KBEDD1567X1ZJ,LMN Enterprises Pvt Ltd,KBEDD1567X,Gujarat,Surat,Active,India
+18RCHQH8859V1Z5,XYZ Foods Pvt Ltd,RCHQH8859V,West Bengal,Howrah,Active,India
+23CHZYJ9834W1ZI,United Enterprises Pvt Ltd,CHZYJ9834W,Rajasthan,Udaipur,Inactive,India
+33KOWHT0589W1ZG,Prime Industries Pvt Ltd,KOWHT0589W,Telangana,Hyderabad,Active,India
+31AWRLQ9677U1ZG,Eastern Industries Pvt Ltd,AWRLQ9677U,Uttar Pradesh,Lucknow,Active,India
+27NLYJV9198O1Z1,Global Solutions Pvt Ltd,NLYJV9198O,Gujarat,Surat,Active,India
+37LENVA1965J1ZQ,PQR Chemicals Pvt Ltd,LENVA1965J,Uttar Pradesh,Kanpur,Active,India
+13LPNJW5414A1ZU,ABC Exports Pvt Ltd,LPNJW5414A,Delhi,New Delhi,Inactive,India
+11FUWOY4527T1ZI,Star Foods Pvt Ltd,FUWOY4527T,Maharashtra,Mumbai,Active,India
+24NECTE2550L1ZN,Prime Exports Pvt Ltd,NECTE2550L,Karnataka,Bengaluru,Active,India
+14PKAAJ6588K1ZE,Prime Industries Pvt Ltd,PKAAJ6588K,Tamil Nadu,Chennai,Active,India
+22PWDCT0072Q1ZE,United Engineering Pvt Ltd,PWDCT0072Q,Telangana,Hyderabad,Active,India
+31JNJVK1905X1ZZ,PQR Logistics Pvt Ltd,JNJVK1905X,Tamil Nadu,Chennai,Active,India
+30ICPPU4444C1ZD,Star Industries Pvt Ltd,ICPPU4444C,Gujarat,Surat,Inactive,India
+13NLIHY3853Z1ZT,Global Textiles Pvt Ltd,NLIHY3853Z,Uttar Pradesh,Kanpur,Inactive,India
+15FMSMK8015X1Z8,Star Logistics Pvt Ltd,FMSMK8015X,Delhi,New Delhi,Active,India
+24XBZEG1733P1Z8,ABC Chemicals Pvt Ltd,XBZEG1733P,Gujarat,Vadodara,Inactive,India
+36NSLIK9949L1Z6,PQR Chemicals Pvt Ltd,NSLIK9949L,Delhi,New Delhi,Active,India
+12OZBGA5014U1ZD,Prime Traders Pvt Ltd,OZBGA5014U,Rajasthan,Jaipur,Active,India
+28VYOWJ7427P1ZN,Star Engineering Pvt Ltd,VYOWJ7427P,Gujarat,Vadodara,Active,India
+26IFFQG9118F1ZV,Techno Engineering Pvt Ltd,IFFQG9118F,Rajasthan,Jaipur,Inactive,India
+23XFHGT5410Q1ZX,PQR Textiles Pvt Ltd,XFHGT5410Q,Rajasthan,Jaipur,Active,India
+21AXLEN3652B1ZS,Global Traders Pvt Ltd,AXLEN3652B,Tamil Nadu,Coimbatore,Active,India
+29RJZOQ7524Q1ZA,LMN Enterprises Pvt Ltd,RJZOQ7524Q,Rajasthan,Jaipur,Inactive,India
+27UPKNI2074Z1ZC,Prime Industries Pvt Ltd,UPKNI2074Z,Uttar Pradesh,Noida,Inactive,India
+35XQUKP3313A1ZR,LMN Chemicals Pvt Ltd,XQUKP3313A,Gujarat,Surat,Inactive,India
+14KSLWO3320O1ZD,PQR Logistics Pvt Ltd,KSLWO3320O,Maharashtra,Pune,Active,India
+33BLOIM7899L1ZR,Eastern Chemicals Pvt Ltd,BLOIM7899L,Uttar Pradesh,Kanpur,Active,India
+13AOQMA0208B1ZQ,Global Solutions Pvt Ltd,AOQMA0208B,Telangana,Hyderabad,Active,India
+24XSXQW8428I1Z6,United Solutions Pvt Ltd,XSXQW8428I,Gujarat,Surat,Active,India
+19AYMWK9049I1ZV,LMN Solutions Pvt Ltd,AYMWK9049I,Tamil Nadu,Coimbatore,Inactive,India
+12BVARP2340W1ZE,United Engineering Pvt Ltd,BVARP2340W,Uttar Pradesh,Lucknow,Inactive,India
+36AUJVN9755Q1Z7,ABC Traders Pvt Ltd,AUJVN9755Q,Tamil Nadu,Chennai,Inactive,India
+19EDGXO3378P1ZZ,United Textiles Pvt Ltd,EDGXO3378P,Karnataka,Mysuru,Inactive,India
+31EBSAZ3121G1ZX,Eastern Engineering Pvt Ltd,EBSAZ3121G,Uttar Pradesh,Kanpur,Active,India
+36JHTOL6949P1Z8,United Solutions Pvt Ltd,JHTOL6949P,Telangana,Hyderabad,Active,India
+22THSTH0622G1ZX,ABC Solutions Pvt Ltd,THSTH0622G,Uttar Pradesh,Lucknow,Inactive,India
+13OYAXX0091S1ZZ,Prime Textiles Pvt Ltd,OYAXX0091S,Uttar Pradesh,Noida,Inactive,India
+15IROVJ8622B1Z7,Techno Logistics Pvt Ltd,IROVJ8622B,Rajasthan,Jaipur,Inactive,India
+10GCLUO6471C1ZE,LMN Exports Pvt Ltd,GCLUO6471C,Kerala,Thiruvananthapuram,Inactive,India
+30ETVDN9412R1ZQ,Prime Solutions Pvt Ltd,ETVDN9412R,Uttar Pradesh,Noida,Inactive,India
+31UEWSA1615Z1ZD,Prime Logistics Pvt Ltd,UEWSA1615Z,Gujarat,Ahmedabad,Active,India
+24WBUDN7665W1ZL,PQR Solutions Pvt Ltd,WBUDN7665W,Telangana,Hyderabad,Active,India
+10MTQTG2134A1ZW,Global Textiles Pvt Ltd,MTQTG2134A,West Bengal,Kolkata,Inactive,India
+34IQNPT8064L1Z7,United Foods Pvt Ltd,IQNPT8064L,Telangana,Hyderabad,Active,India
+22LSFGY4428H1ZK,Prime Solutions Pvt Ltd,LSFGY4428H,Kerala,Kochi,Inactive,India
+23BLGPE3224F1ZG,Global Exports Pvt Ltd,BLGPE3224F,West Bengal,Kolkata,Active,India
+14ROIVB0314F1ZL,United Enterprises Pvt Ltd,ROIVB0314F,Uttar Pradesh,Noida,Active,India
+20JQJEO6304N1ZD,United Industries Pvt Ltd,JQJEO6304N,Delhi,New Delhi,Active,India
+29TEAJQ9744K1ZL,United Enterprises Pvt Ltd,TEAJQ9744K,Rajasthan,Udaipur,Inactive,India
+32DAXUH0024C1ZS,ABC Exports Pvt Ltd,DAXUH0024C,Karnataka,Bengaluru,Inactive,India
+11KPDHI8560D1ZT,PQR Industries Pvt Ltd,KPDHI8560D,Uttar Pradesh,Noida,Inactive,India
+29ENTHD0278Z1ZW,Star Exports Pvt Ltd,ENTHD0278Z,Maharashtra,Nagpur,Active,India
+26UXKRJ7470P1Z6,ABC Solutions Pvt Ltd,UXKRJ7470P,Uttar Pradesh,Noida,Inactive,India
+15RJCUR4074A1ZJ,ABC Engineering Pvt Ltd,RJCUR4074A,Maharashtra,Pune,Active,India
+33JNNCU5097O1Z3,Eastern Logistics Pvt Ltd,JNNCU5097O,Kerala,Kochi,Inactive,India
+27RUKLX0234Q1ZS,Global Exports Pvt Ltd,RUKLX0234Q,Rajasthan,Jaipur,Inactive,India
+23QESML2356F1ZP,LMN Solutions Pvt Ltd,QESML2356F,Karnataka,Mysuru,Inactive,India
+30XAOBK3527L1ZT,United Enterprises Pvt Ltd,XAOBK3527L,Karnataka,Bengaluru,Inactive,India
+11VQVTU1357U1ZK,LMN Foods Pvt Ltd,VQVTU1357U,Maharashtra,Nagpur,Active,India
+30ROFTV1784M1ZY,United Enterprises Pvt Ltd,ROFTV1784M,Karnataka,Bengaluru,Inactive,India
+12EBEYL7544L1ZC,United Exports Pvt Ltd,EBEYL7544L,Delhi,New Delhi,Active,India
+25FMVJV4413Q1ZV,PQR Logistics Pvt Ltd,FMVJV4413Q,Delhi,New Delhi,Active,India
+13SLJMI1194U1ZV,Eastern Solutions Pvt Ltd,SLJMI1194U,Karnataka,Bengaluru,Inactive,India
+26DKVQF6148J1ZF,XYZ Traders Pvt Ltd,DKVQF6148J,Telangana,Hyderabad,Active,India
+14EMTQF7324W1ZF,Eastern Solutions Pvt Ltd,EMTQF7324W,Kerala,Kochi,Active,India
+37DMWIM5731N1ZU,ABC Traders Pvt Ltd,DMWIM5731N,Uttar Pradesh,Noida,Inactive,India
+29DGHNX0051T1ZY,LMN Foods Pvt Ltd,DGHNX0051T,Karnataka,Mysuru,Active,India
+13YQTKN2466Z1Z7,XYZ Exports Pvt Ltd,YQTKN2466Z,Rajasthan,Udaipur,Active,India
+20HFNXL0319X1ZQ,XYZ Engineering Pvt Ltd,HFNXL0319X,Kerala,Kochi,Active,India
+17AJCQV5725E1ZE,Global Chemicals Pvt Ltd,AJCQV5725E,Karnataka,Bengaluru,Inactive,India
+24EYDMU6558L1Z8,PQR Logistics Pvt Ltd,EYDMU6558L,Maharashtra,Pune,Inactive,India
+26KGTKO8272Z1ZZ,Global Foods Pvt Ltd,KGTKO8272Z,Kerala,Kochi,Active,India
+13VXHTZ3649M1Z2,Eastern Enterprises Pvt Ltd,VXHTZ3649M,Kerala,Thiruvananthapuram,Active,India
+12HQUOP4509B1Z1,Global Solutions Pvt Ltd,HQUOP4509B,Maharashtra,Pune,Active,India
+27NDFXE9423C1ZB,PQR Traders Pvt Ltd,NDFXE9423C,Maharashtra,Mumbai,Active,India
+22MYQKA4670B1ZA,LMN Engineering Pvt Ltd,MYQKA4670B,Rajasthan,Jaipur,Active,India
+33TOUMX2163L1Z1,PQR Industries Pvt Ltd,TOUMX2163L,Telangana,Hyderabad,Inactive,India
+34WLEAW8285T1Z8,XYZ Enterprises Pvt Ltd,WLEAW8285T,Karnataka,Bengaluru,Inactive,India
+35CGKSK7058A1ZR,Global Traders Pvt Ltd,CGKSK7058A,Delhi,New Delhi,Inactive,India
+13PAGRA0782B1ZY,Prime Enterprises Pvt Ltd,PAGRA0782B,Telangana,Hyderabad,Inactive,India
+16JNGCM0311A1ZH,Global Chemicals Pvt Ltd,JNGCM0311A,Tamil Nadu,Coimbatore,Active,India
+36QSXBA4462T1Z6,United Exports Pvt Ltd,QSXBA4462T,Telangana,Hyderabad,Inactive,India
+18DCHQL8023W1ZO,United Exports Pvt Ltd,DCHQL8023W,Rajasthan,Udaipur,Active,India
+20HQXGQ3906L1ZV,United Engineering Pvt Ltd,HQXGQ3906L,Gujarat,Ahmedabad,Inactive,India
+30OYXBB4870J1ZK,Eastern Enterprises Pvt Ltd,OYXBB4870J,Delhi,New Delhi,Active,India
+14NLFXP0480S1ZG,United Exports Pvt Ltd,NLFXP0480S,Kerala,Kochi,Active,India
+31PEFDP1527V1ZO,Prime Exports Pvt Ltd,PEFDP1527V,West Bengal,Howrah,Inactive,India
+29IZGCK0468C1Z6,Prime Traders Pvt Ltd,IZGCK0468C,Gujarat,Ahmedabad,Inactive,India
+16SXGEJ7313A1ZR,Global Exports Pvt Ltd,SXGEJ7313A,Tamil Nadu,Coimbatore,Active,India
+34TIDDY7221O1ZL,XYZ Foods Pvt Ltd,TIDDY7221O,Kerala,Thiruvananthapuram,Inactive,India
+30BPDWQ4226T1ZY,Global Traders Pvt Ltd,BPDWQ4226T,Maharashtra,Nagpur,Inactive,India
+12RLEQP7421Y1ZH,XYZ Chemicals Pvt Ltd,RLEQP7421Y,Uttar Pradesh,Kanpur,Inactive,India
+28BEZGS4685A1ZV,PQR Enterprises Pvt Ltd,BEZGS4685A,Kerala,Thiruvananthapuram,Inactive,India
+33QFBNL6669I1Z4,Techno Chemicals Pvt Ltd,QFBNL6669I,West Bengal,Howrah,Active,India
+15VQLDH3376Z1ZA,LMN Enterprises Pvt Ltd,VQLDH3376Z,Telangana,Hyderabad,Inactive,India
+30ITEVD0621W1ZU,ABC Textiles Pvt Ltd,ITEVD0621W,Telangana,Hyderabad,Inactive,India
+15QFZAW7703J1Z2,Techno Logistics Pvt Ltd,QFZAW7703J,Kerala,Kochi,Inactive,India
+13TKOWV9285E1ZE,ABC Enterprises Pvt Ltd,TKOWV9285E,Karnataka,Bengaluru,Inactive,India
+36ELXVF9818N1ZN,LMN Exports Pvt Ltd,ELXVF9818N,Telangana,Hyderabad,Inactive,India
+27NEFLC3721S1Z6,XYZ Foods Pvt Ltd,NEFLC3721S,Uttar Pradesh,Noida,Active,India
+37PCRKQ9966D1Z1,PQR Textiles Pvt Ltd,PCRKQ9966D,Uttar Pradesh,Lucknow,Inactive,India
+12BALML4832Z1Z5,XYZ Logistics Pvt Ltd,BALML4832Z,Tamil Nadu,Coimbatore,Inactive,India
+23PJWWI7323D1Z9,PQR Industries Pvt Ltd,PJWWI7323D,Uttar Pradesh,Noida,Active,India
+18DCMQH6088C1Z5,Star Logistics Pvt Ltd,DCMQH6088C,Kerala,Kochi,Active,India
+35ILHXN4975Y1ZS,Star Exports Pvt Ltd,ILHXN4975Y,Maharashtra,Pune,Active,India
+13FHAMH8092H1ZN,XYZ Foods Pvt Ltd,FHAMH8092H,Maharashtra,Mumbai,Active,India
+29BQRIS0028N1Z7,ABC Traders Pvt Ltd,BQRIS0028N,Maharashtra,Pune,Active,India
+17NQNCI3735Z1ZX,Techno Industries Pvt Ltd,NQNCI3735Z,Maharashtra,Nagpur,Active,India
+24VVEHF5158E1Z6,Techno Traders Pvt Ltd,VVEHF5158E,Gujarat,Vadodara,Active,India
+28TGAIS5507F1ZD,PQR Industries Pvt Ltd,TGAIS5507F,Uttar Pradesh,Kanpur,Active,India
+37MNCDK6687B1Z6,PQR Exports Pvt Ltd,MNCDK6687B,Maharashtra,Pune,Inactive,India
+36CDDOF4545S1ZY,Global Exports Pvt Ltd,CDDOF4545S,Tamil Nadu,Coimbatore,Active,India
+14MWBRO7587S1ZG,Prime Foods Pvt Ltd,MWBRO7587S,Tamil Nadu,Chennai,Active,India
+10BWVPS2437O1Z4,ABC Foods Pvt Ltd,BWVPS2437O,Kerala,Thiruvananthapuram,Active,India
+17CZCPZ7103O1ZN,ABC Chemicals Pvt Ltd,CZCPZ7103O,Maharashtra,Nagpur,Active,India
+14WXEYW4231T1Z8,XYZ Traders Pvt Ltd,WXEYW4231T,Rajasthan,Jaipur,Inactive,India
+34KFOMF4793A1ZZ,Prime Exports Pvt Ltd,KFOMF4793A,Uttar Pradesh,Kanpur,Inactive,India
+30RQPKT9090R1Z3,XYZ Chemicals Pvt Ltd,RQPKT9090R,Uttar Pradesh,Kanpur,Active,India
+30TCXEL0392L1Z2,ABC Engineering Pvt Ltd,TCXEL0392L,Uttar Pradesh,Noida,Inactive,India
+11PTVOM0985M1Z4,Star Logistics Pvt Ltd,PTVOM0985M,Maharashtra,Pune,Active,India
+19QFJOX3925U1Z6,Prime Industries Pvt Ltd,QFJOX3925U,Tamil Nadu,Chennai,Active,India
+31RRKSJ4303Z1ZY,Global Engineering Pvt Ltd,RRKSJ4303Z,West Bengal,Kolkata,Inactive,India
+13ZNOQB3710Z1ZC,Eastern Industries Pvt Ltd,ZNOQB3710Z,Karnataka,Bengaluru,Active,India
+16QSILF7892A1ZK,Techno Logistics Pvt Ltd,QSILF7892A,Uttar Pradesh,Lucknow,Inactive,India
+18JZNXF6512N1ZA,LMN Textiles Pvt Ltd,JZNXF6512N,Kerala,Kochi,Active,India
+12KOXWF7781D1ZX,Techno Exports Pvt Ltd,KOXWF7781D,Uttar Pradesh,Noida,Inactive,India
+22JDXVD0034W1Z3,Global Solutions Pvt Ltd,JDXVD0034W,Maharashtra,Nagpur,Inactive,India
+34DWXRH8474R1ZX,Star Traders Pvt Ltd,DWXRH8474R,Uttar Pradesh,Kanpur,Inactive,India
+13BKSZH5375X1ZG,XYZ Logistics Pvt Ltd,BKSZH5375X,Gujarat,Surat,Active,India
+37TQQQS6115E1ZM,Eastern Solutions Pvt Ltd,TQQQS6115E,Maharashtra,Nagpur,Inactive,India
+30NBRZE1477N1ZR,XYZ Textiles Pvt Ltd,NBRZE1477N,Gujarat,Surat,Active,India
+17LPHKX3728W1ZS,ABC Logistics Pvt Ltd,LPHKX3728W,Tamil Nadu,Chennai,Active,India
+34LIMHM4261P1Z6,Eastern Textiles Pvt Ltd,LIMHM4261P,Maharashtra,Pune,Active,India
+18QUKOL7075E1Z9,Prime Enterprises Pvt Ltd,QUKOL7075E,Maharashtra,Mumbai,Active,India
+23RZGWI1360U1ZG,Star Foods Pvt Ltd,RZGWI1360U,Kerala,Thiruvananthapuram,Active,India
+19QXFKW8340V1ZP,Prime Exports Pvt Ltd,QXFKW8340V,Kerala,Kochi,Inactive,India
+26DCTZB2126S1ZH,LMN Exports Pvt Ltd,DCTZB2126S,Kerala,Thiruvananthapuram,Inactive,India
+15XMARN0222G1ZM,Prime Solutions Pvt Ltd,XMARN0222G,West Bengal,Howrah,Active,India
+37JKRUY6481G1ZB,Eastern Textiles Pvt Ltd,JKRUY6481G,Rajasthan,Jaipur,Active,India
+17QKNQY1105Z1ZG,XYZ Textiles Pvt Ltd,QKNQY1105Z,Kerala,Thiruvananthapuram,Active,India
+31NWXVN8422P1ZN,XYZ Textiles Pvt Ltd,NWXVN8422P,West Bengal,Kolkata,Inactive,India
+15PYQKQ8413H1ZQ,United Chemicals Pvt Ltd,PYQKQ8413H,Rajasthan,Jaipur,Inactive,India
+33UJLES6756Y1ZO,LMN Exports Pvt Ltd,UJLES6756Y,Kerala,Kochi,Active,India
+21NJGMT9866N1ZJ,Global Exports Pvt Ltd,NJGMT9866N,Tamil Nadu,Coimbatore,Active,India
+35OCNGL3608N1ZS,PQR Foods Pvt Ltd,OCNGL3608N,Tamil Nadu,Chennai,Active,India
+37ZCFUN8719K1ZE,Techno Logistics Pvt Ltd,ZCFUN8719K,Uttar Pradesh,Noida,Active,India
+27MYPZM9090L1Z5,LMN Enterprises Pvt Ltd,MYPZM9090L,Kerala,Thiruvananthapuram,Active,India
+19BSJKW9622L1ZL,PQR Textiles Pvt Ltd,BSJKW9622L,West Bengal,Kolkata,Active,India
+32LIHLM5286C1Z8,PQR Industries Pvt Ltd,LIHLM5286C,Delhi,New Delhi,Inactive,India
+29SMQQT4477I1ZB,Star Chemicals Pvt Ltd,SMQQT4477I,Telangana,Hyderabad,Active,India
+14XRBDN0666N1ZG,ABC Solutions Pvt Ltd,XRBDN0666N,Rajasthan,Udaipur,Active,India
+35WYSNG2091U1ZC,Prime Exports Pvt Ltd,WYSNG2091U,Delhi,New Delhi,Inactive,India
+21KYROZ9379W1ZI,Global Logistics Pvt Ltd,KYROZ9379W,West Bengal,Kolkata,Active,India
+22BSERE6749P1ZN,Global Engineering Pvt Ltd,BSERE6749P,Delhi,New Delhi,Inactive,India
+10HUHZU7651R1Z3,LMN Solutions Pvt Ltd,HUHZU7651R,Maharashtra,Nagpur,Active,India
+18AEEXS9666P1ZA,ABC Textiles Pvt Ltd,AEEXS9666P,Rajasthan,Jaipur,Inactive,India
+11EVUGC5857Z1ZR,Global Traders Pvt Ltd,EVUGC5857Z,Uttar Pradesh,Lucknow,Active,India
+25XTMUD4703A1ZS,PQR Chemicals Pvt Ltd,XTMUD4703A,Karnataka,Bengaluru,Inactive,India
+13KKBQI4004J1ZE,Prime Solutions Pvt Ltd,KKBQI4004J,Uttar Pradesh,Noida,Inactive,India
+30JJCSH5532Z1ZS,LMN Exports Pvt Ltd,JJCSH5532Z,West Bengal,Kolkata,Active,India
+12ANEWV7453X1ZH,United Textiles Pvt Ltd,ANEWV7453X,Maharashtra,Mumbai,Active,India
+19HDBBR2964X1ZP,Prime Traders Pvt Ltd,HDBBR2964X,Uttar Pradesh,Lucknow,Inactive,India
+34UPHNJ9043W1Z3,Global Solutions Pvt Ltd,UPHNJ9043W,Uttar Pradesh,Kanpur,Active,India
+27SRWTR5015L1ZH,Global Traders Pvt Ltd,SRWTR5015L,Tamil Nadu,Coimbatore,Inactive,India
+36FWOHO9951E1ZJ,Techno Traders Pvt Ltd,FWOHO9951E,Karnataka,Bengaluru,Inactive,India
+20SCHZM4147W1ZH,Star Solutions Pvt Ltd,SCHZM4147W,Karnataka,Bengaluru,Inactive,India
+21BAEHB7762O1ZJ,Star Textiles Pvt Ltd,BAEHB7762O,Gujarat,Surat,Active,India
+22HRIOT0332J1ZM,Star Traders Pvt Ltd,HRIOT0332J,Maharashtra,Pune,Inactive,India
+14LQBBI4256D1ZR,Eastern Industries Pvt Ltd,LQBBI4256D,Kerala,Thiruvananthapuram,Inactive,India
+36YBRME5440N1ZU,Techno Exports Pvt Ltd,YBRME5440N,West Bengal,Howrah,Active,India
+36IQHPL6922W1ZS,Global Industries Pvt Ltd,IQHPL6922W,Karnataka,Mysuru,Inactive,India
+15QXWZN1062U1Z5,Prime Logistics Pvt Ltd,QXWZN1062U,Delhi,New Delhi,Inactive,India
+26LOVYV7721A1ZA,ABC Traders Pvt Ltd,LOVYV7721A,Rajasthan,Udaipur,Inactive,India
+14ANCIP9975G1ZF,Star Solutions Pvt Ltd,ANCIP9975G,Kerala,Thiruvananthapuram,Active,India
+24MGGOO5765T1ZD,Prime Foods Pvt Ltd,MGGOO5765T,Kerala,Thiruvananthapuram,Active,India
+33BBKNY0710B1ZC,LMN Exports Pvt Ltd,BBKNY0710B,Rajasthan,Udaipur,Active,India
+11AKAEG0094M1ZE,ABC Industries Pvt Ltd,AKAEG0094M,Delhi,New Delhi,Inactive,India
+36BDZBI6233J1Z6,XYZ Chemicals Pvt Ltd,BDZBI6233J,Gujarat,Ahmedabad,Inactive,India
+19NIMZH8980E1Z5,ABC Textiles Pvt Ltd,NIMZH8980E,Telangana,Hyderabad,Active,India
+34ICVMS1778O1Z9,Eastern Logistics Pvt Ltd,ICVMS1778O,Karnataka,Mysuru,Active,India
+31OCZHU6244S1ZY,XYZ Chemicals Pvt Ltd,OCZHU6244S,West Bengal,Howrah,Active,India
+23GWSYF5998N1ZF,United Exports Pvt Ltd,GWSYF5998N,West Bengal,Howrah,Inactive,India
+31TWFUP7000W1Z3,XYZ Chemicals Pvt Ltd,TWFUP7000W,Tamil Nadu,Coimbatore,Active,India
+34UVVDL6021B1ZM,Prime Industries Pvt Ltd,UVVDL6021B,Gujarat,Ahmedabad,Active,India
+30RVLNQ9544Y1Z8,United Enterprises Pvt Ltd,RVLNQ9544Y,Uttar Pradesh,Lucknow,Active,India
+17VHQMA1736S1ZH,ABC Chemicals Pvt Ltd,VHQMA1736S,Telangana,Hyderabad,Inactive,India
+11IGAJF9721H1Z8,Star Chemicals Pvt Ltd,IGAJF9721H,Maharashtra,Pune,Inactive,India
+19SLLCW8575I1ZA,Star Industries Pvt Ltd,SLLCW8575I,Telangana,Hyderabad,Active,India
+25BFYHA1925H1ZY,Techno Engineering Pvt Ltd,BFYHA1925H,Telangana,Hyderabad,Inactive,India
+20DLINX3102A1ZO,ABC Enterprises Pvt Ltd,DLINX3102A,Tamil Nadu,Coimbatore,Active,India
+20XZNRI9255P1Z6,United Chemicals Pvt Ltd,XZNRI9255P,Kerala,Thiruvananthapuram,Inactive,India
+36STYIU0983B1Z7,Global Foods Pvt Ltd,STYIU0983B,Kerala,Thiruvananthapuram,Active,India
+18EVIQS2330K1Z4,ABC Industries Pvt Ltd,EVIQS2330K,Rajasthan,Udaipur,Active,India
+11OOTYP8638D1ZF,LMN Foods Pvt Ltd,OOTYP8638D,Tamil Nadu,Coimbatore,Inactive,India
+15ALQEQ5085J1ZM,XYZ Traders Pvt Ltd,ALQEQ5085J,Rajasthan,Udaipur,Inactive,India
+37EUZHV6504H1ZA,Techno Solutions Pvt Ltd,EUZHV6504H,Uttar Pradesh,Kanpur,Inactive,India
+13WYUDL2189D1ZA,ABC Solutions Pvt Ltd,WYUDL2189D,Telangana,Hyderabad,Inactive,India
+15MMSMM1889O1Z7,ABC Chemicals Pvt Ltd,MMSMM1889O,Karnataka,Mysuru,Inactive,India
+33DDDII8461E1ZG,Prime Textiles Pvt Ltd,DDDII8461E,Maharashtra,Pune,Active,India
+12YXZOO4847P1ZL,Star Logistics Pvt Ltd,YXZOO4847P,Telangana,Hyderabad,Inactive,India
+24DRQNU5247M1ZM,Techno Industries Pvt Ltd,DRQNU5247M,Tamil Nadu,Coimbatore,Active,India
+27BRFDM6572C1ZB,Prime Traders Pvt Ltd,BRFDM6572C,Rajasthan,Udaipur,Active,India
+28VFZQS1801I1ZO,XYZ Chemicals Pvt Ltd,VFZQS1801I,Gujarat,Ahmedabad,Active,India
+21JJIHH3666O1Z4,LMN Solutions Pvt Ltd,JJIHH3666O,Kerala,Kochi,Inactive,India
+11HESUC5056Z1ZW,XYZ Logistics Pvt Ltd,HESUC5056Z,Delhi,New Delhi,Active,India
+11PKHUW2153Y1Z6,Techno Chemicals Pvt Ltd,PKHUW2153Y,Gujarat,Ahmedabad,Active,India
+17WMMNB4696W1ZC,United Solutions Pvt Ltd,WMMNB4696W,Delhi,New Delhi,Active,India
+22BTHIA0323V1Z4,Star Exports Pvt Ltd,BTHIA0323V,Karnataka,Mysuru,Inactive,India
+16FPYDO3608P1ZE,LMN Engineering Pvt Ltd,FPYDO3608P,Telangana,Hyderabad,Active,India
+26MSAEN3303Z1ZT,Techno Enterprises Pvt Ltd,MSAEN3303Z,Delhi,New Delhi,Inactive,India
+17ZNRDU0423P1ZM,Techno Enterprises Pvt Ltd,ZNRDU0423P,Gujarat,Surat,Active,India
+18IGTYU1482H1ZR,PQR Enterprises Pvt Ltd,IGTYU1482H,Karnataka,Bengaluru,Inactive,India
+16SMNUQ3126W1ZD,LMN Enterprises Pvt Ltd,SMNUQ3126W,West Bengal,Howrah,Active,India
+10FCMOS8700K1ZJ,Techno Logistics Pvt Ltd,FCMOS8700K,West Bengal,Kolkata,Inactive,India
+17RAJLU2395R1ZH,ABC Engineering Pvt Ltd,RAJLU2395R,Karnataka,Bengaluru,Active,India
+34SYJAL5002C1ZR,XYZ Logistics Pvt Ltd,SYJAL5002C,Gujarat,Vadodara,Inactive,India
+19MBAVA8599S1ZJ,Techno Traders Pvt Ltd,MBAVA8599S,West Bengal,Howrah,Active,India
+22SKGJS5850D1Z2,PQR Enterprises Pvt Ltd,SKGJS5850D,Tamil Nadu,Coimbatore,Inactive,India
+11FUOZE6611B1ZD,PQR Chemicals Pvt Ltd,FUOZE6611B,Tamil Nadu,Chennai,Inactive,India
+23OWWKB5493T1ZB,Star Traders Pvt Ltd,OWWKB5493T,Delhi,New Delhi,Inactive,India
+36SPKAZ4314U1ZH,Prime Industries Pvt Ltd,SPKAZ4314U,West Bengal,Kolkata,Active,India
+17DMRYZ7672V1ZX,XYZ Engineering Pvt Ltd,DMRYZ7672V,Rajasthan,Udaipur,Inactive,India
+26ASEVQ4903J1Z6,Global Solutions Pvt Ltd,ASEVQ4903J,Tamil Nadu,Chennai,Active,India
+27GAMZA1710O1Z3,LMN Textiles Pvt Ltd,GAMZA1710O,Gujarat,Ahmedabad,Active,India
+29OWKRP7689I1ZZ,United Textiles Pvt Ltd,OWKRP7689I,Rajasthan,Udaipur,Inactive,India
+10KCBJA3607Q1ZS,ABC Chemicals Pvt Ltd,KCBJA3607Q,Kerala,Kochi,Active,India
+15WMJRN7562U1ZI,Prime Textiles Pvt Ltd,WMJRN7562U,Karnataka,Mysuru,Active,India
+28BZTOH6757F1ZF,Global Textiles Pvt Ltd,BZTOH6757F,Kerala,Thiruvananthapuram,Active,India
+27XJVWK1008X1ZG,XYZ Logistics Pvt Ltd,XJVWK1008X,Telangana,Hyderabad,Inactive,India
+19VVISP6630Z1ZU,Star Solutions Pvt Ltd,VVISP6630Z,Rajasthan,Jaipur,Inactive,India
+23BHRUI9476R1ZK,XYZ Enterprises Pvt Ltd,BHRUI9476R,Maharashtra,Nagpur,Active,India
+35VCYAX0271P1ZQ,United Exports Pvt Ltd,VCYAX0271P,Rajasthan,Jaipur,Active,India
+30BPAOZ9516D1ZD,LMN Enterprises Pvt Ltd,BPAOZ9516D,Gujarat,Ahmedabad,Inactive,India
+20NWEDZ2591E1ZE,XYZ Industries Pvt Ltd,NWEDZ2591E,Uttar Pradesh,Lucknow,Inactive,India
+34LANYU8535U1ZN,LMN Traders Pvt Ltd,LANYU8535U,Rajasthan,Udaipur,Active,India
+17VLTQR0431K1ZJ,United Enterprises Pvt Ltd,VLTQR0431K,Telangana,Hyderabad,Active,India
+23CUQXD0850B1ZE,LMN Traders Pvt Ltd,CUQXD0850B,Gujarat,Surat,Inactive,India
+31DIIAW8421M1ZW,XYZ Enterprises Pvt Ltd,DIIAW8421M,Maharashtra,Mumbai,Inactive,India
+18FJRCK6861Q1ZW,PQR Chemicals Pvt Ltd,FJRCK6861Q,Maharashtra,Mumbai,Inactive,India
+15XXOVI9760J1ZP,Eastern Traders Pvt Ltd,XXOVI9760J,Karnataka,Bengaluru,Active,India
+18QOXOT7611A1ZB,Techno Chemicals Pvt Ltd,QOXOT7611A,Karnataka,Bengaluru,Active,India
+30RGIBO1547D1ZN,Prime Textiles Pvt Ltd,RGIBO1547D,Maharashtra,Nagpur,Inactive,India
+33IZAQU1194Y1Z9,ABC Solutions Pvt Ltd,IZAQU1194Y,Delhi,New Delhi,Inactive,India
+21GPRZR2331X1Z5,Global Traders Pvt Ltd,GPRZR2331X,Kerala,Kochi,Inactive,India
+12UFLKC8757V1ZK,LMN Logistics Pvt Ltd,UFLKC8757V,West Bengal,Kolkata,Inactive,India
+27ILDXA5052C1ZA,Star Chemicals Pvt Ltd,ILDXA5052C,Kerala,Kochi,Active,India
+34PXACA6343R1Z1,Global Textiles Pvt Ltd,PXACA6343R,Kerala,Thiruvananthapuram,Inactive,India
+26HHWSE1906I1ZU,Eastern Textiles Pvt Ltd,HHWSE1906I,Gujarat,Surat,Active,India
+12PXRMV1995G1ZW,XYZ Textiles Pvt Ltd,PXRMV1995G,Delhi,New Delhi,Active,India
+36DMAJQ8707U1ZU,XYZ Traders Pvt Ltd,DMAJQ8707U,Tamil Nadu,Chennai,Active,India
+12ZMPFJ5163Q1ZR,Global Logistics Pvt Ltd,ZMPFJ5163Q,Maharashtra,Nagpur,Inactive,India
+34GYJXT0118E1Z2,Prime Logistics Pvt Ltd,GYJXT0118E,Maharashtra,Pune,Active,India
+27DQNWX5438T1ZK,Global Textiles Pvt Ltd,DQNWX5438T,Kerala,Thiruvananthapuram,Inactive,India
+35USCHU7006E1ZM,United Exports Pvt Ltd,USCHU7006E,Maharashtra,Nagpur,Inactive,India
+30AFAIG6582Z1ZP,ABC Chemicals Pvt Ltd,AFAIG6582Z,West Bengal,Howrah,Active,India
+29TMLQG6566C1ZL,United Enterprises Pvt Ltd,TMLQG6566C,Kerala,Kochi,Active,India
+18MMNQC9959R1ZO,XYZ Enterprises Pvt Ltd,MMNQC9959R,Maharashtra,Pune,Inactive,India
+37GMTXI1332O1ZH,LMN Exports Pvt Ltd,GMTXI1332O,Maharashtra,Pune,Active,India
+12ZIXZB7930W1ZQ,Techno Chemicals Pvt Ltd,ZIXZB7930W,Uttar Pradesh,Lucknow,Inactive,India
+17TEPIT4534X1ZA,PQR Solutions Pvt Ltd,TEPIT4534X,West Bengal,Howrah,Inactive,India
+23QYLML5544I1ZM,ABC Engineering Pvt Ltd,QYLML5544I,Maharashtra,Mumbai,Inactive,India
+14CRRNY6763W1ZI,PQR Chemicals Pvt Ltd,CRRNY6763W,Tamil Nadu,Coimbatore,Inactive,India
+24PRQVJ2539F1ZX,Global Industries Pvt Ltd,PRQVJ2539F,Rajasthan,Jaipur,Inactive,India
+36WLXVC8498F1ZH,LMN Engineering Pvt Ltd,WLXVC8498F,Uttar Pradesh,Noida,Active,India
+36BCJMM6756M1ZQ,Star Engineering Pvt Ltd,BCJMM6756M,Karnataka,Mysuru,Inactive,India
+22DUULH1158S1ZG,XYZ Traders Pvt Ltd,DUULH1158S,Tamil Nadu,Coimbatore,Inactive,India
+19FPTRV3694U1Z7,XYZ Foods Pvt Ltd,FPTRV3694U,Gujarat,Ahmedabad,Inactive,India
+37ZBAFT9703U1ZR,Prime Enterprises Pvt Ltd,ZBAFT9703U,Uttar Pradesh,Lucknow,Inactive,India
+25CBDVL1477Z1ZX,Star Industries Pvt Ltd,CBDVL1477Z,Rajasthan,Jaipur,Active,India
+32QFEXG3745K1Z2,ABC Industries Pvt Ltd,QFEXG3745K,Kerala,Kochi,Inactive,India
+12UUQFL0431J1ZW,Techno Foods Pvt Ltd,UUQFL0431J,Telangana,Hyderabad,Inactive,India
+26AEWML9051P1ZV,Global Foods Pvt Ltd,AEWML9051P,Kerala,Thiruvananthapuram,Active,India
+27UBUHA8824G1ZG,Star Textiles Pvt Ltd,UBUHA8824G,Rajasthan,Udaipur,Inactive,India
+19UJRNX9945B1ZS,Eastern Chemicals Pvt Ltd,UJRNX9945B,Uttar Pradesh,Lucknow,Active,India
+19NHEOJ9099S1ZN,ABC Chemicals Pvt Ltd,NHEOJ9099S,West Bengal,Kolkata,Active,India
+30JSFYL2154O1Z4,XYZ Industries Pvt Ltd,JSFYL2154O,Tamil Nadu,Chennai,Active,India
+27VLJNY0789B1ZU,LMN Solutions Pvt Ltd,VLJNY0789B,West Bengal,Kolkata,Inactive,India
+28TESZE5688Y1ZS,United Chemicals Pvt Ltd,TESZE5688Y,Delhi,New Delhi,Active,India
+11IVQBB3930S1ZT,ABC Foods Pvt Ltd,IVQBB3930S,Gujarat,Surat,Inactive,India
+23FFSVZ8863P1ZU,PQR Logistics Pvt Ltd,FFSVZ8863P,Delhi,New Delhi,Active,India
+35UFDKX2325E1ZW,Prime Engineering Pvt Ltd,UFDKX2325E,Rajasthan,Udaipur,Active,India
+10BPCCG3450U1ZN,Global Industries Pvt Ltd,BPCCG3450U,Karnataka,Mysuru,Inactive,India
+33YCDHH0388I1Z6,Techno Traders Pvt Ltd,YCDHH0388I,Delhi,New Delhi,Inactive,India
+15LBFMU7700X1ZT,Eastern Industries Pvt Ltd,LBFMU7700X,Karnataka,Bengaluru,Inactive,India
+27WAELB5370Y1ZH,Star Foods Pvt Ltd,WAELB5370Y,Gujarat,Vadodara,Active,India
+20NAOCW8864E1ZR,Prime Industries Pvt Ltd,NAOCW8864E,Delhi,New Delhi,Inactive,India
+25DYMBS2400Y1ZG,Techno Textiles Pvt Ltd,DYMBS2400Y,Maharashtra,Nagpur,Active,India
+15JUQZC3643Y1ZQ,PQR Traders Pvt Ltd,JUQZC3643Y,Karnataka,Mysuru,Active,India
+22OZNUR6997A1ZR,XYZ Foods Pvt Ltd,OZNUR6997A,Gujarat,Surat,Active,India
+30QDEWU1551H1ZF,Star Logistics Pvt Ltd,QDEWU1551H,Kerala,Kochi,Active,India
+32IZSBS3301D1ZW,United Enterprises Pvt Ltd,IZSBS3301D,Maharashtra,Pune,Inactive,India
+37ABKSX6625D1ZL,PQR Solutions Pvt Ltd,ABKSX6625D,Kerala,Kochi,Active,India
+34MVAFG0683G1ZF,Star Engineering Pvt Ltd,MVAFG0683G,Gujarat,Surat,Inactive,India
+33BCACU8664K1ZA,PQR Exports Pvt Ltd,BCACU8664K,Telangana,Hyderabad,Inactive,India
+23IUODJ3600J1ZL,PQR Enterprises Pvt Ltd,IUODJ3600J,Karnataka,Mysuru,Inactive,India
+11JXIOL5568P1Z4,XYZ Industries Pvt Ltd,JXIOL5568P,Tamil Nadu,Coimbatore,Inactive,India
+32TAQKH4451R1Z4,Star Traders Pvt Ltd,TAQKH4451R,Maharashtra,Mumbai,Active,India
+17EUKTP0824S1ZI,PQR Traders Pvt Ltd,EUKTP0824S,Telangana,Hyderabad,Active,India
+22HPVGV4377F1ZH,Eastern Exports Pvt Ltd,HPVGV4377F,Delhi,New Delhi,Active,India
+34PETTP3896Y1ZQ,Star Engineering Pvt Ltd,PETTP3896Y,Gujarat,Vadodara,Active,India
+37WBVXD0232T1ZE,United Chemicals Pvt Ltd,WBVXD0232T,Maharashtra,Mumbai,Inactive,India
+35KENOT6055M1ZF,XYZ Chemicals Pvt Ltd,KENOT6055M,Maharashtra,Pune,Inactive,India
+12WMFQF9846D1ZK,XYZ Logistics Pvt Ltd,WMFQF9846D,Gujarat,Surat,Active,India
+26ENRKB2060W1Z4,PQR Solutions Pvt Ltd,ENRKB2060W,West Bengal,Kolkata,Active,India
+34VGXNG1160S1ZG,United Chemicals Pvt Ltd,VGXNG1160S,West Bengal,Howrah,Inactive,India
+36VIPMP5385Z1ZX,XYZ Exports Pvt Ltd,VIPMP5385Z,Kerala,Thiruvananthapuram,Active,India
+12MMATK4226W1ZZ,Techno Engineering Pvt Ltd,MMATK4226W,Kerala,Kochi,Active,India
+27VNYNM5148M1ZN,Eastern Textiles Pvt Ltd,VNYNM5148M,West Bengal,Kolkata,Inactive,India
+31JSPUD8612Q1ZQ,XYZ Enterprises Pvt Ltd,JSPUD8612Q,West Bengal,Howrah,Active,India
+17AHJNX5855D1ZF,Star Chemicals Pvt Ltd,AHJNX5855D,West Bengal,Kolkata,Active,India
+14XOGUY0239N1ZS,Global Traders Pvt Ltd,XOGUY0239N,Kerala,Thiruvananthapuram,Active,India
+23LYMUD7820H1ZB,Prime Exports Pvt Ltd,LYMUD7820H,Kerala,Thiruvananthapuram,Active,India
+33EPCFG1928O1Z5,PQR Foods Pvt Ltd,EPCFG1928O,Karnataka,Mysuru,Active,India
+33XTBRY5816N1ZM,LMN Textiles Pvt Ltd,XTBRY5816N,Karnataka,Bengaluru,Inactive,India
+36WCSHY2197B1ZE,XYZ Textiles Pvt Ltd,WCSHY2197B,Maharashtra,Mumbai,Inactive,India
+16WFFYR0334I1ZH,LMN Logistics Pvt Ltd,WFFYR0334I,Rajasthan,Jaipur,Active,India
+17WXUFZ2219E1ZM,ABC Logistics Pvt Ltd,WXUFZ2219E,Delhi,New Delhi,Inactive,India
+16STNTT4046L1ZZ,United Exports Pvt Ltd,STNTT4046L,Tamil Nadu,Coimbatore,Inactive,India
+26JTFGJ3324B1ZK,PQR Logistics Pvt Ltd,JTFGJ3324B,Rajasthan,Jaipur,Active,India
+29BIAAP2919M1ZI,Eastern Exports Pvt Ltd,BIAAP2919M,Karnataka,Mysuru,Inactive,India
+13JQELJ6181X1Z7,PQR Enterprises Pvt Ltd,JQELJ6181X,Rajasthan,Jaipur,Active,India
+30LQENE7367K1Z1,ABC Exports Pvt Ltd,LQENE7367K,Telangana,Hyderabad,Active,India
+28JDRGW9522E1ZU,ABC Exports Pvt Ltd,JDRGW9522E,Gujarat,Vadodara,Inactive,India
+26VDPAU3485Q1ZB,Techno Textiles Pvt Ltd,VDPAU3485Q,Karnataka,Bengaluru,Inactive,India
+25RWJRJ3949S1ZE,Techno Enterprises Pvt Ltd,RWJRJ3949S,Karnataka,Mysuru,Inactive,India
+34NTDCL6462R1ZQ,Global Solutions Pvt Ltd,NTDCL6462R,Telangana,Hyderabad,Inactive,India
+31FQQZB5291W1ZL,Star Engineering Pvt Ltd,FQQZB5291W,Rajasthan,Udaipur,Active,India
+37CNKFF6114S1ZY,PQR Exports Pvt Ltd,CNKFF6114S,Tamil Nadu,Chennai,Active,India
+17PEBGK2188B1ZY,ABC Solutions Pvt Ltd,PEBGK2188B,Uttar Pradesh,Noida,Inactive,India
+24ITMPU9357B1Z8,PQR Exports Pvt Ltd,ITMPU9357B,Tamil Nadu,Chennai,Active,India
+16LSXCW2005K1ZE,Prime Logistics Pvt Ltd,LSXCW2005K,Kerala,Kochi,Active,India
+31HBCIE6040I1Z6,United Exports Pvt Ltd,HBCIE6040I,West Bengal,Kolkata,Inactive,India
+13XLUZG7002X1Z7,United Chemicals Pvt Ltd,XLUZG7002X,Uttar Pradesh,Lucknow,Active,India
+36RPUNA3577X1ZR,Star Logistics Pvt Ltd,RPUNA3577X,West Bengal,Howrah,Active,India
+24AXBMG4865T1ZI,United Engineering Pvt Ltd,AXBMG4865T,Kerala,Thiruvananthapuram,Active,India
+19PBYIU3831W1ZH,Eastern Enterprises Pvt Ltd,PBYIU3831W,Karnataka,Bengaluru,Inactive,India
+11URKUL2702W1ZK,LMN Traders Pvt Ltd,URKUL2702W,West Bengal,Howrah,Inactive,India
+10VADCM1560J1ZX,Eastern Industries Pvt Ltd,VADCM1560J,West Bengal,Kolkata,Active,India
+11AUXKT5834O1Z9,LMN Foods Pvt Ltd,AUXKT5834O,Gujarat,Surat,Inactive,India
+19YOLLB3167Z1ZV,LMN Chemicals Pvt Ltd,YOLLB3167Z,Telangana,Hyderabad,Active,India
+28NHWPL0155P1ZF,PQR Solutions Pvt Ltd,NHWPL0155P,Telangana,Hyderabad,Active,India
+23SPGXX9192M1Z6,Techno Chemicals Pvt Ltd,SPGXX9192M,Telangana,Hyderabad,Inactive,India
+24NSCCS8647B1ZH,Prime Textiles Pvt Ltd,NSCCS8647B,Telangana,Hyderabad,Active,India
+20CWZPN5829C1ZH,Eastern Logistics Pvt Ltd,CWZPN5829C,West Bengal,Howrah,Inactive,India
+29WUDUE2610E1ZH,PQR Exports Pvt Ltd,WUDUE2610E,Kerala,Thiruvananthapuram,Active,India
+20QZEHN3631Q1ZI,Techno Exports Pvt Ltd,QZEHN3631Q,Uttar Pradesh,Lucknow,Inactive,India
+13JDROU2716A1ZW,Eastern Engineering Pvt Ltd,JDROU2716A,West Bengal,Kolkata,Active,India
+34NMAGJ7589R1ZS,XYZ Foods Pvt Ltd,NMAGJ7589R,Maharashtra,Nagpur,Active,India
+37LVUCV3982O1Z5,PQR Logistics Pvt Ltd,LVUCV3982O,Rajasthan,Udaipur,Inactive,India
+36BQBGB3115F1Z9,PQR Industries Pvt Ltd,BQBGB3115F,Karnataka,Mysuru,Inactive,India
+34ZBLCT4710Q1ZK,LMN Traders Pvt Ltd,ZBLCT4710Q,Karnataka,Mysuru,Inactive,India
+13BEKIC5060V1ZW,PQR Exports Pvt Ltd,BEKIC5060V,Delhi,New Delhi,Active,India
+25TNCPY9148G1Z7,ABC Enterprises Pvt Ltd,TNCPY9148G,Maharashtra,Nagpur,Inactive,India
+34ZZADO4070N1Z8,Global Exports Pvt Ltd,ZZADO4070N,Kerala,Thiruvananthapuram,Inactive,India
+21LNMNR8587A1ZQ,XYZ Traders Pvt Ltd,LNMNR8587A,Uttar Pradesh,Kanpur,Inactive,India
+34GYKFM5821G1ZZ,Techno Solutions Pvt Ltd,GYKFM5821G,Delhi,New Delhi,Inactive,India
+15MSGBZ1892P1ZX,LMN Traders Pvt Ltd,MSGBZ1892P,Uttar Pradesh,Noida,Active,India
+34LKYNZ8664K1ZE,Star Chemicals Pvt Ltd,LKYNZ8664K,Delhi,New Delhi,Active,India
+27GFLHH3768E1Z8,LMN Chemicals Pvt Ltd,GFLHH3768E,Uttar Pradesh,Lucknow,Inactive,India
+30QBPQD1889H1ZO,Global Solutions Pvt Ltd,QBPQD1889H,Karnataka,Mysuru,Active,India
+10ZYSSW6953R1ZO,Eastern Logistics Pvt Ltd,ZYSSW6953R,Maharashtra,Nagpur,Inactive,India
+24MSQMX1899O1ZO,Star Industries Pvt Ltd,MSQMX1899O,Telangana,Hyderabad,Active,India
+32QALQD1557B1ZJ,Star Textiles Pvt Ltd,QALQD1557B,Telangana,Hyderabad,Active,India
+21MPJGK1062L1Z7,LMN Textiles Pvt Ltd,MPJGK1062L,Uttar Pradesh,Noida,Active,India
+23VTYRH8125U1ZY,LMN Foods Pvt Ltd,VTYRH8125U,Rajasthan,Jaipur,Inactive,India
+14UIUFZ9031H1Z9,Eastern Enterprises Pvt Ltd,UIUFZ9031H,Karnataka,Bengaluru,Active,India
+28UPFXQ3768L1ZR,Eastern Chemicals Pvt Ltd,UPFXQ3768L,Delhi,New Delhi,Active,India
+12MYIHN3696O1ZO,PQR Textiles Pvt Ltd,MYIHN3696O,Delhi,New Delhi,Inactive,India
+17UUIAM9063Z1ZC,Star Exports Pvt Ltd,UUIAM9063Z,West Bengal,Kolkata,Active,India
+17PGXXM5096T1Z9,Prime Engineering Pvt Ltd,PGXXM5096T,Uttar Pradesh,Noida,Active,India
+17ZLCQI5927U1ZD,LMN Traders Pvt Ltd,ZLCQI5927U,Maharashtra,Nagpur,Inactive,India
+30OGTJW4001E1ZC,Techno Chemicals Pvt Ltd,OGTJW4001E,West Bengal,Kolkata,Inactive,India
+25HCPDB0143B1ZM,United Traders Pvt Ltd,HCPDB0143B,Telangana,Hyderabad,Inactive,India
+20OFNTM1004Y1ZM,XYZ Logistics Pvt Ltd,OFNTM1004Y,Tamil Nadu,Coimbatore,Active,India
+33IKYZC8603C1Z2,Prime Textiles Pvt Ltd,IKYZC8603C,Telangana,Hyderabad,Active,India
+11WBJDQ8051Q1ZU,XYZ Exports Pvt Ltd,WBJDQ8051Q,West Bengal,Kolkata,Active,India
+11IVTBS4755H1ZD,Techno Exports Pvt Ltd,IVTBS4755H,Uttar Pradesh,Lucknow,Active,India
+30QCCOO8511I1ZF,Global Chemicals Pvt Ltd,QCCOO8511I,Karnataka,Bengaluru,Active,India
+32TPVDH0234J1ZM,LMN Logistics Pvt Ltd,TPVDH0234J,Kerala,Kochi,Inactive,India
+34GPTPU0041O1ZL,Prime Logistics Pvt Ltd,GPTPU0041O,Karnataka,Bengaluru,Inactive,India
+34DEWTL2734X1ZV,LMN Chemicals Pvt Ltd,DEWTL2734X,Tamil Nadu,Coimbatore,Active,India
+24FTJMN3821Z1Z8,XYZ Enterprises Pvt Ltd,FTJMN3821Z,Karnataka,Mysuru,Inactive,India
+36EBINO0505O1ZZ,Star Chemicals Pvt Ltd,EBINO0505O,Gujarat,Vadodara,Inactive,India
+24THOQF3190Z1ZE,ABC Chemicals Pvt Ltd,THOQF3190Z,West Bengal,Howrah,Inactive,India
+34PDDHT1289B1ZK,Techno Foods Pvt Ltd,PDDHT1289B,Telangana,Hyderabad,Inactive,India
+14STCCA7594Y1ZA,Eastern Textiles Pvt Ltd,STCCA7594Y,Delhi,New Delhi,Active,India
+24RXNVW1964Z1ZS,Eastern Chemicals Pvt Ltd,RXNVW1964Z,Telangana,Hyderabad,Inactive,India
+14JJVKG0624U1Z6,ABC Engineering Pvt Ltd,JJVKG0624U,Maharashtra,Pune,Active,India
+13FJFXY7587Y1ZH,ABC Solutions Pvt Ltd,FJFXY7587Y,Delhi,New Delhi,Inactive,India
+20CPMRM6444B1Z2,Global Enterprises Pvt Ltd,CPMRM6444B,Uttar Pradesh,Kanpur,Inactive,India
+20LCKOF9264Q1ZT,XYZ Enterprises Pvt Ltd,LCKOF9264Q,Gujarat,Vadodara,Active,India
+30SPPAE9315X1ZN,United Textiles Pvt Ltd,SPPAE9315X,Uttar Pradesh,Noida,Active,India
+23SGPEA9449O1ZB,Eastern Industries Pvt Ltd,SGPEA9449O,Karnataka,Bengaluru,Inactive,India
+23EYKGM4959B1ZO,XYZ Textiles Pvt Ltd,EYKGM4959B,Maharashtra,Mumbai,Active,India
+13HOSGM8741N1ZB,Prime Industries Pvt Ltd,HOSGM8741N,Telangana,Hyderabad,Inactive,India
+18VPLPV8505V1ZT,United Enterprises Pvt Ltd,VPLPV8505V,Karnataka,Mysuru,Inactive,India
+30KFULA7733W1Z5,XYZ Solutions Pvt Ltd,KFULA7733W,Tamil Nadu,Chennai,Inactive,India
+17BEXZW8850I1ZE,United Engineering Pvt Ltd,BEXZW8850I,Delhi,New Delhi,Active,India
+30YDJVE5354P1ZX,PQR Foods Pvt Ltd,YDJVE5354P,Rajasthan,Udaipur,Active,India
+24WCZDI8229A1Z8,Techno Logistics Pvt Ltd,WCZDI8229A,Maharashtra,Mumbai,Inactive,India
+36EPLYD6140Y1ZN,Star Textiles Pvt Ltd,EPLYD6140Y,Maharashtra,Mumbai,Inactive,India
+15ETWDH0686O1Z4,Eastern Traders Pvt Ltd,ETWDH0686O,Gujarat,Surat,Active,India
+35STVHY4043S1Z7,Eastern Traders Pvt Ltd,STVHY4043S,Tamil Nadu,Chennai,Inactive,India
+27CXTHL2258J1ZH,LMN Logistics Pvt Ltd,CXTHL2258J,Maharashtra,Pune,Inactive,India
+15WWKDY0081T1ZV,Techno Foods Pvt Ltd,WWKDY0081T,Delhi,New Delhi,Inactive,India
+31IWJST6459I1Z9,XYZ Logistics Pvt Ltd,IWJST6459I,Rajasthan,Udaipur,Active,India
+13DJSCN2186L1ZC,PQR Exports Pvt Ltd,DJSCN2186L,Uttar Pradesh,Kanpur,Inactive,India
+26FZJAR2996T1Z8,Techno Engineering Pvt Ltd,FZJAR2996T,Rajasthan,Jaipur,Active,India
+28NXSPO5807D1ZP,Global Textiles Pvt Ltd,NXSPO5807D,Kerala,Thiruvananthapuram,Active,India
+20QFVNM6942U1ZQ,PQR Solutions Pvt Ltd,QFVNM6942U,Telangana,Hyderabad,Active,India
+24KDMBR6872X1ZI,Star Enterprises Pvt Ltd,KDMBR6872X,Gujarat,Surat,Inactive,India
+15NFHTI9585P1Z7,Eastern Exports Pvt Ltd,NFHTI9585P,West Bengal,Kolkata,Active,India
+28SCVBF0486Z1Z8,Eastern Enterprises Pvt Ltd,SCVBF0486Z,Tamil Nadu,Chennai,Active,India
+27BNQDF3307X1ZE,Prime Textiles Pvt Ltd,BNQDF3307X,Delhi,New Delhi,Inactive,India
+20SJOBU0840Y1ZL,Prime Engineering Pvt Ltd,SJOBU0840Y,West Bengal,Howrah,Active,India
+19OIURK0916L1ZE,Prime Foods Pvt Ltd,OIURK0916L,Gujarat,Vadodara,Inactive,India
+19WVUCC3625D1ZD,PQR Exports Pvt Ltd,WVUCC3625D,Telangana,Hyderabad,Active,India
+23VSIZC2729I1Z5,ABC Foods Pvt Ltd,VSIZC2729I,Gujarat,Ahmedabad,Inactive,India
+13QRKKA9134F1ZF,ABC Industries Pvt Ltd,QRKKA9134F,Rajasthan,Jaipur,Active,India
+24THFDJ9536Q1ZS,Prime Solutions Pvt Ltd,THFDJ9536Q,West Bengal,Howrah,Inactive,India
+30MCESB4036N1ZI,ABC Enterprises Pvt Ltd,MCESB4036N,West Bengal,Kolkata,Inactive,India
+12VZVTU0963U1Z1,United Logistics Pvt Ltd,VZVTU0963U,Gujarat,Vadodara,Inactive,India
+32KPGMA4652I1ZL,Global Chemicals Pvt Ltd,KPGMA4652I,Rajasthan,Jaipur,Active,India
+18VBFPO8918B1ZE,United Chemicals Pvt Ltd,VBFPO8918B,West Bengal,Kolkata,Active,India
+24FSJTF1744F1ZX,Star Solutions Pvt Ltd,FSJTF1744F,Delhi,New Delhi,Inactive,India
+33SRXPH9022N1ZS,Global Solutions Pvt Ltd,SRXPH9022N,Kerala,Kochi,Active,India
+29NOEKL4083Y1ZG,United Exports Pvt Ltd,NOEKL4083Y,Tamil Nadu,Coimbatore,Inactive,India
+10FCYKV8635G1ZO,XYZ Exports Pvt Ltd,FCYKV8635G,Uttar Pradesh,Lucknow,Active,India
+26GOKFI9304G1ZE,Star Chemicals Pvt Ltd,GOKFI9304G,Rajasthan,Jaipur,Inactive,India
+26DQEAC5250R1ZF,United Chemicals Pvt Ltd,DQEAC5250R,Tamil Nadu,Coimbatore,Inactive,India
+11JYQTO4293X1ZO,LMN Industries Pvt Ltd,JYQTO4293X,Maharashtra,Pune,Active,India
+20IVNWM2201C1ZC,XYZ Engineering Pvt Ltd,IVNWM2201C,Tamil Nadu,Chennai,Active,India
+23ZCTRY9437J1Z3,PQR Logistics Pvt Ltd,ZCTRY9437J,Kerala,Thiruvananthapuram,Active,India
+30SEHUN5502S1ZW,PQR Textiles Pvt Ltd,SEHUN5502S,Rajasthan,Udaipur,Active,India
+35BKLNT4710V1ZD,Global Chemicals Pvt Ltd,BKLNT4710V,Telangana,Hyderabad,Active,India
+28BVACI5555T1ZG,ABC Exports Pvt Ltd,BVACI5555T,Telangana,Hyderabad,Inactive,India
+18NNQJD5310T1Z3,ABC Industries Pvt Ltd,NNQJD5310T,Kerala,Thiruvananthapuram,Inactive,India
+22PZKFQ6619U1ZS,Star Industries Pvt Ltd,PZKFQ6619U,Delhi,New Delhi,Active,India
+33MDPTH9101N1ZX,ABC Engineering Pvt Ltd,MDPTH9101N,Delhi,New Delhi,Active,India
+37QVYLJ5756S1ZW,LMN Foods Pvt Ltd,QVYLJ5756S,Karnataka,Mysuru,Active,India
+15VOEGE6194Y1ZV,Global Traders Pvt Ltd,VOEGE6194Y,Karnataka,Mysuru,Active,India
+11LJPIO2444G1ZP,XYZ Industries Pvt Ltd,LJPIO2444G,Rajasthan,Jaipur,Inactive,India
+14JDSPL1514N1Z6,Star Exports Pvt Ltd,JDSPL1514N,Uttar Pradesh,Lucknow,Inactive,India
+22QDJKW7105A1Z8,PQR Engineering Pvt Ltd,QDJKW7105A,Delhi,New Delhi,Inactive,India
+29UKQDD0149F1ZO,Techno Foods Pvt Ltd,UKQDD0149F,Gujarat,Surat,Active,India
+11RRUPM5450L1Z6,United Logistics Pvt Ltd,RRUPM5450L,Delhi,New Delhi,Inactive,India
+13ZEMPJ6009O1ZR,United Foods Pvt Ltd,ZEMPJ6009O,Karnataka,Bengaluru,Active,India
+20OSLMK3434S1ZW,XYZ Textiles Pvt Ltd,OSLMK3434S,Rajasthan,Udaipur,Active,India
+12BPOWJ9808U1Z4,PQR Traders Pvt Ltd,BPOWJ9808U,Delhi,New Delhi,Active,India
+25IYPUW5451W1Z9,Eastern Engineering Pvt Ltd,IYPUW5451W,Kerala,Kochi,Active,India
+20UXRJU9919O1Z8,LMN Exports Pvt Ltd,UXRJU9919O,Uttar Pradesh,Noida,Active,India
+37UDYEJ0177E1ZS,XYZ Foods Pvt Ltd,UDYEJ0177E,West Bengal,Kolkata,Active,India
+16YAIGB2474G1ZE,Global Logistics Pvt Ltd,YAIGB2474G,Rajasthan,Jaipur,Inactive,India
+13ACMMC4392K1Z4,XYZ Foods Pvt Ltd,ACMMC4392K,Karnataka,Bengaluru,Active,India
+29CCAAV1270G1Z3,Star Foods Pvt Ltd,CCAAV1270G,Uttar Pradesh,Kanpur,Active,India
+24KTEZK1209F1ZQ,United Chemicals Pvt Ltd,KTEZK1209F,Maharashtra,Mumbai,Active,India
+11GEJYH4778U1ZA,Star Textiles Pvt Ltd,GEJYH4778U,Tamil Nadu,Coimbatore,Inactive,India
+32MUJAO6787N1Z8,LMN Enterprises Pvt Ltd,MUJAO6787N,West Bengal,Howrah,Active,India
+17HIIQQ7912L1Z2,XYZ Industries Pvt Ltd,HIIQQ7912L,Karnataka,Mysuru,Active,India
+29XMBLG7071D1ZY,Star Engineering Pvt Ltd,XMBLG7071D,Tamil Nadu,Coimbatore,Inactive,India
+34UVEMD3589E1Z6,Star Traders Pvt Ltd,UVEMD3589E,Rajasthan,Jaipur,Active,India
+31KBGOZ0535U1Z6,LMN Industries Pvt Ltd,KBGOZ0535U,Delhi,New Delhi,Inactive,India
+12WVUPR6613W1Z9,Global Textiles Pvt Ltd,WVUPR6613W,Rajasthan,Udaipur,Active,India
+33SXLBB3867I1Z9,Star Industries Pvt Ltd,SXLBB3867I,Telangana,Hyderabad,Inactive,India
+30VBSIW0246Q1ZY,Techno Exports Pvt Ltd,VBSIW0246Q,Gujarat,Vadodara,Active,India
+17ZPUQI8835U1ZF,Star Traders Pvt Ltd,ZPUQI8835U,Maharashtra,Nagpur,Inactive,India
+35VHPAS1391I1ZB,Techno Solutions Pvt Ltd,VHPAS1391I,Rajasthan,Udaipur,Inactive,India
+35GUDTM9631R1Z9,PQR Industries Pvt Ltd,GUDTM9631R,Delhi,New Delhi,Inactive,India
+13HWACU1734K1Z3,Prime Exports Pvt Ltd,HWACU1734K,Gujarat,Ahmedabad,Active,India
+35CYYMN7287W1Z3,Star Traders Pvt Ltd,CYYMN7287W,Karnataka,Bengaluru,Inactive,India
+35HRAKV2994L1ZD,Techno Traders Pvt Ltd,HRAKV2994L,West Bengal,Howrah,Inactive,India
+13BJDCT7478Y1ZO,Star Textiles Pvt Ltd,BJDCT7478Y,Rajasthan,Jaipur,Inactive,India
+33IQFDI6192R1ZA,United Enterprises Pvt Ltd,IQFDI6192R,Telangana,Hyderabad,Active,India
+23SXIPJ0865W1ZX,PQR Industries Pvt Ltd,SXIPJ0865W,Maharashtra,Pune,Active,India
+32FDWFS6786S1ZR,LMN Traders Pvt Ltd,FDWFS6786S,Uttar Pradesh,Noida,Inactive,India
+28EIAED6416H1ZX,XYZ Exports Pvt Ltd,EIAED6416H,Kerala,Kochi,Inactive,India
+22PIPVA8598I1Z6,Prime Exports Pvt Ltd,PIPVA8598I,Delhi,New Delhi,Inactive,India
+33OXNUK6318Z1Z1,XYZ Engineering Pvt Ltd,OXNUK6318Z,Uttar Pradesh,Kanpur,Active,India
+14IUCZK8696O1ZV,ABC Solutions Pvt Ltd,IUCZK8696O,Uttar Pradesh,Kanpur,Active,India
+22PLMUB1828Q1ZU,ABC Foods Pvt Ltd,PLMUB1828Q,Rajasthan,Jaipur,Active,India
+36MOLJM2406H1Z9,United Enterprises Pvt Ltd,MOLJM2406H,Rajasthan,Jaipur,Inactive,India
+30PFGMY6343I1ZN,LMN Industries Pvt Ltd,PFGMY6343I,Maharashtra,Pune,Inactive,India
+29VDQQX0567D1ZW,LMN Logistics Pvt Ltd,VDQQX0567D,Telangana,Hyderabad,Active,India
+10GYZOP4619R1ZJ,PQR Exports Pvt Ltd,GYZOP4619R,Delhi,New Delhi,Inactive,India
+21GQSVA9837I1ZW,LMN Engineering Pvt Ltd,GQSVA9837I,Tamil Nadu,Chennai,Active,India
+29OVBDH1302P1Z4,Prime Traders Pvt Ltd,OVBDH1302P,Gujarat,Ahmedabad,Inactive,India
+14XKWZG7144X1ZN,Techno Solutions Pvt Ltd,XKWZG7144X,Delhi,New Delhi,Inactive,India
+20RUTQT5171A1ZT,United Enterprises Pvt Ltd,RUTQT5171A,West Bengal,Howrah,Inactive,India
+34ZOXDE2869L1Z1,Prime Logistics Pvt Ltd,ZOXDE2869L,Kerala,Kochi,Inactive,India
+15CVARD3057M1ZA,United Traders Pvt Ltd,CVARD3057M,West Bengal,Kolkata,Active,India
+15MTAZS7918D1ZQ,Eastern Foods Pvt Ltd,MTAZS7918D,Telangana,Hyderabad,Active,India
+17GEFBH3169X1Z7,Global Traders Pvt Ltd,GEFBH3169X,Delhi,New Delhi,Inactive,India
+12ISCLV9917R1ZN,LMN Textiles Pvt Ltd,ISCLV9917R,Telangana,Hyderabad,Active,India
+19ZTICR3773P1ZI,XYZ Exports Pvt Ltd,ZTICR3773P,Karnataka,Mysuru,Inactive,India
+31DUYUE5219K1ZY,Eastern Industries Pvt Ltd,DUYUE5219K,Telangana,Hyderabad,Active,India
+19MTUHO8788H1ZL,Prime Industries Pvt Ltd,MTUHO8788H,Delhi,New Delhi,Active,India
+17GELXV9563B1ZY,PQR Solutions Pvt Ltd,GELXV9563B,Uttar Pradesh,Noida,Inactive,India
+13PXPUF3214E1ZE,Prime Chemicals Pvt Ltd,PXPUF3214E,Telangana,Hyderabad,Active,India
+16LYFPL1878U1ZB,PQR Logistics Pvt Ltd,LYFPL1878U,Rajasthan,Udaipur,Active,India
+31QQSWM9431P1ZS,Eastern Industries Pvt Ltd,QQSWM9431P,Kerala,Kochi,Active,India
+32MKLSO1461C1ZH,Global Chemicals Pvt Ltd,MKLSO1461C,Karnataka,Mysuru,Active,India
+27SLFOD7698S1ZC,Prime Textiles Pvt Ltd,SLFOD7698S,Telangana,Hyderabad,Inactive,India
+22THRDE1315B1ZY,Global Textiles Pvt Ltd,THRDE1315B,Maharashtra,Pune,Active,India
+27PCKHC2860X1ZE,United Solutions Pvt Ltd,PCKHC2860X,Tamil Nadu,Coimbatore,Active,India
+22MHZNV9123X1ZM,United Enterprises Pvt Ltd,MHZNV9123X,West Bengal,Howrah,Active,India
+10OKUYT3064K1Z9,XYZ Logistics Pvt Ltd,OKUYT3064K,Delhi,New Delhi,Active,India
+19ZSYJP2902Z1ZR,Eastern Logistics Pvt Ltd,ZSYJP2902Z,Telangana,Hyderabad,Inactive,India
+14VHZHV9815E1Z7,Eastern Engineering Pvt Ltd,VHZHV9815E,West Bengal,Howrah,Inactive,India
+35ELAVX2093J1ZQ,Prime Traders Pvt Ltd,ELAVX2093J,Maharashtra,Nagpur,Inactive,India
+15MNOWP9202D1ZX,PQR Chemicals Pvt Ltd,MNOWP9202D,Kerala,Thiruvananthapuram,Active,India
+17LOEWV7966I1ZZ,United Chemicals Pvt Ltd,LOEWV7966I,Delhi,New Delhi,Inactive,India
+33ENPWY7794H1Z5,Star Textiles Pvt Ltd,ENPWY7794H,Uttar Pradesh,Noida,Active,India
+17TYMZP4994Y1Z7,Techno Foods Pvt Ltd,TYMZP4994Y,Uttar Pradesh,Lucknow,Inactive,India
+14WNIOA8547Z1ZD,Star Logistics Pvt Ltd,WNIOA8547Z,Gujarat,Vadodara,Inactive,India
+35ORWGE0874S1Z8,United Exports Pvt Ltd,ORWGE0874S,Delhi,New Delhi,Inactive,India
+13NBDGN9620F1ZI,ABC Enterprises Pvt Ltd,NBDGN9620F,Telangana,Hyderabad,Inactive,India
+34IGLML1933J1ZP,Global Textiles Pvt Ltd,IGLML1933J,Telangana,Hyderabad,Inactive,India
+32IKFYB1118S1ZW,ABC Traders Pvt Ltd,IKFYB1118S,Delhi,New Delhi,Active,India
+33UOOQX7268N1Z8,Prime Chemicals Pvt Ltd,UOOQX7268N,Delhi,New Delhi,Active,India
+28HHVNV4242G1ZY,PQR Chemicals Pvt Ltd,HHVNV4242G,Tamil Nadu,Coimbatore,Active,India
+20DKAOM1494Y1ZX,Prime Textiles Pvt Ltd,DKAOM1494Y,Delhi,New Delhi,Active,India
+10LYYOM9699G1ZS,Star Industries Pvt Ltd,LYYOM9699G,Gujarat,Surat,Inactive,India
+25YOJKJ1747O1ZL,Eastern Engineering Pvt Ltd,YOJKJ1747O,Maharashtra,Pune,Inactive,India
+28XCYLI3947X1ZD,LMN Solutions Pvt Ltd,XCYLI3947X,Delhi,New Delhi,Inactive,India
+30JQZDP2300E1Z9,Prime Foods Pvt Ltd,JQZDP2300E,Rajasthan,Jaipur,Active,India
+34IVUMB5912H1Z1,ABC Textiles Pvt Ltd,IVUMB5912H,Telangana,Hyderabad,Active,India
+22JXRXA0938Y1ZY,United Textiles Pvt Ltd,JXRXA0938Y,Uttar Pradesh,Noida,Inactive,India
+31IWKAL5885D1ZI,XYZ Exports Pvt Ltd,IWKAL5885D,Telangana,Hyderabad,Inactive,India
+30RSPLV7426N1ZK,LMN Enterprises Pvt Ltd,RSPLV7426N,Uttar Pradesh,Kanpur,Active,India
+17AICKP8228Q1ZT,XYZ Engineering Pvt Ltd,AICKP8228Q,Telangana,Hyderabad,Active,India
+21PHNTS2722R1ZR,LMN Traders Pvt Ltd,PHNTS2722R,West Bengal,Kolkata,Inactive,India
+32ACMBW0215W1ZF,Prime Exports Pvt Ltd,ACMBW0215W,Karnataka,Mysuru,Active,India
+16CNLSV5902U1ZI,PQR Enterprises Pvt Ltd,CNLSV5902U,Karnataka,Mysuru,Active,India
+12JNCRN4690T1ZK,LMN Industries Pvt Ltd,JNCRN4690T,Maharashtra,Mumbai,Inactive,India
+22NCUON7664G1ZV,ABC Solutions Pvt Ltd,NCUON7664G,Maharashtra,Nagpur,Active,India
+29EGLCQ8700F1ZP,Global Engineering Pvt Ltd,EGLCQ8700F,Tamil Nadu,Coimbatore,Inactive,India
+16EQIYF8763S1ZI,XYZ Enterprises Pvt Ltd,EQIYF8763S,Gujarat,Vadodara,Inactive,India
+19KFHYS9629Y1Z4,Star Foods Pvt Ltd,KFHYS9629Y,Tamil Nadu,Coimbatore,Active,India
+36WZOIJ9852H1ZG,ABC Exports Pvt Ltd,WZOIJ9852H,Rajasthan,Udaipur,Inactive,India
+11ZRKVQ1089R1ZF,ABC Foods Pvt Ltd,ZRKVQ1089R,Maharashtra,Pune,Active,India
+12UNYRO5763P1ZA,Global Chemicals Pvt Ltd,UNYRO5763P,West Bengal,Howrah,Inactive,India
+11NUTSB8576K1ZM,LMN Textiles Pvt Ltd,NUTSB8576K,West Bengal,Kolkata,Inactive,India
+29VHLCX2649V1ZK,Eastern Textiles Pvt Ltd,VHLCX2649V,West Bengal,Kolkata,Active,India
+20QVUBF3961B1ZD,Global Solutions Pvt Ltd,QVUBF3961B,Gujarat,Ahmedabad,Inactive,India
+25DLHJZ7429F1ZZ,Eastern Textiles Pvt Ltd,DLHJZ7429F,Kerala,Kochi,Active,India
+16OLQKE5003Q1ZI,ABC Chemicals Pvt Ltd,OLQKE5003Q,Telangana,Hyderabad,Active,India
+16FOGOA7055G1ZH,PQR Engineering Pvt Ltd,FOGOA7055G,Tamil Nadu,Coimbatore,Active,India
+12LLIHL0180B1Z9,ABC Enterprises Pvt Ltd,LLIHL0180B,Kerala,Thiruvananthapuram,Inactive,India
+22DLOMG7612V1ZM,Prime Chemicals Pvt Ltd,DLOMG7612V,Maharashtra,Mumbai,Inactive,India
+16XZXAO3854F1ZP,United Textiles Pvt Ltd,XZXAO3854F,Tamil Nadu,Coimbatore,Active,India
+22BRVYS0455K1ZO,ABC Engineering Pvt Ltd,BRVYS0455K,Delhi,New Delhi,Active,India
+17SXNNF6104G1Z5,Prime Foods Pvt Ltd,SXNNF6104G,Karnataka,Mysuru,Inactive,India
+32CXEXD4708Q1Z7,LMN Traders Pvt Ltd,CXEXD4708Q,Rajasthan,Jaipur,Active,India
+16BYUQT7911E1ZD,ABC Engineering Pvt Ltd,BYUQT7911E,Delhi,New Delhi,Active,India
+20OEEJP9668D1ZW,LMN Enterprises Pvt Ltd,OEEJP9668D,West Bengal,Kolkata,Inactive,India
+32VKCKM7751C1Z7,Eastern Exports Pvt Ltd,VKCKM7751C,Maharashtra,Nagpur,Active,India
+30EFKKQ7227R1ZC,Techno Solutions Pvt Ltd,EFKKQ7227R,Delhi,New Delhi,Active,India
+13KTBSK3764F1ZB,Eastern Enterprises Pvt Ltd,KTBSK3764F,Kerala,Thiruvananthapuram,Active,India
+17GWROD5461E1Z4,United Exports Pvt Ltd,GWROD5461E,Delhi,New Delhi,Active,India
+33TCDXU1280L1ZF,Techno Traders Pvt Ltd,TCDXU1280L,Maharashtra,Pune,Active,India
+31RRVEV2295O1ZP,XYZ Foods Pvt Ltd,RRVEV2295O,Maharashtra,Nagpur,Inactive,India
+25ZFKIP9012S1ZA,Eastern Engineering Pvt Ltd,ZFKIP9012S,West Bengal,Howrah,Active,India
+21RZFXD4833O1Z4,ABC Foods Pvt Ltd,RZFXD4833O,Maharashtra,Nagpur,Inactive,India
+34QLPEQ1950C1ZB,ABC Solutions Pvt Ltd,QLPEQ1950C,Delhi,New Delhi,Active,India
+20IWXTC8892D1ZZ,LMN Industries Pvt Ltd,IWXTC8892D,West Bengal,Kolkata,Active,India
+18DPRXA3597M1ZS,ABC Exports Pvt Ltd,DPRXA3597M,Rajasthan,Jaipur,Active,India
+23MKUMR9037Q1ZW,Eastern Textiles Pvt Ltd,MKUMR9037Q,Tamil Nadu,Coimbatore,Inactive,India
+36UCYRR6243V1ZK,Global Industries Pvt Ltd,UCYRR6243V,Tamil Nadu,Coimbatore,Active,India
+17PSEJA2091L1Z5,Eastern Solutions Pvt Ltd,PSEJA2091L,Kerala,Kochi,Active,India
+21UJFQY0425K1ZO,XYZ Foods Pvt Ltd,UJFQY0425K,Telangana,Hyderabad,Inactive,India
+32EHHFC5830O1ZY,Prime Industries Pvt Ltd,EHHFC5830O,West Bengal,Kolkata,Active,India
+20XGNEA2976F1Z4,Eastern Solutions Pvt Ltd,XGNEA2976F,Kerala,Kochi,Active,India
+17HXQFC5244L1Z3,Global Enterprises Pvt Ltd,HXQFC5244L,Maharashtra,Pune,Active,India
+22CFXIU4377U1ZV,United Textiles Pvt Ltd,CFXIU4377U,Delhi,New Delhi,Active,India
+14RLUBI4106O1ZF,PQR Exports Pvt Ltd,RLUBI4106O,Rajasthan,Jaipur,Inactive,India
+16IOZMG1633H1Z9,Prime Industries Pvt Ltd,IOZMG1633H,Delhi,New Delhi,Inactive,India
+20HOIKD8044O1ZQ,LMN Exports Pvt Ltd,HOIKD8044O,Delhi,New Delhi,Inactive,India
+19YAGSB3040M1Z8,Eastern Textiles Pvt Ltd,YAGSB3040M,Maharashtra,Pune,Active,India
+33RPFFM9402R1ZQ,Techno Exports Pvt Ltd,RPFFM9402R,Karnataka,Mysuru,Active,India
+36XWFGE0477N1ZE,LMN Industries Pvt Ltd,XWFGE0477N,Tamil Nadu,Coimbatore,Active,India
+15MDYUL1008U1Z2,ABC Industries Pvt Ltd,MDYUL1008U,Tamil Nadu,Chennai,Active,India
+19NJFGL4775O1ZL,United Exports Pvt Ltd,NJFGL4775O,Maharashtra,Mumbai,Active,India
+15EUSTD3137M1ZN,United Foods Pvt Ltd,EUSTD3137M,Karnataka,Bengaluru,Inactive,India
+17GPGEJ5641V1ZC,United Enterprises Pvt Ltd,GPGEJ5641V,Delhi,New Delhi,Active,India
+14BCHWS0679O1ZX,Global Textiles Pvt Ltd,BCHWS0679O,West Bengal,Howrah,Inactive,India
+23MVPAZ6923R1ZI,XYZ Textiles Pvt Ltd,MVPAZ6923R,West Bengal,Kolkata,Active,India
+22OJJUS3697I1Z8,Eastern Engineering Pvt Ltd,OJJUS3697I,Delhi,New Delhi,Inactive,India
+19JUOFY0600A1ZF,Global Foods Pvt Ltd,JUOFY0600A,Gujarat,Ahmedabad,Inactive,India
+16DDYZD8590U1ZF,Prime Solutions Pvt Ltd,DDYZD8590U,Rajasthan,Udaipur,Active,India
+13QEVLE4892P1ZK,Eastern Industries Pvt Ltd,QEVLE4892P,West Bengal,Kolkata,Inactive,India
+22EBERX9712H1ZI,Prime Exports Pvt Ltd,EBERX9712H,Kerala,Kochi,Active,India
+17IZHPJ8021M1ZW,LMN Exports Pvt Ltd,IZHPJ8021M,Rajasthan,Udaipur,Inactive,India
+34YLMXZ3664N1ZF,Eastern Solutions Pvt Ltd,YLMXZ3664N,Karnataka,Mysuru,Active,India
+19CBWSX1027P1ZT,Prime Foods Pvt Ltd,CBWSX1027P,Kerala,Kochi,Inactive,India
+15RCQOL2097T1ZK,PQR Logistics Pvt Ltd,RCQOL2097T,Karnataka,Mysuru,Active,India
+11GFZGA5010A1ZK,United Solutions Pvt Ltd,GFZGA5010A,Karnataka,Bengaluru,Inactive,India
+27MVUSO4669S1ZY,Eastern Industries Pvt Ltd,MVUSO4669S,Gujarat,Surat,Inactive,India
+16OYCYD5211C1ZT,XYZ Enterprises Pvt Ltd,OYCYD5211C,Kerala,Kochi,Active,India
+29CADCK0803E1ZU,Star Chemicals Pvt Ltd,CADCK0803E,Uttar Pradesh,Lucknow,Active,India
+12WQVDX0243U1Z1,Global Enterprises Pvt Ltd,WQVDX0243U,Gujarat,Vadodara,Active,India
+21AQSFL6513H1ZZ,Prime Exports Pvt Ltd,AQSFL6513H,Delhi,New Delhi,Inactive,India
+25ECGLK4647P1Z7,Techno Solutions Pvt Ltd,ECGLK4647P,Tamil Nadu,Coimbatore,Inactive,India
+15IAKQX0395F1ZF,Techno Textiles Pvt Ltd,IAKQX0395F,Rajasthan,Udaipur,Inactive,India
+17WEDZU3093L1Z2,Eastern Foods Pvt Ltd,WEDZU3093L,Uttar Pradesh,Kanpur,Inactive,India
+29GKLTF2732I1ZC,ABC Chemicals Pvt Ltd,GKLTF2732I,Rajasthan,Jaipur,Inactive,India
+31ZQIGF7998P1Z4,Global Exports Pvt Ltd,ZQIGF7998P,Telangana,Hyderabad,Active,India
+10DWKLC9730V1Z5,Techno Industries Pvt Ltd,DWKLC9730V,Maharashtra,Pune,Inactive,India
+13PVOYX0520L1ZA,Global Exports Pvt Ltd,PVOYX0520L,West Bengal,Howrah,Active,India
+34SBTMM3802V1ZV,United Engineering Pvt Ltd,SBTMM3802V,West Bengal,Howrah,Active,India
+20CAAIH7565R1ZN,PQR Engineering Pvt Ltd,CAAIH7565R,Delhi,New Delhi,Active,India
+12BRFVE3116Q1ZF,Techno Chemicals Pvt Ltd,BRFVE3116Q,West Bengal,Howrah,Inactive,India
+19PZYUM9354I1ZC,XYZ Exports Pvt Ltd,PZYUM9354I,Tamil Nadu,Coimbatore,Active,India
+22JFKWB9242U1ZV,PQR Logistics Pvt Ltd,JFKWB9242U,Telangana,Hyderabad,Active,India
+27XLZIB4868K1ZB,PQR Foods Pvt Ltd,XLZIB4868K,Maharashtra,Pune,Inactive,India
+35GPMNY8754H1ZV,PQR Traders Pvt Ltd,GPMNY8754H,Kerala,Kochi,Active,India
+10MZZKD4521S1ZI,PQR Foods Pvt Ltd,MZZKD4521S,Kerala,Kochi,Inactive,India
+32CQUAE5678N1ZA,XYZ Traders Pvt Ltd,CQUAE5678N,West Bengal,Kolkata,Inactive,India
+11EJYAR4403S1ZV,United Traders Pvt Ltd,EJYAR4403S,Gujarat,Ahmedabad,Inactive,India
+13PJLZZ0104U1Z7,United Logistics Pvt Ltd,PJLZZ0104U,Kerala,Kochi,Inactive,India
+18YTXMI2764L1ZX,PQR Textiles Pvt Ltd,YTXMI2764L,Kerala,Thiruvananthapuram,Active,India
+30KTEDD6967G1ZL,LMN Foods Pvt Ltd,KTEDD6967G,Maharashtra,Nagpur,Active,India
+26GSEOP1134W1ZR,Techno Foods Pvt Ltd,GSEOP1134W,West Bengal,Kolkata,Active,India
+31NLRLT2389Y1ZQ,Eastern Chemicals Pvt Ltd,NLRLT2389Y,Rajasthan,Jaipur,Inactive,India
+28QOHEI7551I1ZS,Prime Industries Pvt Ltd,QOHEI7551I,Maharashtra,Pune,Active,India
+10NQHLC8902P1ZL,ABC Foods Pvt Ltd,NQHLC8902P,Rajasthan,Jaipur,Inactive,India
+32HKSHE1041L1ZD,XYZ Engineering Pvt Ltd,HKSHE1041L,Uttar Pradesh,Noida,Active,India
+22WJFUE7787X1ZO,Global Logistics Pvt Ltd,WJFUE7787X,Delhi,New Delhi,Active,India
+37ASDYS9384I1ZG,ABC Foods Pvt Ltd,ASDYS9384I,Uttar Pradesh,Lucknow,Inactive,India
+21QDYZI1692R1ZP,Techno Chemicals Pvt Ltd,QDYZI1692R,Delhi,New Delhi,Inactive,India
+31PIPEY6845D1Z3,XYZ Enterprises Pvt Ltd,PIPEY6845D,West Bengal,Howrah,Inactive,India
+32QZZTF2279Y1Z4,Prime Chemicals Pvt Ltd,QZZTF2279Y,Karnataka,Bengaluru,Active,India
+24WELXL4704W1ZT,XYZ Foods Pvt Ltd,WELXL4704W,Uttar Pradesh,Kanpur,Inactive,India
+21FHAJW2365A1ZR,PQR Engineering Pvt Ltd,FHAJW2365A,Rajasthan,Udaipur,Active,India
+29UWTQH8678P1ZG,Eastern Textiles Pvt Ltd,UWTQH8678P,Kerala,Kochi,Inactive,India
+36CQMSA9410T1ZE,PQR Textiles Pvt Ltd,CQMSA9410T,Uttar Pradesh,Noida,Active,India
+17TQQKY7383R1Z6,Prime Exports Pvt Ltd,TQQKY7383R,Rajasthan,Udaipur,Active,India
+17DKGLG9465V1ZJ,Star Exports Pvt Ltd,DKGLG9465V,Rajasthan,Jaipur,Inactive,India
+31CTFLG8141H1Z6,XYZ Foods Pvt Ltd,CTFLG8141H,Uttar Pradesh,Kanpur,Inactive,India
+15WTIAB3947C1ZD,ABC Logistics Pvt Ltd,WTIAB3947C,Telangana,Hyderabad,Inactive,India
+34PJEVG0236V1ZN,Techno Enterprises Pvt Ltd,PJEVG0236V,Gujarat,Ahmedabad,Active,India
+19VKEVZ3260M1ZS,PQR Solutions Pvt Ltd,VKEVZ3260M,Rajasthan,Jaipur,Inactive,India
+25ZAKYF9957Q1ZH,ABC Engineering Pvt Ltd,ZAKYF9957Q,Uttar Pradesh,Kanpur,Inactive,India
+15LQVOL6938G1ZJ,ABC Solutions Pvt Ltd,LQVOL6938G,Kerala,Kochi,Inactive,India
+24NNGBI8413U1Z8,Prime Enterprises Pvt Ltd,NNGBI8413U,Maharashtra,Nagpur,Active,India
+23NCLYY6428V1ZD,Prime Textiles Pvt Ltd,NCLYY6428V,Rajasthan,Jaipur,Inactive,India
+27TUCBY8484U1ZN,ABC Chemicals Pvt Ltd,TUCBY8484U,Karnataka,Bengaluru,Inactive,India
+26SCKOS4011H1ZF,PQR Textiles Pvt Ltd,SCKOS4011H,West Bengal,Howrah,Inactive,India
+14NLOQU1663X1ZP,LMN Engineering Pvt Ltd,NLOQU1663X,Kerala,Kochi,Active,India
+35HCUYC6799O1Z6,LMN Chemicals Pvt Ltd,HCUYC6799O,Delhi,New Delhi,Inactive,India
+32LNXCO9555N1ZA,LMN Exports Pvt Ltd,LNXCO9555N,Gujarat,Surat,Inactive,India
+23SSVBX2657R1Z9,ABC Textiles Pvt Ltd,SSVBX2657R,Kerala,Kochi,Active,India
+31GOMCB5202J1ZO,Eastern Solutions Pvt Ltd,GOMCB5202J,West Bengal,Kolkata,Active,India
+24ILVLG0541X1ZJ,ABC Traders Pvt Ltd,ILVLG0541X,Uttar Pradesh,Lucknow,Inactive,India
+37EMLYF3535G1ZM,Global Industries Pvt Ltd,EMLYF3535G,Tamil Nadu,Chennai,Inactive,India
+25TUGHR8605P1ZS,Star Textiles Pvt Ltd,TUGHR8605P,Tamil Nadu,Chennai,Active,India
+28NRSYT7282I1ZO,LMN Exports Pvt Ltd,NRSYT7282I,Karnataka,Bengaluru,Active,India
+24PBKFB1463U1Z6,Techno Industries Pvt Ltd,PBKFB1463U,Gujarat,Surat,Inactive,India
+30LEHHL4942N1Z6,LMN Enterprises Pvt Ltd,LEHHL4942N,Karnataka,Mysuru,Active,India
+22VNJMI5556U1ZT,Eastern Textiles Pvt Ltd,VNJMI5556U,Tamil Nadu,Chennai,Active,India
+30RHGBE4066B1ZB,LMN Enterprises Pvt Ltd,RHGBE4066B,Tamil Nadu,Chennai,Inactive,India
+34OFINO8726N1ZV,Eastern Traders Pvt Ltd,OFINO8726N,Uttar Pradesh,Noida,Active,India
+11OCCBQ2584I1ZV,ABC Solutions Pvt Ltd,OCCBQ2584I,Karnataka,Mysuru,Inactive,India
+27YERCI7908H1ZS,United Solutions Pvt Ltd,YERCI7908H,Telangana,Hyderabad,Inactive,India
+18MCFPW0445P1ZJ,Eastern Traders Pvt Ltd,MCFPW0445P,Maharashtra,Pune,Inactive,India
+32OHXQG2956B1ZH,Techno Exports Pvt Ltd,OHXQG2956B,West Bengal,Howrah,Inactive,India
+22MRDKO2528I1ZX,LMN Engineering Pvt Ltd,MRDKO2528I,Gujarat,Surat,Active,India
+34FXQVK1462O1Z7,United Engineering Pvt Ltd,FXQVK1462O,Telangana,Hyderabad,Active,India
+16IGBQZ1553O1ZE,PQR Enterprises Pvt Ltd,IGBQZ1553O,West Bengal,Howrah,Inactive,India
+30KVPAR3833B1Z3,XYZ Textiles Pvt Ltd,KVPAR3833B,Gujarat,Ahmedabad,Inactive,India
+18GBNEP0947X1ZX,LMN Solutions Pvt Ltd,GBNEP0947X,Maharashtra,Nagpur,Active,India
+15SAFUF6726A1ZM,Global Solutions Pvt Ltd,SAFUF6726A,Karnataka,Mysuru,Active,India
+24YLPWZ4212G1ZO,LMN Engineering Pvt Ltd,YLPWZ4212G,West Bengal,Howrah,Inactive,India
+13TQLQX2757F1ZD,Global Foods Pvt Ltd,TQLQX2757F,Gujarat,Ahmedabad,Inactive,India
+23WERDP3488G1ZB,XYZ Textiles Pvt Ltd,WERDP3488G,Uttar Pradesh,Kanpur,Active,India
+10BPGPF8645S1ZL,PQR Textiles Pvt Ltd,BPGPF8645S,Tamil Nadu,Coimbatore,Inactive,India
+25UZCAC8670M1ZN,XYZ Foods Pvt Ltd,UZCAC8670M,Maharashtra,Nagpur,Active,India
+18LFVMK2099P1Z4,PQR Logistics Pvt Ltd,LFVMK2099P,Rajasthan,Udaipur,Inactive,India
+13CGBZW7385A1Z5,Global Chemicals Pvt Ltd,CGBZW7385A,Delhi,New Delhi,Active,India
+30TRWEA9506M1Z8,Prime Industries Pvt Ltd,TRWEA9506M,Maharashtra,Pune,Inactive,India
+25EGUYX2488E1Z1,XYZ Logistics Pvt Ltd,EGUYX2488E,Maharashtra,Nagpur,Active,India
+17PQVUF1146N1ZH,PQR Foods Pvt Ltd,PQVUF1146N,West Bengal,Kolkata,Active,India
+11QYQXK7634H1Z9,Star Solutions Pvt Ltd,QYQXK7634H,Rajasthan,Udaipur,Active,India
+22USRCN4554M1ZB,Star Exports Pvt Ltd,USRCN4554M,Delhi,New Delhi,Active,India
+13PLMKP5445H1ZW,Eastern Foods Pvt Ltd,PLMKP5445H,Telangana,Hyderabad,Active,India
+31IKRPR6324O1ZY,Star Engineering Pvt Ltd,IKRPR6324O,Telangana,Hyderabad,Active,India
+11JQRCG7107T1ZM,United Engineering Pvt Ltd,JQRCG7107T,Gujarat,Surat,Inactive,India
+24TVMPM3650P1ZZ,ABC Textiles Pvt Ltd,TVMPM3650P,Tamil Nadu,Chennai,Inactive,India
+18VNANW7980R1Z3,ABC Solutions Pvt Ltd,VNANW7980R,Maharashtra,Mumbai,Inactive,India
+14OTANZ6825N1ZV,ABC Foods Pvt Ltd,OTANZ6825N,Maharashtra,Pune,Active,India
+26ZPHHA5221F1ZZ,ABC Engineering Pvt Ltd,ZPHHA5221F,Karnataka,Mysuru,Inactive,India
+14YMWTR3299P1Z1,Star Engineering Pvt Ltd,YMWTR3299P,Uttar Pradesh,Lucknow,Inactive,India
+37QFCMA5451K1ZT,Eastern Textiles Pvt Ltd,QFCMA5451K,Maharashtra,Pune,Inactive,India
+28AFVTA9744B1Z4,United Logistics Pvt Ltd,AFVTA9744B,Karnataka,Mysuru,Active,India
+11IXDJO1264B1ZU,XYZ Foods Pvt Ltd,IXDJO1264B,Gujarat,Vadodara,Active,India
+10BWYBW6570K1Z3,Techno Logistics Pvt Ltd,BWYBW6570K,Karnataka,Mysuru,Active,India
+12LRXBS9448W1ZO,Global Industries Pvt Ltd,LRXBS9448W,Rajasthan,Udaipur,Inactive,India
+15KLSJK2146O1Z1,XYZ Engineering Pvt Ltd,KLSJK2146O,Maharashtra,Pune,Active,India
+25WLNHA8639M1ZV,LMN Exports Pvt Ltd,WLNHA8639M,Kerala,Kochi,Active,India
+26IPWVM1599J1Z4,Star Enterprises Pvt Ltd,IPWVM1599J,Maharashtra,Pune,Active,India
+26DMESV5289Y1ZG,Prime Enterprises Pvt Ltd,DMESV5289Y,West Bengal,Kolkata,Active,India
+17MSLMI8361Y1ZM,ABC Industries Pvt Ltd,MSLMI8361Y,Maharashtra,Nagpur,Inactive,India
+21VVRJN9694A1ZC,Techno Chemicals Pvt Ltd,VVRJN9694A,West Bengal,Howrah,Active,India
+27LBRUC3431B1ZN,PQR Logistics Pvt Ltd,LBRUC3431B,West Bengal,Howrah,Active,India
+22JHMZF4234R1Z4,Techno Exports Pvt Ltd,JHMZF4234R,Telangana,Hyderabad,Active,India
+19RXYIY9261M1ZH,Techno Chemicals Pvt Ltd,RXYIY9261M,Gujarat,Vadodara,Active,India
+28PCUCH7191I1Z5,Techno Chemicals Pvt Ltd,PCUCH7191I,Telangana,Hyderabad,Active,India
+32RTXGU0857Z1Z8,LMN Logistics Pvt Ltd,RTXGU0857Z,Telangana,Hyderabad,Inactive,India
+16ZLWUZ5767Z1ZB,Eastern Enterprises Pvt Ltd,ZLWUZ5767Z,Rajasthan,Jaipur,Inactive,India
+17HUYWG4782P1ZJ,LMN Traders Pvt Ltd,HUYWG4782P,Gujarat,Surat,Inactive,India
+25GLPUJ5744P1ZJ,LMN Traders Pvt Ltd,GLPUJ5744P,Gujarat,Surat,Inactive,India
+37FXPEC1311O1Z6,Prime Foods Pvt Ltd,FXPEC1311O,Maharashtra,Mumbai,Active,India
+30LXNWD2786P1ZI,LMN Exports Pvt Ltd,LXNWD2786P,Maharashtra,Pune,Inactive,India
+21RJUCR2519A1ZC,LMN Industries Pvt Ltd,RJUCR2519A,Karnataka,Mysuru,Active,India
+31TKKGV9314P1ZN,PQR Enterprises Pvt Ltd,TKKGV9314P,Kerala,Thiruvananthapuram,Active,India
+35GPLGY1412E1ZV,ABC Traders Pvt Ltd,GPLGY1412E,West Bengal,Howrah,Inactive,India
+19BFJYR7210T1ZB,XYZ Logistics Pvt Ltd,BFJYR7210T,Tamil Nadu,Chennai,Active,India
+20GQNKD9476P1ZT,United Engineering Pvt Ltd,GQNKD9476P,Telangana,Hyderabad,Active,India
+10LMKVI6867L1ZL,XYZ Chemicals Pvt Ltd,LMKVI6867L,West Bengal,Howrah,Active,India
+36GOHYU7192U1ZU,XYZ Industries Pvt Ltd,GOHYU7192U,Uttar Pradesh,Kanpur,Inactive,India
+14RGICO6526F1ZY,Eastern Engineering Pvt Ltd,RGICO6526F,Rajasthan,Udaipur,Active,India
+18YEOYT1253Z1Z9,Prime Textiles Pvt Ltd,YEOYT1253Z,Tamil Nadu,Coimbatore,Active,India
+10DGZKK7013W1ZP,PQR Exports Pvt Ltd,DGZKK7013W,Maharashtra,Pune,Active,India
+26HALKF5896E1ZY,ABC Solutions Pvt Ltd,HALKF5896E,West Bengal,Howrah,Active,India
+28KIIUV6985S1ZU,LMN Solutions Pvt Ltd,KIIUV6985S,Gujarat,Ahmedabad,Inactive,India
+30HYIVN9971F1ZU,Global Chemicals Pvt Ltd,HYIVN9971F,Tamil Nadu,Chennai,Active,India
+19NCZPN6786W1ZJ,ABC Traders Pvt Ltd,NCZPN6786W,Delhi,New Delhi,Inactive,India
+13FYQDA2156F1ZT,Eastern Traders Pvt Ltd,FYQDA2156F,Karnataka,Mysuru,Inactive,India
+34TWQTA5057B1ZZ,United Textiles Pvt Ltd,TWQTA5057B,Tamil Nadu,Coimbatore,Inactive,India
+20QDBMB1539G1Z6,Star Engineering Pvt Ltd,QDBMB1539G,West Bengal,Kolkata,Active,India
+23MCILL8392R1ZE,ABC Logistics Pvt Ltd,MCILL8392R,Maharashtra,Mumbai,Inactive,India
+17EBDMV0223D1Z1,ABC Exports Pvt Ltd,EBDMV0223D,Uttar Pradesh,Noida,Active,India
+37BFDES6883A1Z3,Eastern Foods Pvt Ltd,BFDES6883A,Uttar Pradesh,Kanpur,Active,India
+15BGQHJ1029F1Z2,Eastern Textiles Pvt Ltd,BGQHJ1029F,Maharashtra,Mumbai,Inactive,India
+35QUHTO2817J1ZX,Star Chemicals Pvt Ltd,QUHTO2817J,Maharashtra,Pune,Inactive,India
+27CAPAX2550H1ZE,Global Industries Pvt Ltd,CAPAX2550H,West Bengal,Howrah,Inactive,India
+37ORBSX6338I1Z8,PQR Solutions Pvt Ltd,ORBSX6338I,Delhi,New Delhi,Inactive,India
+14DJLHE0799D1ZD,ABC Chemicals Pvt Ltd,DJLHE0799D,Gujarat,Ahmedabad,Inactive,India
+13CLYYJ7824N1Z9,PQR Exports Pvt Ltd,CLYYJ7824N,Kerala,Thiruvananthapuram,Active,India
+11QCEFT1193X1ZU,LMN Industries Pvt Ltd,QCEFT1193X,Kerala,Kochi,Active,India
+33DVWIB5972C1ZM,ABC Industries Pvt Ltd,DVWIB5972C,Karnataka,Mysuru,Active,India
+29WJAUY1230T1ZD,PQR Textiles Pvt Ltd,WJAUY1230T,Rajasthan,Jaipur,Active,India
+22PMYUW8584N1ZF,Eastern Industries Pvt Ltd,PMYUW8584N,Tamil Nadu,Chennai,Inactive,India
+15EHGIQ5072X1Z2,Techno Enterprises Pvt Ltd,EHGIQ5072X,Maharashtra,Pune,Inactive,India
+18PZHVP9126I1Z4,PQR Exports Pvt Ltd,PZHVP9126I,Uttar Pradesh,Lucknow,Inactive,India
+30MVWTF4233H1ZQ,Global Exports Pvt Ltd,MVWTF4233H,Maharashtra,Mumbai,Inactive,India
+31MZQRC2378Z1ZF,Techno Logistics Pvt Ltd,MZQRC2378Z,Rajasthan,Udaipur,Inactive,India
+11OJQNY6038L1ZD,Star Foods Pvt Ltd,OJQNY6038L,Telangana,Hyderabad,Active,India
+19QJMII6537B1ZK,Eastern Logistics Pvt Ltd,QJMII6537B,West Bengal,Kolkata,Inactive,India
+34JGZJM0732E1ZK,Star Textiles Pvt Ltd,JGZJM0732E,Karnataka,Bengaluru,Active,India
+30JXIDW6812X1ZB,United Chemicals Pvt Ltd,JXIDW6812X,Delhi,New Delhi,Inactive,India
+29SSEAJ7346X1ZK,Eastern Exports Pvt Ltd,SSEAJ7346X,Maharashtra,Mumbai,Active,India
+32BGBRC9258L1ZY,Global Textiles Pvt Ltd,BGBRC9258L,Uttar Pradesh,Noida,Active,India
+17WRWAN4975H1ZO,LMN Exports Pvt Ltd,WRWAN4975H,Tamil Nadu,Coimbatore,Active,India
+23MGJMD2543Q1ZX,Techno Industries Pvt Ltd,MGJMD2543Q,Uttar Pradesh,Lucknow,Active,India
+32UUVVS2763N1Z9,United Exports Pvt Ltd,UUVVS2763N,Telangana,Hyderabad,Active,India
+29ZFGOM7246H1ZH,Techno Engineering Pvt Ltd,ZFGOM7246H,Delhi,New Delhi,Inactive,India
+19YRHAS8979O1Z5,Techno Engineering Pvt Ltd,YRHAS8979O,Maharashtra,Pune,Inactive,India
+24NDGKR4019W1ZK,Prime Textiles Pvt Ltd,NDGKR4019W,West Bengal,Kolkata,Inactive,India
+11XGSMI3370U1Z3,Techno Textiles Pvt Ltd,XGSMI3370U,Rajasthan,Udaipur,Inactive,India
+15WCUBA8067U1Z2,Prime Exports Pvt Ltd,WCUBA8067U,West Bengal,Howrah,Inactive,India
+28WSPLX9650H1ZW,LMN Traders Pvt Ltd,WSPLX9650H,West Bengal,Howrah,Active,India
+22JNXNJ9214L1ZB,Techno Enterprises Pvt Ltd,JNXNJ9214L,Uttar Pradesh,Kanpur,Active,India
+36RIGVQ8238I1Z5,Eastern Logistics Pvt Ltd,RIGVQ8238I,Karnataka,Bengaluru,Active,India
+11KRXYU4618V1ZP,XYZ Textiles Pvt Ltd,KRXYU4618V,West Bengal,Howrah,Inactive,India
+19ZUGAE7988Y1ZU,ABC Industries Pvt Ltd,ZUGAE7988Y,West Bengal,Howrah,Active,India
+16CJYWA7907V1Z6,PQR Engineering Pvt Ltd,CJYWA7907V,Rajasthan,Udaipur,Inactive,India
+12QXQYF0614F1ZE,Eastern Traders Pvt Ltd,QXQYF0614F,Uttar Pradesh,Kanpur,Inactive,India
+36JHZHS4931J1ZQ,Prime Chemicals Pvt Ltd,JHZHS4931J,West Bengal,Howrah,Active,India
+36UHBVG5313L1Z9,PQR Chemicals Pvt Ltd,UHBVG5313L,Karnataka,Bengaluru,Active,India
+11TXOLE2161L1ZO,Eastern Traders Pvt Ltd,TXOLE2161L,West Bengal,Howrah,Active,India
+34VQUCK5103U1ZY,PQR Foods Pvt Ltd,VQUCK5103U,Kerala,Kochi,Inactive,India
+33UIDGF5209V1ZH,Star Exports Pvt Ltd,UIDGF5209V,Delhi,New Delhi,Active,India
+27KHMPR1001C1ZU,Star Foods Pvt Ltd,KHMPR1001C,Kerala,Thiruvananthapuram,Inactive,India
+18BNFBY7090D1ZW,Star Exports Pvt Ltd,BNFBY7090D,Delhi,New Delhi,Inactive,India
+16MEOUA6775F1ZM,Star Engineering Pvt Ltd,MEOUA6775F,Rajasthan,Udaipur,Active,India
+23KOCUL4356D1ZF,Eastern Enterprises Pvt Ltd,KOCUL4356D,Gujarat,Ahmedabad,Active,India
+12TYQTD7207I1ZE,ABC Foods Pvt Ltd,TYQTD7207I,Kerala,Thiruvananthapuram,Inactive,India
+32HBXZT0189J1ZU,LMN Solutions Pvt Ltd,HBXZT0189J,Rajasthan,Jaipur,Inactive,India
+36MIFCC8995Z1ZK,Techno Enterprises Pvt Ltd,MIFCC8995Z,Tamil Nadu,Chennai,Active,India
+24AKDRB9460S1ZM,Prime Foods Pvt Ltd,AKDRB9460S,Karnataka,Bengaluru,Active,India
+13LDBYZ7175Y1ZE,PQR Enterprises Pvt Ltd,LDBYZ7175Y,West Bengal,Kolkata,Active,India
+23FRWWH8428Y1ZV,United Solutions Pvt Ltd,FRWWH8428Y,West Bengal,Kolkata,Active,India
+13NMYFP3609S1ZP,ABC Foods Pvt Ltd,NMYFP3609S,Uttar Pradesh,Kanpur,Active,India
+17QJTOM6217V1Z4,Eastern Industries Pvt Ltd,QJTOM6217V,Uttar Pradesh,Noida,Inactive,India
+32DPULX8827X1ZU,LMN Logistics Pvt Ltd,DPULX8827X,West Bengal,Kolkata,Active,India
+27UDDGH3977O1ZZ,Prime Solutions Pvt Ltd,UDDGH3977O,Kerala,Kochi,Inactive,India
+20LWPQN9697L1ZP,PQR Industries Pvt Ltd,LWPQN9697L,Tamil Nadu,Coimbatore,Inactive,India
+23WWLFL1208K1ZF,Star Chemicals Pvt Ltd,WWLFL1208K,West Bengal,Kolkata,Inactive,India
+32YXXXH3628T1Z4,Techno Chemicals Pvt Ltd,YXXXH3628T,Tamil Nadu,Coimbatore,Inactive,India
+14AMSQO7534I1Z8,ABC Engineering Pvt Ltd,AMSQO7534I,Kerala,Kochi,Inactive,India
+28EOHXP3163L1ZI,ABC Logistics Pvt Ltd,EOHXP3163L,Telangana,Hyderabad,Active,India
+23ZNTTS4166C1ZK,Eastern Traders Pvt Ltd,ZNTTS4166C,Karnataka,Mysuru,Inactive,India
+19BHEKT8932F1Z8,ABC Logistics Pvt Ltd,BHEKT8932F,Delhi,New Delhi,Active,India
+36TDPQF3091E1ZJ,Techno Traders Pvt Ltd,TDPQF3091E,Karnataka,Bengaluru,Active,India
+31XDJLD2380U1ZR,Global Chemicals Pvt Ltd,XDJLD2380U,Uttar Pradesh,Lucknow,Inactive,India
+12HWSCX2144R1ZN,Global Traders Pvt Ltd,HWSCX2144R,Rajasthan,Jaipur,Active,India
+35OFZGA7943N1ZK,Global Textiles Pvt Ltd,OFZGA7943N,Uttar Pradesh,Lucknow,Inactive,India
+16TEUTP9734L1Z3,LMN Industries Pvt Ltd,TEUTP9734L,Delhi,New Delhi,Inactive,India
+24AQHTL6657P1Z7,United Logistics Pvt Ltd,AQHTL6657P,West Bengal,Howrah,Inactive,India
+19WTAJF9941Y1Z9,XYZ Chemicals Pvt Ltd,WTAJF9941Y,Maharashtra,Nagpur,Active,India
+31YBFHJ4334L1Z1,United Foods Pvt Ltd,YBFHJ4334L,West Bengal,Kolkata,Active,India
+34IULOK4852Y1ZR,ABC Enterprises Pvt Ltd,IULOK4852Y,Delhi,New Delhi,Inactive,India
+30WWUHI8995Q1ZT,Star Traders Pvt Ltd,WWUHI8995Q,Delhi,New Delhi,Inactive,India
+16IMNJX8847G1ZK,Global Exports Pvt Ltd,IMNJX8847G,Rajasthan,Jaipur,Inactive,India
+14DOGEJ7849U1Z6,Prime Industries Pvt Ltd,DOGEJ7849U,Uttar Pradesh,Lucknow,Active,India
+28EZMWY4223R1ZB,Techno Textiles Pvt Ltd,EZMWY4223R,Maharashtra,Nagpur,Inactive,India
+24VSEWR3164S1Z5,Star Chemicals Pvt Ltd,VSEWR3164S,Kerala,Thiruvananthapuram,Active,India
+13FYOQG8125C1ZJ,United Engineering Pvt Ltd,FYOQG8125C,Delhi,New Delhi,Active,India
+32PQVSJ6385S1ZU,Global Foods Pvt Ltd,PQVSJ6385S,Delhi,New Delhi,Active,India
+27FGADB2111D1ZY,LMN Logistics Pvt Ltd,FGADB2111D,Gujarat,Vadodara,Active,India
+30TFYQV2587I1Z5,United Logistics Pvt Ltd,TFYQV2587I,Uttar Pradesh,Kanpur,Active,India
+36XVHFG8881Z1ZF,PQR Chemicals Pvt Ltd,XVHFG8881Z,Kerala,Thiruvananthapuram,Active,India
+14EFEGG5969S1Z7,PQR Traders Pvt Ltd,EFEGG5969S,Telangana,Hyderabad,Inactive,India
+23KYEIP4545M1ZH,Techno Foods Pvt Ltd,KYEIP4545M,Karnataka,Mysuru,Inactive,India
+11IVEUZ1713Q1ZP,Prime Enterprises Pvt Ltd,IVEUZ1713Q,Maharashtra,Mumbai,Active,India
+29JTKJP5209Q1ZX,XYZ Industries Pvt Ltd,JTKJP5209Q,Uttar Pradesh,Kanpur,Inactive,India
+35RPOWL8601O1ZL,Prime Foods Pvt Ltd,RPOWL8601O,Delhi,New Delhi,Active,India
+35JKROV9763X1ZH,LMN Exports Pvt Ltd,JKROV9763X,Uttar Pradesh,Kanpur,Inactive,India
+28BMQWR3089N1ZB,Prime Foods Pvt Ltd,BMQWR3089N,Uttar Pradesh,Lucknow,Active,India
+28KQYOS2314F1ZL,LMN Enterprises Pvt Ltd,KQYOS2314F,Maharashtra,Mumbai,Active,India
+27DFYXB9946X1Z5,Global Engineering Pvt Ltd,DFYXB9946X,Tamil Nadu,Chennai,Active,India
+37JUPJW2991V1ZT,PQR Industries Pvt Ltd,JUPJW2991V,Telangana,Hyderabad,Active,India
+16LFFRR6467C1ZE,Star Enterprises Pvt Ltd,LFFRR6467C,Kerala,Thiruvananthapuram,Active,India
+13AQABO9995V1ZC,XYZ Engineering Pvt Ltd,AQABO9995V,Maharashtra,Mumbai,Inactive,India
+34GRUAV3559L1ZW,XYZ Traders Pvt Ltd,GRUAV3559L,Telangana,Hyderabad,Active,India
+27XGBQN1482G1Z5,Eastern Solutions Pvt Ltd,XGBQN1482G,Telangana,Hyderabad,Active,India
+35ZZWOJ8793O1ZZ,Star Foods Pvt Ltd,ZZWOJ8793O,West Bengal,Kolkata,Active,India
+29YIYRV4660J1Z6,Global Solutions Pvt Ltd,YIYRV4660J,Telangana,Hyderabad,Inactive,India
+27NAIHS5634G1ZS,XYZ Textiles Pvt Ltd,NAIHS5634G,West Bengal,Kolkata,Inactive,India
+25CREGM8427E1ZV,Star Chemicals Pvt Ltd,CREGM8427E,Karnataka,Bengaluru,Inactive,India
+23TNFIT8846N1ZP,XYZ Traders Pvt Ltd,TNFIT8846N,Rajasthan,Jaipur,Active,India
+36QZFLP4354N1Z3,PQR Enterprises Pvt Ltd,QZFLP4354N,Delhi,New Delhi,Inactive,India
+22FXKUG8628Q1ZO,ABC Exports Pvt Ltd,FXKUG8628Q,Telangana,Hyderabad,Inactive,India
+35NWYFD5872D1ZY,United Traders Pvt Ltd,NWYFD5872D,Telangana,Hyderabad,Inactive,India
+16NKCOI7491C1Z2,Global Exports Pvt Ltd,NKCOI7491C,West Bengal,Howrah,Inactive,India
+35TOUUQ1037V1ZR,Prime Logistics Pvt Ltd,TOUUQ1037V,Rajasthan,Udaipur,Active,India
+32NWRCA8552B1ZH,Prime Logistics Pvt Ltd,NWRCA8552B,Maharashtra,Pune,Inactive,India
+35HGXBV3549Z1ZL,LMN Foods Pvt Ltd,HGXBV3549Z,Gujarat,Surat,Active,India
+11JVBVI1135G1ZW,Eastern Logistics Pvt Ltd,JVBVI1135G,Kerala,Thiruvananthapuram,Active,India
+12JVDJK9881H1ZS,PQR Engineering Pvt Ltd,JVDJK9881H,Delhi,New Delhi,Inactive,India
+20JOAUU9435D1ZM,Eastern Solutions Pvt Ltd,JOAUU9435D,Tamil Nadu,Coimbatore,Active,India
+33DPJTB7361F1ZJ,PQR Foods Pvt Ltd,DPJTB7361F,Rajasthan,Jaipur,Active,India
+28VJKRD0509N1ZI,Eastern Industries Pvt Ltd,VJKRD0509N,Delhi,New Delhi,Active,India
+34ZZBAW7198D1ZH,United Industries Pvt Ltd,ZZBAW7198D,Uttar Pradesh,Kanpur,Inactive,India
+10UMJVE5094F1ZA,Star Chemicals Pvt Ltd,UMJVE5094F,Kerala,Kochi,Active,India
+26MTHHJ9734F1ZB,Global Chemicals Pvt Ltd,MTHHJ9734F,Tamil Nadu,Chennai,Active,India
+16QUXRR2367X1ZA,United Chemicals Pvt Ltd,QUXRR2367X,Karnataka,Mysuru,Inactive,India
+32EGVHE8164S1ZZ,ABC Engineering Pvt Ltd,EGVHE8164S,Maharashtra,Pune,Active,India
+28XKMOW8096V1ZO,Global Industries Pvt Ltd,XKMOW8096V,Tamil Nadu,Chennai,Inactive,India
+16RBCBG8922P1ZG,Techno Exports Pvt Ltd,RBCBG8922P,Gujarat,Ahmedabad,Inactive,India
+36AJICV0206F1ZV,PQR Traders Pvt Ltd,AJICV0206F,Rajasthan,Udaipur,Inactive,India
+34CMLXE3197R1ZF,Techno Traders Pvt Ltd,CMLXE3197R,Telangana,Hyderabad,Inactive,India
+19GDCOK6939A1Z8,Star Industries Pvt Ltd,GDCOK6939A,West Bengal,Kolkata,Active,India
+30MUIUI3941Y1ZT,United Logistics Pvt Ltd,MUIUI3941Y,West Bengal,Kolkata,Active,India
+29IXCSQ8787V1ZY,Prime Exports Pvt Ltd,IXCSQ8787V,Rajasthan,Udaipur,Inactive,India
+22GCYQE6454Y1Z2,ABC Solutions Pvt Ltd,GCYQE6454Y,Maharashtra,Mumbai,Active,India
+12EXLLF7360E1ZE,Star Enterprises Pvt Ltd,EXLLF7360E,Telangana,Hyderabad,Active,India
+28FGTZY5942B1ZU,Eastern Chemicals Pvt Ltd,FGTZY5942B,Gujarat,Vadodara,Active,India
+22EAURT3042F1ZH,Eastern Logistics Pvt Ltd,EAURT3042F,Telangana,Hyderabad,Inactive,India
+21WBRJG9827C1ZF,XYZ Traders Pvt Ltd,WBRJG9827C,Kerala,Thiruvananthapuram,Active,India
+36NHIRQ8963M1Z3,United Chemicals Pvt Ltd,NHIRQ8963M,Telangana,Hyderabad,Inactive,India
+14TDFMR0806Y1ZZ,PQR Chemicals Pvt Ltd,TDFMR0806Y,Uttar Pradesh,Kanpur,Active,India
+23WQUJH0425W1ZB,LMN Traders Pvt Ltd,WQUJH0425W,Kerala,Kochi,Inactive,India
+19PJMPX5222O1Z4,XYZ Logistics Pvt Ltd,PJMPX5222O,Maharashtra,Pune,Inactive,India
+26HPZEN8445K1Z5,ABC Engineering Pvt Ltd,HPZEN8445K,Rajasthan,Jaipur,Active,India
+26HEIZS3183O1ZV,Prime Solutions Pvt Ltd,HEIZS3183O,West Bengal,Howrah,Inactive,India
+29IMBUJ2354O1ZM,PQR Chemicals Pvt Ltd,IMBUJ2354O,Tamil Nadu,Chennai,Active,India
+28IPKXI4686P1Z5,PQR Engineering Pvt Ltd,IPKXI4686P,Telangana,Hyderabad,Active,India
+33DTSMC6968H1Z8,ABC Textiles Pvt Ltd,DTSMC6968H,Maharashtra,Mumbai,Active,India
+26XIOAV0136D1ZO,LMN Engineering Pvt Ltd,XIOAV0136D,West Bengal,Kolkata,Inactive,India
+19AFFLE7098Z1ZZ,PQR Logistics Pvt Ltd,AFFLE7098Z,Kerala,Thiruvananthapuram,Active,India
+16FMFWK8961V1ZR,United Solutions Pvt Ltd,FMFWK8961V,Tamil Nadu,Chennai,Active,India
+34ZRTLR0030X1Z8,United Textiles Pvt Ltd,ZRTLR0030X,Maharashtra,Nagpur,Active,India
+30XHXHE6107Y1ZF,LMN Industries Pvt Ltd,XHXHE6107Y,Maharashtra,Mumbai,Active,India
+31ZXBYQ5563Y1ZA,Global Industries Pvt Ltd,ZXBYQ5563Y,Kerala,Thiruvananthapuram,Inactive,India
+31EYNSJ3767O1ZJ,XYZ Foods Pvt Ltd,EYNSJ3767O,Tamil Nadu,Coimbatore,Inactive,India
+28IZCHR4042H1ZW,PQR Industries Pvt Ltd,IZCHR4042H,Delhi,New Delhi,Inactive,India
+37RCGEO3684G1ZI,Techno Traders Pvt Ltd,RCGEO3684G,Maharashtra,Pune,Inactive,India
+31BBRFS6922J1ZL,Eastern Traders Pvt Ltd,BBRFS6922J,Gujarat,Ahmedabad,Inactive,India
+31JTGHN5740V1ZE,Global Exports Pvt Ltd,JTGHN5740V,Telangana,Hyderabad,Inactive,India
+11CAZPY1500H1ZN,Star Logistics Pvt Ltd,CAZPY1500H,Uttar Pradesh,Kanpur,Active,India
+11YAHGX5385P1Z5,PQR Foods Pvt Ltd,YAHGX5385P,Delhi,New Delhi,Inactive,India
+27WKLAC7659N1ZO,Techno Exports Pvt Ltd,WKLAC7659N,Uttar Pradesh,Noida,Active,India
+30FRUVF3374I1ZN,XYZ Logistics Pvt Ltd,FRUVF3374I,Maharashtra,Mumbai,Active,India
+12OLBLK7459X1ZU,PQR Textiles Pvt Ltd,OLBLK7459X,Kerala,Kochi,Inactive,India
+30YMJNV1131G1Z3,United Exports Pvt Ltd,YMJNV1131G,Gujarat,Surat,Active,India
+20BPMPG0768S1Z9,XYZ Enterprises Pvt Ltd,BPMPG0768S,Delhi,New Delhi,Active,India
+29XUVWZ1404Y1ZJ,Prime Foods Pvt Ltd,XUVWZ1404Y,West Bengal,Howrah,Inactive,India
+23DORIT6998Z1Z2,Star Engineering Pvt Ltd,DORIT6998Z,Karnataka,Mysuru,Inactive,India
+16FSCAK0037L1ZX,Star Textiles Pvt Ltd,FSCAK0037L,Gujarat,Vadodara,Inactive,India
+31JGKZF2908P1ZM,Eastern Exports Pvt Ltd,JGKZF2908P,Gujarat,Vadodara,Active,India
+19YMWPO3152J1ZT,United Solutions Pvt Ltd,YMWPO3152J,Delhi,New Delhi,Inactive,India
+26FKPWM4340Z1ZA,PQR Foods Pvt Ltd,FKPWM4340Z,Karnataka,Mysuru,Active,India
+10KOYHO0021U1Z9,Prime Industries Pvt Ltd,KOYHO0021U,Rajasthan,Jaipur,Active,India
+14WRFON5282H1ZJ,ABC Engineering Pvt Ltd,WRFON5282H,Tamil Nadu,Coimbatore,Active,India
+34WBFCX1929C1ZI,Eastern Logistics Pvt Ltd,WBFCX1929C,Maharashtra,Mumbai,Active,India
+22UJQBT6579I1ZH,Techno Exports Pvt Ltd,UJQBT6579I,Uttar Pradesh,Kanpur,Active,India
+17DZJGX3495D1ZH,ABC Textiles Pvt Ltd,DZJGX3495D,Maharashtra,Pune,Inactive,India
+25DONWR4462S1ZT,ABC Solutions Pvt Ltd,DONWR4462S,West Bengal,Howrah,Inactive,India
+28KLENW2874R1ZW,PQR Chemicals Pvt Ltd,KLENW2874R,Uttar Pradesh,Noida,Inactive,India
+37ABSBY5893G1ZD,Star Solutions Pvt Ltd,ABSBY5893G,Karnataka,Bengaluru,Inactive,India
+28JYAYK9662Q1ZM,XYZ Exports Pvt Ltd,JYAYK9662Q,West Bengal,Howrah,Active,India
+14KIQKN8901L1Z8,ABC Solutions Pvt Ltd,KIQKN8901L,West Bengal,Kolkata,Active,India
+35MANXP6288E1Z3,XYZ Chemicals Pvt Ltd,MANXP6288E,Telangana,Hyderabad,Active,India
+27QRWSE4985O1ZQ,Eastern Exports Pvt Ltd,QRWSE4985O,Rajasthan,Udaipur,Active,India
+27AAACU9603D1ZM,Tata Consultancy Services Ltd,AAACU9603D,Maharashtra,Mumbai,Active,India
+29AAACG2115R1ZN,Infosys Ltd,AAACG2115R,Karnataka,Bengaluru,Active,India
+07AAACH2702H1Z2,HCL Technologies Ltd,AAACH2702H,Delhi,New Delhi,Active,India
