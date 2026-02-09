@@ -22,3 +22,24 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Python virtual environments
+venv/
+Backend/.env
+Backend/venv/
+
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Model artifacts (already tracked separately)
+*.pt
+*.pth
+
+# SQLite databases (STEP 8)
+*.db
+*.sqlite
+
+Backend/plastic_inherent_risk/plastic_risk.db

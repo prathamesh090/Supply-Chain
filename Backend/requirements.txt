@@ -17,7 +17,8 @@ numpy==1.26.4
 scikit-learn==1.5.2
 
 # Updated versions with prebuilt wheels for Python 3.12
-xgboost==2.1.2
+# xgboost==2.1.2
+xgboost-cpu==2.1.2
 lightgbm==4.5.0
 shap==0.46.0
 lime==0.2.0.1
@@ -25,3 +26,5 @@ lime==0.2.0.1
 matplotlib==3.9.2
 seaborn==0.13.2
 gunicorn==21.2.0
+
+email-validator==2.3.0

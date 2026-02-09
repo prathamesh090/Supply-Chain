@@ -24,6 +24,14 @@ try:
 except ImportError as e:
     print(f"Note: Supplier risk module not available: {e}")
     SUPPLIER_RISK_AVAILABLE = False
+    
+try:
+    from plastic_inherent_risk.router import router as plastic_inherent_risk_router
+    PLASTIC_INHERENT_RISK_AVAILABLE = True
+except ImportError as e:
+    print(f"Note: Plastic inherent risk module not available: {e}")
+    PLASTIC_INHERENT_RISK_AVAILABLE = False
+
 
 # Load environment variables
 load_dotenv()
@@ -68,6 +76,12 @@ if SUPPLIER_RISK_AVAILABLE:
     print("✓ Supplier risk routes registered")
 else:
     print("✗ Supplier risk routes not available")
+if PLASTIC_INHERENT_RISK_AVAILABLE:
+    app.include_router(plastic_inherent_risk_router)
+    print("✓ Plastic inherent risk routes registered")
+else:
+    print("✗ Plastic inherent risk routes not available")
+
 # Environment Variables
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key-change-in-production')
 ALGORITHM = os.getenv('ALGORITHM', 'HS256')
