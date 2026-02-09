@@ -43,3 +43,6 @@ __pycache__/
 *.sqlite
 
 Backend/plastic_inherent_risk/plastic_risk.db
+
+# ML model artifacts
+Backend/plastic_inherent_risk/model/
