@@ -18,6 +18,7 @@ import hashlib
 import hmac
 import base64
 from dotenv import load_dotenv
+from plastic_inherent_risk.database import init_db
 try:
     from supplier_risk import router as supplier_router
     SUPPLIER_RISK_AVAILABLE = True
@@ -982,6 +983,9 @@ async def startup_event():
     
     # Initialize database
     init_database()
+
+    # Initialize Plastic Inherent Risk SQLite DB
+    init_db()
     
     # Create uploads directory
     uploads_dir = Path("uploads")

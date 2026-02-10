@@ -1,125 +1,174 @@
 # Plastic Inherent Risk – Backend Service
 
-## Purpose
+## Overview
 
-This module provides a backend service for **Plastic Supplier Inherent Risk Detection**
-using NLP-based classification on unstructured text (e.g., news, reports).
+This module implements a **production-grade Plastic Inherent Risk Engine** that detects, scores, explains, and aggregates **supplier-specific risk events** from unstructured text such as news or reports.
 
-The service is designed to:
-- Run model inference
-- Deduplicate previously processed risk texts
-- Persist risk signals for downstream systems
-
-This module intentionally focuses on **infrastructure and inference only**.
-Risk interpretation and enrichment are handled in a later phase.
+It is designed to operate as an **event-driven risk signal service** and act as a foundational input to higher-level supplier risk analytics.
 
 ---
 
-## Scope (Phase 1)
+## What This Service Does
 
-✔ Model inference  
-✔ FastAPI endpoint  
-✔ SQLite persistence  
-✔ Deduplication logic  
-✔ Backend integration  
+### Core Capabilities
 
-❌ Risk level calculation  
-❌ Severity scoring  
-❌ Business explanation  
+* **Text-based inherent risk detection** using an NLP model
+* **Risk enrichment** (category, severity, explanation, impact areas)
+* **Score normalization and temporal decay**
+* **Supplier-level rolling risk index**
+* **Idempotent event storage**
+* **Explainable outputs suitable for UI and audits**
 
-These are addressed in **Phase 2**.
+This service is **self-contained** and owns:
+
+* Inference
+* Scoring logic
+* Persistence
+* Aggregation
+
+---
+
+## Phase Coverage
+
+### Phase 1 – Inference Infrastructure (Completed)
+
+* Model loading and inference
+* FastAPI endpoint
+* SQLite persistence
+* Deduplication
+
+### Phase 2 – Risk Intelligence Layer (Completed)
+
+* Risk severity scoring
+* Category-based weighting
+* Temporal decay (half-life based)
+* Supplier-level rolling risk index
+* Explainability metadata
+* Stable API contract
 
 ---
 
 ## Architecture
 
 ```
-
 plastic_inherent_risk/
 │
-├── model/                     # Trained transformer artifacts
-├── model_loader.py            # Loads model & tokenizer once
-├── predictor.py               # Runs inference
-├── schemas.py                 # API request/response schemas
-├── service.py                 # Business logic
-├── repository.py              # SQLite queries
-├── database.py                # DB initialization
-├── router.py                  # FastAPI router
+├── predictor.py               # NLP inference
+├── enrichment.py              # Risk enrichment & explanations
+├── normalization.py           # Normalization + decay logic
+├── supplier_repository.py     # Supplier risk aggregation
+├── service.py                 # Orchestration layer
+├── schemas.py                 # API contracts
+├── router.py                  # FastAPI routes
+├── repository.py              # Event persistence
+├── database.py                # SQLite initialization
+├── constants.py               # Risk taxonomy & rules
 ├── plastic_risk.db            # SQLite database (gitignored)
 └── README.md
-
-````
+```
 
 ---
 
-## API Endpoint
+## API
 
 ### POST `/plastic/inherent-risk/predict`
 
+Processes a **supplier-specific risk event**.
+
 #### Request
+
 ```json
 {
+  "supplier_id": "SUPPLIER_ABC_001",
   "text": "Government announces new single-use plastic ban"
 }
-````
+```
 
-#### Response (First occurrence)
+#### Response (New Event)
 
 ```json
 {
   "status": "stored",
   "result": {
-    "category": "Regulatory & Compliance",
-    "confidence": 0.3858
+    "risk_category": "Regulatory & Compliance",
+    "risk_level": "High",
+    "risk_score": 32.79,
+    "normalized_score": 32.79,
+    "decayed_score": 32.79,
+    "explanation": "...",
+    "signals": ["regulatory_ban", "government_action"],
+    "explainability": { ... }
+  },
+  "supplier_risk_index": {
+    "supplier_id": "SUPPLIER_ABC_001",
+    "rolling_risk_score": 32.79,
+    "risk_level": "Low",
+    "event_count": 1
   }
 }
 ```
 
-#### Response (Duplicate text)
+#### Response (Duplicate Event)
 
 ```json
 {
   "status": "exists",
-  "result": {
-    "category": "Regulatory & Compliance",
-    "confidence": 0.3858
-  }
+  "result": { ... },
+  "supplier_risk_index": { ... }
 }
 ```
 
 ---
 
-## Model
+### GET `/plastic/inherent-risk/supplier/{supplier_id}/risk-index`
 
-* Transformer-based text classifier
-* Fine-tuned on plastic risk taxonomy
-* Outputs:
+Returns the **current rolling inherent risk index** for a supplier.
+
+---
+
+## Risk Model Design
+
+* **Input**: Unstructured text (news, reports, disclosures)
+* **Model**: Transformer-based classifier
+* **Outputs**:
 
   * Risk category
-  * Confidence score
+  * Confidence
+* **Post-model logic**:
 
-Model is loaded **once at startup** for performance.
+  * Category weighting
+  * Severity scoring
+  * Temporal decay
+  * Supplier aggregation
 
----
-
-## Persistence
-
-* SQLite database (`plastic_risk.db`)
-* Auto-created on first run
-* Table: `inherent_risk`
-* Used for:
-
-  * Deduplication
-  * Historical risk storage
-  * Future aggregation
-
-Database file is **not committed**.
+The model itself is **unchanged** during Phase 2; intelligence is layered on top.
 
 ---
 
-## Design Notes
+## Persistence & Idempotency
 
-* Backend owns all inference and persistence
-* Frontend never controls storage
-* Designed for irregular, event-driven inputs (e.g., news)
-* Compatible with later migration to MySQL/Postgres
+* SQLite used as an event store
+* Each risk event is uniquely identified by `(supplier_id, text_hash)`
+* Enables:
+
+  * Safe replays
+  * Deterministic aggregation
+  * Historical analysis
+
+---
+
+## Key Design Principles
+
+* Supplier risk is **event-driven**
+* Inherent risk ≠ financial risk
+* Explainability is mandatory
+* Backend is the single source of truth
+* Frontend only consumes computed risk
+
+---
+
+## Status
+
+**Phase 2 complete.
+API is stable.
+Ready for integration.**

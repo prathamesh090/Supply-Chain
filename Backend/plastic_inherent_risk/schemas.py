@@ -1,14 +1,43 @@
+# schemas.py
 from pydantic import BaseModel
+from typing import List, Dict, Optional
+from datetime import datetime
+
+class Explainability(BaseModel):
+    score_components: Dict[str, float]
+    rules_version: str
 
 class InherentRiskRequest(BaseModel):
+    supplier_id: str
     text: str
 
-
 class InherentRiskResult(BaseModel):
-    category: str
+    risk_category: str
+    risk_level: str
     confidence: float
+    risk_score: float
 
+    normalized_score: float
+    decayed_score: float
+    decay_lambda: float
+
+    explanation: str
+    signals: List[str]
+    explainability: Explainability
+
+    time_horizon: str
+    impact_areas: List[str]
+    model_version: str
+    created_at: datetime
+
+class SupplierRiskIndex(BaseModel):
+    supplier_id: str
+    rolling_risk_score: float
+    risk_level: str
+    event_count: int
+    category_breakdown: Dict[str, int]
 
 class InherentRiskAPIResponse(BaseModel):
-    status: str          # "stored" | "exists"
+    status: str
     result: InherentRiskResult
+    supplier_risk_index: Optional[SupplierRiskIndex] = None
