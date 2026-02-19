@@ -19,6 +19,8 @@ import hmac
 import base64
 from dotenv import load_dotenv
 from plastic_inherent_risk.database import init_db
+from risk_integration.router import router as integrated_risk_router
+
 try:
     from supplier_risk import router as supplier_router
     SUPPLIER_RISK_AVAILABLE = True
@@ -72,16 +74,25 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
 if SUPPLIER_RISK_AVAILABLE:
     app.include_router(supplier_router)
     print("✓ Supplier risk routes registered")
 else:
     print("✗ Supplier risk routes not available")
+
 if PLASTIC_INHERENT_RISK_AVAILABLE:
     app.include_router(plastic_inherent_risk_router)
     print("✓ Plastic inherent risk routes registered")
 else:
     print("✗ Plastic inherent risk routes not available")
+
+# ✅ Integrated Risk Router
+try:
+    app.include_router(integrated_risk_router)
+    print("✓ Integrated risk routes registered")
+except Exception as e:
+    print(f"✗ Integrated risk routes not available: {e}")
 
 # Environment Variables
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key-change-in-production')

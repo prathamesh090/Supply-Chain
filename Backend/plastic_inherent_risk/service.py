@@ -7,8 +7,21 @@ from .repository import exists, insert
 from .enrichment import enrich_risk
 from .normalization import normalize_score, apply_decay, decay_lambda
 from .supplier_repository import compute_supplier_index
+from supplier_registry.mapping_engine import match_supplier_from_text
 
-def process_inherent_risk(text: str, supplier_id: str):
+def process_inherent_risk(text: str, supplier_id: str | None):
+    # Auto-detect supplier if not provided
+    if not supplier_id:
+        match = match_supplier_from_text(text)
+        if not match:
+            return {
+                "status": "no_supplier_found",
+                "message": "No supplier identified from text.",
+                "result": None,
+                "supplier_risk_index": None
+            }
+        supplier_id = match["supplier_id"]
+
     base = predict_inherent_risk(text)
 
     enriched = enrich_risk(

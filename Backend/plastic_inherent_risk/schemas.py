@@ -8,8 +8,8 @@ class Explainability(BaseModel):
     rules_version: str
 
 class InherentRiskRequest(BaseModel):
-    supplier_id: str
     text: str
+    supplier_id: Optional[str] = None
 
 class InherentRiskResult(BaseModel):
     risk_category: str
@@ -39,5 +39,6 @@ class SupplierRiskIndex(BaseModel):
 
 class InherentRiskAPIResponse(BaseModel):
     status: str
-    result: InherentRiskResult
+    result: Optional[InherentRiskResult] = None
     supplier_risk_index: Optional[SupplierRiskIndex] = None
+    message: Optional[str] = None

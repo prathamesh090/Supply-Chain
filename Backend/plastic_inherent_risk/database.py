@@ -60,5 +60,17 @@ def init_db():
         );
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS supplier_registry (
+            supplier_id TEXT PRIMARY KEY,
+            supplier_name TEXT NOT NULL,
+            aliases TEXT,
+            country TEXT,
+            region TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+
+
     conn.commit()
     conn.close()

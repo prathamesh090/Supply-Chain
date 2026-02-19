@@ -12,7 +12,7 @@ sys.path.insert(0, ml_supplier_path)
 
 # Try to import supplier risk predictor
 try:
-    from supplier_risk_predictor import SupplierRiskPredictor
+    from ml_supplier_risk.supplier_risk_predictor import SupplierRiskPredictor
     PREDICTOR_AVAILABLE = True
     predictor = SupplierRiskPredictor()
 except ImportError as e:
