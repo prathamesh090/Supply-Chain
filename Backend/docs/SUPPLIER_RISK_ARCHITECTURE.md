@@ -1,54 +1,66 @@
 # SUPPLIER RISK ASSESSMENT (SRA) – ARCHITECTURE & INTEGRATION GUIDE
 
-# 1. Overview
+# 1. Purpose
 
-Supplier Risk Assessment (SRA) is a backend intelligence layer that evaluates supplier risk using:
+Supplier Risk Assessment (SRA) is a centralized backend intelligence layer that evaluates supplier risk using:
 
-1. **Financial & Operational Risk Model** (structured performance data)
-2. **Inherent Risk Model** (news/event-based risk detection)
-3. **Integrated Risk Engine** (final unified risk score)
+1. **Financial & Operational Risk Model** (structured performance metrics)
+2. **Inherent Risk Model** (event/news-based risk detection)
+3. **Integrated Risk Engine** (unified planning-ready risk signal)
 
-SRA is designed to:
+SRA provides:
 
-* Provide decision-driving risk signals
-* Be consumed by Route Optimization (RO)
-* Be consumed by Inventory Management (IM)
-* Provide explainable dashboards for monitoring
+* A normalized numeric risk score (0–100)
+* A categorical risk level (Low / Medium / High)
+* Explainability for dashboards
+* Structured outputs for Route Optimization (RO)
+* Structured outputs for Inventory Management (IM)
 
-SRA does **not** automate decisions.
-It provides structured intelligence.
+SRA is a decision-support system.
+It does not automate operational decisions.
 
 ---
 
 # 2. High-Level Architecture
 
 ```
-News Text ───────► Inherent Risk Engine
-                       │
-Financial Data ─────► Financial Risk Model
-                       │
-                       ▼
-                Integrated Risk Engine
-                       │
-                       ▼
-               API: /api/integrated-risk/{supplier_id}
-                       │
-      ┌────────────────┼────────────────┐
-      ▼                ▼                ▼
-     RO               IM             Dashboard
+News Text ───────────► Inherent Risk Engine
+                             │
+Structured Financial Data ─► Financial Risk Model
+                             │
+                             ▼
+                    Integrated Risk Engine
+                             │
+                             ▼
+              API: /api/integrated-risk/{supplier_id}
+                             │
+      ┌──────────────────────┼──────────────────────┐
+      ▼                      ▼                      ▼
+Route Optimization      Inventory Mgmt          Dashboard
 ```
 
 ---
 
-# 3. Component Breakdown
+# 3. Core Design Principles
+
+* Risk is event-driven.
+* Risk is normalized (0–100).
+* Risk is time-aware.
+* Risk is explainable.
+* Backend is single source of truth.
+* Modules consume structured outputs only.
 
 ---
 
-# 3.1 Inherent Risk Engine (News-Based)
+# 4. Component Breakdown
+
+---
+
+# 4.1 Inherent Risk Engine (News-Based)
 
 ### Purpose
 
-Detect supplier-specific risk from unstructured text.
+Detect supplier-specific risk events from unstructured text.
 
 ### Endpoint
 
@@ -64,7 +76,11 @@ POST /plastic/inherent-risk/predict
 }
 ```
 
-### Output (Event-Level)
+Supplier is resolved internally via mapping engine.
+
+---
+
+### Output (Event-Level Response)
 
 ```json
 {
@@ -90,33 +106,31 @@ POST /plastic/inherent-risk/predict
 }
 ```
 
-### What This Means
+### Key Behavior
 
-* Each news event becomes a stored risk event.
-* A rolling supplier risk index is updated automatically.
 * Duplicate events are prevented.
+* Supplier rolling risk index is automatically updated.
+* Historical events are stored for audit.
 
 ---
 
-# 3.2 Financial & Operational Risk Model
+# 4.2 Financial & Operational Risk Model
 
 ### Purpose
 
-Evaluate supplier reliability based on:
+Evaluate supplier reliability using structured metrics:
 
-* Delivery delays
+* Delivery delay rate
 * Defect rate
 * Price variance
-* Compliance
+* Compliance performance
 * Trust score
 
-### Used Internally By:
+This model is consumed internally by the Integrated Risk Engine.
 
-```
-GET /api/integrated-risk/{supplier_id}
-```
+---
 
-### Output Structure
+### Output Structure (Internal)
 
 ```json
 {
@@ -132,9 +146,9 @@ GET /api/integrated-risk/{supplier_id}
 
 ---
 
-# 3.3 Integrated Risk Engine (Primary Signal)
+# 4.3 Integrated Risk Engine (Primary Planning Signal)
 
-This is the **final risk output** consumed by other modules.
+This is the final risk output consumed by other modules.
 
 ### Endpoint
 
@@ -142,7 +156,9 @@ This is the **final risk output** consumed by other modules.
 GET /api/integrated-risk/{supplier_id}
 ```
 
-### Final Output
+---
+
+## Final Output Schema (Planning-Ready)
 
 ```json
 {
@@ -162,14 +178,21 @@ GET /api/integrated-risk/{supplier_id}
   },
 
   "integrated_risk_score": 26.66,
-  "integrated_risk_level": "Low"
+  "integrated_risk_level": "Low",
+
+  "risk_scope": ["supplier", "distribution", "inventory"],
+
+  "valid_from": "2026-02-10",
+  "valid_to": "2026-03-10"
 }
 ```
 
-### Integration Logic
+---
+
+## Integration Logic
 
 ```
-Integrated Score = 
+Integrated Score =
   (0.6 × Financial Score) +
   (0.4 × Inherent Score)
 ```
@@ -178,19 +201,83 @@ Weights are configurable.
 
 ---
 
-# 4. Final Dashboard Display Design
+# 5. Supplier → Warehouse Mapping (Critical for RO)
 
-The UI should be divided into 3 logical sections.
+Route Optimization allocates from warehouses, not suppliers.
+
+Therefore, a mapping layer is required:
+
+```
+warehouse_supplier_mapping
+```
+
+| warehouse_id | supplier_id |
+| ------------ | ----------- |
+
+Before RO consumes risk:
+
+```
+warehouse risk = integrated_risk of its mapped supplier
+```
+
+SRA does not compute warehouse-level risk directly.
+Mapping is performed in the planning layer.
 
 ---
 
-# 4.1 Main Supplier Risk Card (Primary View)
+# 6. Time Validity
+
+All integrated risk outputs include:
+
+```
+valid_from
+valid_to
+```
+
+This ensures:
+
+* Risk is aligned with planning time buckets.
+* RO and IM apply risk only during active period.
+* Risk is not treated as permanently static.
+
+---
+
+# 7. Risk Scope
+
+Each integrated response includes:
+
+```
+risk_scope
+```
+
+Possible values:
+
+* supplier
+* distribution
+* inventory
+
+This allows:
+
+* RO to apply penalties only when distribution is affected.
+* IM to adjust safety stock only when inventory risk exists.
+* Future modules to selectively consume risk.
+
+---
+
+# 8. Dashboard Display Design
+
+UI should have three logical sections.
+
+---
+
+## 8.1 Primary Supplier Risk Card
 
 Display:
 
 * Supplier Name
-* Integrated Risk Level (Large Badge)
-* Integrated Risk Score (0–100 Gauge)
+* Integrated Risk Level (large badge)
+* Integrated Risk Score (0–100 gauge)
+* Validity period
 
 Example:
 
@@ -198,56 +285,56 @@ Example:
 Supplier: Alpha_Inc
 Integrated Risk: LOW
 Score: 26.66 / 100
+Valid: Feb 10 – Mar 10
 ```
 
-This is the **decision-driving signal**.
+This is the decision-driving signal.
 
 ---
 
-# 4.2 Risk Breakdown Section
+## 8.2 Risk Breakdown Section
 
-Two side-by-side panels:
-
-### Financial Risk Panel
+### Financial Panel
 
 * Risk Level
 * Risk Score
-* Key Metrics (delivery delay, defect rate, etc.)
+* Key metrics summary
 * Explanation
 
-### Inherent Risk Panel
+### Inherent Panel
 
 * Rolling Risk Score
 * Risk Level
 * Event Count
-* Category Breakdown Chart
-* Latest Event Explanation
-
-This provides transparency.
+* Category breakdown chart
+* Latest event explanation
 
 ---
 
-# 4.3 Event Timeline Section
+## 8.3 Event Timeline
 
-List of recent risk events:
+Display recent events:
 
 | Date | Category | Level | Explanation |
 | ---- | -------- | ----- | ----------- |
 
-This supports auditability.
+Supports auditability.
 
 ---
 
-# 5. How Other Modules Consume SRA
+# 9. How Other Modules Consume SRA
 
 ---
 
-# 5.1 Route Optimization (RO)
+# 9.1 Route Optimization (RO)
 
 Consumes:
 
 ```
 integrated_risk_score
+risk_scope
+valid_from
+valid_to
 ```
 
 Usage:
@@ -256,18 +343,19 @@ Usage:
 total_cost = transport_cost + (integrated_risk_score × risk_weight)
 ```
 
-High risk increases allocation penalty.
+If "distribution" ∉ risk_scope → no penalty applied.
 
-RO does NOT use explanations.
+RO does not use explanations.
 
 ---
 
-# 5.2 Inventory Management (IM)
+# 9.2 Inventory Management (IM)
 
 Consumes:
 
 ```
 integrated_risk_level
+risk_scope
 ```
 
 Usage:
@@ -278,36 +366,34 @@ Medium → multiplier = 1.3
 High   → multiplier = 1.6
 ```
 
-Used in safety stock calculation.
-
-IM does NOT need breakdown details.
+If "inventory" ∉ risk_scope → base safety stock applied.
 
 ---
 
-# 6. What Is Currently Being Completed
+# 9.3 Risk Exposure (Future KPI)
 
-The following extension is in progress:
+Derived metric:
+
+```
+risk_exposure = integrated_risk_score × allocated_volume
+```
+
+Can be computed inside RO.
+
+Used for analytics dashboards.
 
 ---
 
-# 6.1 Global / Macro Risk Layer
+# 10. Global / Macro Risk Layer (In Progress)
 
-Purpose:
-
-Handle events affecting:
+Handles events affecting:
 
 * Multiple suppliers
 * Regions
 * Logistics
 * Inventory planning
 
-Example:
-
-* Shipping disruption
-* Oil crisis
-* Regulatory bans
-
-Planned Output Schema:
+Planned schema:
 
 ```json
 {
@@ -322,34 +408,26 @@ Planned Output Schema:
 }
 ```
 
-This will allow:
+This enables:
 
-* RO to apply regional risk penalties
-* IM to adjust safety stock globally
-* Dashboard to display active macro risks
-
----
-
-# 7. Design Principles
-
-* Risk is event-driven
-* Risk is normalized (0–100)
-* Risk is explainable
-* Backend is single source of truth
-* Modules consume structured outputs only
+* Regional penalty in RO
+* Global safety stock adjustment in IM
+* Macro risk dashboard
 
 ---
 
-# 8. Current Status
+# 11. Current Status
 
 Completed:
 
 * Inherent Risk Engine
 * Financial Risk Integration
 * Integrated Risk Engine
-* API Endpoints
-* Duplicate Handling
-* Dashboard-ready response format
+* Duplicate handling
+* Planning-ready normalized scoring
+* Time validity
+* Risk scope support
+* API endpoints
 
 In Progress:
 
@@ -358,15 +436,15 @@ In Progress:
 
 ---
 
-# 9. Final System Goal
+# 12. Final System Goal
 
 SRA provides:
 
-* A unified supplier risk score
+* Unified supplier risk score
 * Explainable breakdown
-* Planning-ready numeric signals
+* Time-aware planning signal
 * Cross-module integration capability
 
-It transforms risk from reporting into a decision-support intelligence layer.
+It transforms risk from reporting into a structured planning intelligence layer.
 
 ---
