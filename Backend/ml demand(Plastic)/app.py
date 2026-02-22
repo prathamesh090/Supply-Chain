@@ -1,35 +1,3 @@
-# from flask import Flask, request, jsonify
-# from flask_cors import CORS
-# from routes.predict import predict_bp
-# import os
-# import logging
-
-# # Set up logging
-# logging.basicConfig(level=logging.DEBUG)
-# logger = logging.getLogger(__name__)
-
-# app = Flask(__name__)
-# CORS(app)  # Enable CORS for frontend communication
-
-# # Register blueprints
-# try:
-#     app.register_blueprint(predict_bp, url_prefix='/api/ml')
-#     logger.info("Blueprints registered successfully")
-# except Exception as e:
-#     logger.error(f"Failed to register blueprints: {e}")
-
-# @app.route('/health')
-# def health_check():
-#     return jsonify({"status": "healthy", "service": "ml-backend"})
-
-# if __name__ == '__main__':
-#     port = int(os.environ.get('PORT', 5001))
-#     logger.info(f"Starting server on port {port}")
-#     try:
-#         app.run(host='0.0.0.0', port=port, debug=True)
-#     except Exception as e:
-#         logger.error(f"Server failed to start: {e}")
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
