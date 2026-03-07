@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional
 from risk_integration.financial_service import get_financial_risk_for_supplier
 from plastic_inherent_risk.supplier_repository import get_supplier_index
 from supplier_registry.repository import get_supplier_by_id
-
+from datetime import datetime, timedelta
 
 FINANCIAL_WEIGHT = 0.6
 INHERENT_WEIGHT = 0.4
@@ -49,6 +49,21 @@ def compute_integrated_risk(supplier_id: str) -> Dict[str, Any]:
 
     integrated_level = _risk_level_from_score(integrated_score)
 
+    # --------------------------
+    # Planning Metadata
+    # --------------------------
+
+    valid_from = datetime.utcnow().date()
+    valid_to = valid_from + timedelta(days=30)
+
+    risk_scope = ["supplier"]
+
+    if inherent_score >= 40:
+        risk_scope.append("distribution")
+
+    if integrated_score >= 50:
+        risk_scope.append("inventory")
+
     return {
         "status": "ok",
         "supplier_id": supplier_id,
@@ -59,6 +74,10 @@ def compute_integrated_risk(supplier_id: str) -> Dict[str, Any]:
 
         "integrated_risk_score": integrated_score,
         "integrated_risk_level": integrated_level,
+
+        "risk_scope": risk_scope,
+        "valid_from": str(valid_from),
+        "valid_to": str(valid_to),
 
         "integration_metadata": {
             "financial_weight": FINANCIAL_WEIGHT,

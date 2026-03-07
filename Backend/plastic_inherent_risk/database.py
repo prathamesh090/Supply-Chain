@@ -1,9 +1,12 @@
 # database.py
 
 import sqlite3
+import csv
 from pathlib import Path
 
 DB_PATH = Path(__file__).parent / "plastic_risk.db"
+SUPPLIER_DATASET = Path(__file__).parent.parent / "data" / "sra" / "entities_to_monitor_plastic.csv"
+
 
 def get_connection():
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
@@ -11,15 +14,14 @@ def get_connection():
     return conn
 
 
-def _column_exists(cursor, table: str, column: str) -> bool:
-    cursor.execute(f"PRAGMA table_info({table})")
-    return column in [row["name"] for row in cursor.fetchall()]
-
-
 def init_db():
+
     conn = get_connection()
     cursor = conn.cursor()
 
+    # -------------------------
+    # inherent risk events
+    # -------------------------
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS inherent_risk (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +47,9 @@ def init_db():
         );
     """)
 
+    # -------------------------
+    # supplier rolling index
+    # -------------------------
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS supplier_risk_index (
             supplier_id TEXT PRIMARY KEY,
@@ -60,6 +65,9 @@ def init_db():
         );
     """)
 
+    # -------------------------
+    # supplier registry
+    # -------------------------
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS supplier_registry (
             supplier_id TEXT PRIMARY KEY,
@@ -71,6 +79,44 @@ def init_db():
         );
     """)
 
-
     conn.commit()
+
+    # -------------------------
+    # AUTO SEED SUPPLIERS
+    # -------------------------
+
+    cursor.execute("SELECT COUNT(*) FROM supplier_registry")
+    count = cursor.fetchone()[0]
+
+    if count == 0:
+
+        if not SUPPLIER_DATASET.exists():
+            raise FileNotFoundError(
+                f"SRA dataset missing: {SUPPLIER_DATASET}"
+            )
+
+        with open(SUPPLIER_DATASET) as f:
+            reader = csv.DictReader(f)
+
+            for row in reader:
+                cursor.execute(
+                    """
+                    INSERT INTO supplier_registry
+                    (supplier_id, supplier_name, country, region)
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (
+                        row["uid"],
+                        row["plant_name"],
+                        row["country"],
+                        row["country"]
+                    )
+                )
+
+        conn.commit()
+        print("✓ Supplier registry seeded")
+
+    else:
+        print("✓ Supplier registry already initialized")
+
     conn.close()

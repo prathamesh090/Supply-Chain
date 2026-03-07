@@ -3,7 +3,6 @@
 from pydantic import BaseModel
 from typing import Dict, Optional
 
-
 # ---------- Financial Risk ----------
 
 class FinancialRiskResponse(BaseModel):
@@ -39,10 +38,14 @@ class IntegratedRiskResponse(BaseModel):
     supplier_id: str
     supplier_name: str
 
-    financial_risk: FinancialRiskResponse
+    financial_risk: Optional[FinancialRiskResponse]
     inherent_risk: Optional[InherentRiskSummary]
 
     integrated_risk_score: float
     integrated_risk_level: str
+
+    risk_scope: list[str]
+    valid_from: str
+    valid_to: str
 
     integration_metadata: IntegrationMetadata

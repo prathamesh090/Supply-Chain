@@ -20,6 +20,8 @@ import base64
 from dotenv import load_dotenv
 from plastic_inherent_risk.database import init_db
 from risk_integration.router import router as integrated_risk_router
+from risk_global.router import router as global_risk_router
+from risk_feed.router import router as risk_feed_router
 
 try:
     from supplier_risk import router as supplier_router
@@ -87,12 +89,26 @@ if PLASTIC_INHERENT_RISK_AVAILABLE:
 else:
     print("✗ Plastic inherent risk routes not available")
 
-# ✅ Integrated Risk Router
+# Integrated Risk Router
 try:
     app.include_router(integrated_risk_router)
     print("✓ Integrated risk routes registered")
 except Exception as e:
     print(f"✗ Integrated risk routes not available: {e}")
+
+# Global Risk Router
+try:
+    app.include_router(global_risk_router)
+    print("✓ Global risk routes registered")
+except Exception as e:
+    print(f"✗ Global risk routes not available: {e}")
+
+# Global Risk Feed Router
+try:
+    app.include_router(risk_feed_router)
+    print("✓ Risk feed routes registered")
+except Exception as e:
+    print(f"✗ Risk feed routes not available: {e}")
 
 # Environment Variables
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key-change-in-production')
@@ -996,7 +1012,7 @@ async def startup_event():
     init_database()
 
     # Initialize Plastic Inherent Risk SQLite DB
-    init_db()
+    init_db() # this is actually done by me only. everything except the financial SRA in the whole SRA is my work.
     
     # Create uploads directory
     uploads_dir = Path("uploads")
@@ -1009,7 +1025,7 @@ async def startup_event():
     if not df_foreign.empty:
         sample_foreign = df_foreign.iloc[0]
         logger.info(f"Sample Foreign company: {sample_foreign['company_name']} - Country: {sample_foreign['country']}")
-
+    
 # Start server when running this file directly
 # At the bottom of main.py, change this:
 if __name__ == "__main__":

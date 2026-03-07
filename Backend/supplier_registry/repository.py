@@ -111,25 +111,3 @@ def resolve_supplier_by_name(name: str) -> Optional[Dict]:
                 return supplier
 
     return None
-
-def get_all_suppliers():
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM supplier_registry")
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    suppliers = []
-
-    for row in rows:
-        suppliers.append({
-            "supplier_id": row["supplier_id"],
-            "supplier_name": row["supplier_name"],
-            "aliases": json.loads(row["aliases"]),
-            "country": row["country"],
-            "region": row["region"]
-        })
-
-    return suppliers

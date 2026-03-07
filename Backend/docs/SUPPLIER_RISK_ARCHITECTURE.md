@@ -2,65 +2,230 @@
 
 # 1. Purpose
 
-Supplier Risk Assessment (SRA) is a centralized backend intelligence layer that evaluates supplier risk using:
+Supplier Risk Assessment (**SRA**) is a centralized backend intelligence layer that evaluates **supplier reliability and supply chain disruption risk**.
 
-1. **Financial & Operational Risk Model** (structured performance metrics)
-2. **Inherent Risk Model** (event/news-based risk detection)
-3. **Integrated Risk Engine** (unified planning-ready risk signal)
+It combines multiple risk signals:
+
+1. **Financial & Operational Risk Model**
+   (structured supplier performance metrics)
+
+2. **Inherent Risk Model**
+   (AI-based risk detection from unstructured text such as news or incident reports)
+
+3. **Global / Macro Risk Layer**
+   (regional disruptions affecting multiple suppliers)
+
+4. **Integrated Risk Engine**
+   (unified planning-ready risk score)
 
 SRA provides:
 
-* A normalized numeric risk score (0–100)
-* A categorical risk level (Low / Medium / High)
+* A normalized **numeric risk score (0–100)**
+* A **categorical risk level (Low / Medium / High)**
 * Explainability for dashboards
-* Structured outputs for Route Optimization (RO)
-* Structured outputs for Inventory Management (IM)
+* Structured outputs for **Route Optimization (RO)**
+* Structured outputs for **Inventory Management (IM)**
+* A unified **risk feed API** for frontend dashboards
 
-SRA is a decision-support system.
-It does not automate operational decisions.
+SRA is a **decision-support system**.
+It does **not directly automate operational decisions**.
 
 ---
 
 # 2. High-Level Architecture
 
 ```
-News Text ───────────► Inherent Risk Engine
-                             │
-Structured Financial Data ─► Financial Risk Model
-                             │
-                             ▼
-                    Integrated Risk Engine
-                             │
-                             ▼
-              API: /api/integrated-risk/{supplier_id}
-                             │
-      ┌──────────────────────┼──────────────────────┐
-      ▼                      ▼                      ▼
-Route Optimization      Inventory Mgmt          Dashboard
+                    External Risk Signals
+                 (News / Events / Incidents)
+                            │
+                            ▼
+                Inherent Risk Detection Engine
+                POST /plastic/inherent-risk/predict
+                            │
+                            ▼
+                    inherent_risk table
+                            │
+                            ▼
+                 Supplier Risk Aggregation
+                 supplier_risk_index table
+                            │
+                            │
+      Structured Supplier Data ──► Financial Risk Model
+                            │
+                            ▼
+                   Integrated Risk Engine
+             GET /api/integrated-risk/{supplier_id}
+                            │
+                            ▼
+                     Global Risk Engine
+                  GET /api/global-risk
+                            │
+                            ▼
+                     Unified Risk Feed
+                GET /api/risk-feed/{supplier_id}
+                            │
+         ┌──────────────────┼──────────────────┐
+         ▼                  ▼                  ▼
+   Frontend Dashboard   Route Optimization   Inventory Mgmt
 ```
 
 ---
 
 # 3. Core Design Principles
 
-* Risk is event-driven.
-* Risk is normalized (0–100).
-* Risk is time-aware.
-* Risk is explainable.
-* Backend is single source of truth.
-* Modules consume structured outputs only.
+The SRA system is designed with the following principles:
+
+### Event-driven risk
+
+Risk changes when **new events occur** (incidents, legal actions, accidents).
+
+### Normalized scoring
+
+All risk signals are normalized to:
+
+```
+0 – 100
+```
+
+This enables consistent integration across modules.
+
+### Time-aware risk
+
+Risk signals include:
+
+```
+valid_from
+valid_to
+```
+
+Ensuring planning algorithms apply risk **only within valid periods**.
+
+### Explainability
+
+Every risk score includes explanations for:
+
+* dashboards
+* auditability
+* debugging
+
+### Backend as single source of truth
+
+All modules consume **structured API outputs**, not internal model results.
 
 ---
 
-# 4. Component Breakdown
+# 4. Data Storage
+
+SRA uses **SQLite storage** for risk events and supplier metadata.
+
+Database file:
+
+```
+plastic_inherent_risk/plastic_risk.db
+```
 
 ---
 
-# 4.1 Inherent Risk Engine (News-Based)
+# 4.1 supplier_registry
 
-### Purpose
+Stores known suppliers and metadata.
 
-Detect supplier-specific risk events from unstructured text.
+Purpose:
+
+```
+Resolve supplier names detected in news text
+```
+
+Schema:
+
+| Column        | Description                        |
+| ------------- | ---------------------------------- |
+| supplier_id   | unique supplier identifier         |
+| supplier_name | canonical supplier name            |
+| aliases       | alternative names detected in text |
+| country       | supplier country                   |
+| region        | geographic region                  |
+| created_at    | record creation time               |
+
+Example:
+
+```
+supplier_id: PLASTIC-19749e1e
+supplier_name: basf
+country: Germany
+region: Germany
+```
+
+---
+
+# 4.2 inherent_risk
+
+Stores individual detected risk events.
+
+Each row represents **one risk event extracted from text**.
+
+Schema:
+
+| Column           | Description           |
+| ---------------- | --------------------- |
+| id               | event ID              |
+| supplier_id      | affected supplier     |
+| text             | original text         |
+| category         | risk category         |
+| confidence       | model confidence      |
+| risk_level       | Low / Medium / High   |
+| risk_score       | normalized risk score |
+| normalized_score | normalized score      |
+| decayed_score    | time-decayed score    |
+| decay_lambda     | decay parameter       |
+| explanation      | model explanation     |
+| signals          | detected signals      |
+| created_at       | timestamp             |
+
+---
+
+# 4.3 supplier_risk_index
+
+Aggregated supplier risk state.
+
+Updated automatically when new events occur.
+
+Schema:
+
+| Column             | Description               |
+| ------------------ | ------------------------- |
+| supplier_id        | supplier                  |
+| rolling_risk_score | aggregated risk score     |
+| risk_level         | Low / Medium / High       |
+| event_count        | number of detected events |
+| last_event_at      | last detected event       |
+| category_breakdown | category distribution     |
+| updated_at         | update timestamp          |
+
+---
+
+# 5. Component Breakdown
+
+---
+
+# 5.1 Inherent Risk Engine (AI Event Detection)
+
+Purpose:
+
+Detect **risk signals from unstructured text** such as:
+
+* news articles
+* accident reports
+* regulatory actions
+* production shutdowns
+
+Model:
+
+```
+DistilBERT classifier
+```
+
+---
 
 ### Endpoint
 
@@ -68,15 +233,17 @@ Detect supplier-specific risk events from unstructured text.
 POST /plastic/inherent-risk/predict
 ```
 
+---
+
 ### Input
 
 ```json
 {
-  "text": "Alpha Inc faces regulatory action from government"
+  "text": "Explosion at BASF polymer manufacturing facility"
 }
 ```
 
-Supplier is resolved internally via mapping engine.
+Supplier name is resolved using the **supplier registry mapping engine**.
 
 ---
 
@@ -86,39 +253,40 @@ Supplier is resolved internally via mapping engine.
 {
   "status": "stored",
   "result": {
-    "risk_category": "Governance & Legal",
+    "risk_category": "Safety & Chemical",
     "risk_level": "High",
-    "confidence": 0.7395,
-    "risk_score": 59.16,
-    "normalized_score": 59.16,
-    "decayed_score": 59.16,
-    "explanation": "Legal or governance issues can affect supplier reliability...",
-    "impact_areas": ["contracts", "compliance", "reputation"],
-    "time_horizon": "short_term",
-    "created_at": "2026-02-11T17:03:08Z"
+    "confidence": 0.84,
+    "risk_score": 75.98,
+    "explanation": "Incidents involving hazardous materials can disrupt production",
+    "time_horizon": "short_term"
   },
   "supplier_risk_index": {
-    "supplier_id": "SUPPLIER_ALPHA_001",
-    "rolling_risk_score": 59.16,
-    "risk_level": "Medium",
-    "event_count": 1
+    "supplier_id": "PLASTIC-19749e1e",
+    "rolling_risk_score": 74.46,
+    "risk_level": "High",
+    "event_count": 3
   }
 }
 ```
 
+---
+
 ### Key Behavior
 
-* Duplicate events are prevented.
-* Supplier rolling risk index is automatically updated.
-* Historical events are stored for audit.
+* Duplicate events prevented using text hash
+* Risk aggregation updates automatically
+* Event history stored for audit
+* Rolling supplier risk index updated
 
 ---
 
-# 4.2 Financial & Operational Risk Model
+# 5.2 Financial & Operational Risk Model
 
-### Purpose
+Purpose:
 
-Evaluate supplier reliability using structured metrics:
+Evaluate supplier reliability using **structured supplier metrics**.
+
+Inputs include:
 
 * Delivery delay rate
 * Defect rate
@@ -126,11 +294,15 @@ Evaluate supplier reliability using structured metrics:
 * Compliance performance
 * Trust score
 
-This model is consumed internally by the Integrated Risk Engine.
+Model:
+
+```
+XGBoost classification model
+```
 
 ---
 
-### Output Structure (Internal)
+### Internal Output
 
 ```json
 {
@@ -139,16 +311,19 @@ This model is consumed internally by the Integrated Risk Engine.
   "probabilities": {
     "Low": 0.82,
     "Medium": 0.17
-  },
-  "explanation": "Predicted low risk (score: 5.0/100)"
+  }
 }
 ```
 
+This output is consumed internally by the **Integrated Risk Engine**.
+
 ---
 
-# 4.3 Integrated Risk Engine (Primary Planning Signal)
+# 5.3 Integrated Risk Engine
 
-This is the final risk output consumed by other modules.
+The **primary planning signal** used across the platform.
+
+---
 
 ### Endpoint
 
@@ -158,242 +333,71 @@ GET /api/integrated-risk/{supplier_id}
 
 ---
 
-## Final Output Schema (Planning-Ready)
+### Output Schema
 
 ```json
 {
   "status": "ok",
-  "supplier_id": "SUPPLIER_ALPHA_001",
-  "supplier_name": "Alpha_Inc",
+  "supplier_id": "PLASTIC-19749e1e",
+  "supplier_name": "basf",
 
   "financial_risk": {
-    "risk_score": 5.0,
+    "risk_score": 5,
     "risk_level": "Low"
   },
 
   "inherent_risk": {
-    "rolling_risk_score": 59.16,
-    "risk_level": "Medium",
-    "event_count": 1
+    "rolling_risk_score": 74.46,
+    "risk_level": "High",
+    "event_count": 3
   },
 
-  "integrated_risk_score": 26.66,
+  "integrated_risk_score": 32.78,
   "integrated_risk_level": "Low",
 
-  "risk_scope": ["supplier", "distribution", "inventory"],
+  "risk_scope": ["supplier","distribution"],
 
-  "valid_from": "2026-02-10",
-  "valid_to": "2026-03-10"
+  "valid_from": "2026-03-07",
+  "valid_to": "2026-04-06"
 }
 ```
 
 ---
 
-## Integration Logic
+### Integration Logic
 
 ```
-Integrated Score =
-  (0.6 × Financial Score) +
-  (0.4 × Inherent Score)
+Integrated Risk Score =
+   (0.6 × Financial Score)
+ + (0.4 × Inherent Score)
 ```
 
 Weights are configurable.
 
 ---
 
-# 5. Supplier → Warehouse Mapping (Critical for RO)
+# 5.4 Global Risk Engine
 
-Route Optimization allocates from warehouses, not suppliers.
+Handles **macro disruptions affecting multiple suppliers or regions**.
 
-Therefore, a mapping layer is required:
+Examples:
 
-```
-warehouse_supplier_mapping
-```
-
-| warehouse_id | supplier_id |
-| ------------ | ----------- |
-
-Before RO consumes risk:
-
-```
-warehouse risk = integrated_risk of its mapped supplier
-```
-
-SRA does not compute warehouse-level risk directly.
-Mapping is performed in the planning layer.
+* geopolitical conflict
+* logistics disruptions
+* natural disasters
+* regulatory changes
 
 ---
 
-# 6. Time Validity
-
-All integrated risk outputs include:
+### Endpoint
 
 ```
-valid_from
-valid_to
+GET /api/global-risk
 ```
-
-This ensures:
-
-* Risk is aligned with planning time buckets.
-* RO and IM apply risk only during active period.
-* Risk is not treated as permanently static.
 
 ---
 
-# 7. Risk Scope
-
-Each integrated response includes:
-
-```
-risk_scope
-```
-
-Possible values:
-
-* supplier
-* distribution
-* inventory
-
-This allows:
-
-* RO to apply penalties only when distribution is affected.
-* IM to adjust safety stock only when inventory risk exists.
-* Future modules to selectively consume risk.
-
----
-
-# 8. Dashboard Display Design
-
-UI should have three logical sections.
-
----
-
-## 8.1 Primary Supplier Risk Card
-
-Display:
-
-* Supplier Name
-* Integrated Risk Level (large badge)
-* Integrated Risk Score (0–100 gauge)
-* Validity period
-
-Example:
-
-```
-Supplier: Alpha_Inc
-Integrated Risk: LOW
-Score: 26.66 / 100
-Valid: Feb 10 – Mar 10
-```
-
-This is the decision-driving signal.
-
----
-
-## 8.2 Risk Breakdown Section
-
-### Financial Panel
-
-* Risk Level
-* Risk Score
-* Key metrics summary
-* Explanation
-
-### Inherent Panel
-
-* Rolling Risk Score
-* Risk Level
-* Event Count
-* Category breakdown chart
-* Latest event explanation
-
----
-
-## 8.3 Event Timeline
-
-Display recent events:
-
-| Date | Category | Level | Explanation |
-| ---- | -------- | ----- | ----------- |
-
-Supports auditability.
-
----
-
-# 9. How Other Modules Consume SRA
-
----
-
-# 9.1 Route Optimization (RO)
-
-Consumes:
-
-```
-integrated_risk_score
-risk_scope
-valid_from
-valid_to
-```
-
-Usage:
-
-```
-total_cost = transport_cost + (integrated_risk_score × risk_weight)
-```
-
-If "distribution" ∉ risk_scope → no penalty applied.
-
-RO does not use explanations.
-
----
-
-# 9.2 Inventory Management (IM)
-
-Consumes:
-
-```
-integrated_risk_level
-risk_scope
-```
-
-Usage:
-
-```
-Low    → multiplier = 1.0
-Medium → multiplier = 1.3
-High   → multiplier = 1.6
-```
-
-If "inventory" ∉ risk_scope → base safety stock applied.
-
----
-
-# 9.3 Risk Exposure (Future KPI)
-
-Derived metric:
-
-```
-risk_exposure = integrated_risk_score × allocated_volume
-```
-
-Can be computed inside RO.
-
-Used for analytics dashboards.
-
----
-
-# 10. Global / Macro Risk Layer (In Progress)
-
-Handles events affecting:
-
-* Multiple suppliers
-* Regions
-* Logistics
-* Inventory planning
-
-Planned schema:
+### Example Event
 
 ```json
 {
@@ -402,49 +406,222 @@ Planned schema:
   "risk_score": 75,
   "risk_level": "High",
   "affected_regions": ["Asia"],
-  "affects": ["distribution", "inventory"],
-  "valid_from": "2026-02-01",
-  "valid_to": "2026-03-30"
+  "affects": ["distribution","inventory"],
+  "valid_from": "2026-03-01",
+  "valid_to": "2026-04-30"
 }
 ```
 
-This enables:
-
-* Regional penalty in RO
-* Global safety stock adjustment in IM
-* Macro risk dashboard
+Global risk affects **multiple suppliers simultaneously**.
 
 ---
 
-# 11. Current Status
+# 5.5 Unified Risk Feed
+
+This endpoint combines:
+
+* integrated supplier risk
+* global risk impact
+
+---
+
+### Endpoint
+
+```
+GET /api/risk-feed/{supplier_id}
+```
+
+---
+
+### Output
+
+```json
+{
+  "supplier_id": "PLASTIC-19749e1e",
+  "supplier_name": "basf",
+
+  "supplier_risk_score": 32.78,
+  "supplier_risk_level": "Low",
+
+  "global_risk_score": 75,
+
+  "final_risk_score": 39.61,
+  "final_risk_level": "Moderate",
+
+  "risk_scope": ["supplier","distribution"]
+}
+```
+
+This is the **main API used by frontend dashboards**.
+
+---
+
+# 6. Frontend Dashboard Design
+
+The dashboard should include:
+
+---
+
+## 6.1 Supplier Risk Summary
+
+Display:
+
+```
+Supplier Name
+Final Risk Level
+Final Risk Score
+Validity Period
+```
+
+Example:
+
+```
+Supplier: BASF
+Risk Level: MODERATE
+Score: 39.61 / 100
+Valid: Mar 7 – Apr 6
+```
+
+---
+
+## 6.2 Risk Breakdown
+
+Two panels:
+
+### Financial Risk
+
+* risk score
+* risk level
+* explanation
+
+### Inherent Risk
+
+* rolling risk score
+* event count
+* category breakdown
+
+---
+
+## 6.3 Event Timeline
+
+| Date  | Category | Level | Description                   |
+| ----- | -------- | ----- | ----------------------------- |
+| Mar 7 | Safety   | High  | Explosion at polymer facility |
+
+---
+
+# 7. How Route Optimization (RO) Uses SRA
+
+RO consumes:
+
+```
+integrated_risk_score
+risk_scope
+valid_from
+valid_to
+```
+
+Example usage:
+
+```
+total_cost =
+   transport_cost
+ + (integrated_risk_score × risk_weight)
+```
+
+If:
+
+```
+"distribution" ∉ risk_scope
+```
+
+Then no penalty is applied.
+
+---
+
+# 8. How Inventory Management (IM) Uses SRA
+
+IM adjusts safety stock.
+
+Inputs:
+
+```
+integrated_risk_level
+risk_scope
+```
+
+Example:
+
+```
+Low → multiplier 1.0
+Medium → multiplier 1.3
+High → multiplier 1.6
+```
+
+If:
+
+```
+"inventory" ∉ risk_scope
+```
+
+Then safety stock remains unchanged.
+
+---
+
+# 9. Risk Exposure (Future KPI)
+
+Derived metric:
+
+```
+risk_exposure =
+   integrated_risk_score × allocated_volume
+```
+
+This metric is used for:
+
+* analytics dashboards
+* supplier risk comparison
+* supply chain stress testing
+
+---
+
+# 10. Current Implementation Status
 
 Completed:
 
-* Inherent Risk Engine
-* Financial Risk Integration
-* Integrated Risk Engine
-* Duplicate handling
-* Planning-ready normalized scoring
-* Time validity
-* Risk scope support
-* API endpoints
+```
+Inherent Risk Engine
+Financial Risk Model Integration
+Supplier Risk Aggregation
+Integrated Risk Engine
+Global Risk Layer
+Unified Risk Feed API
+SQLite persistence
+Duplicate event protection
+```
 
-In Progress:
+Future Enhancements:
 
-* Global Risk Event Layer
-* Multi-supplier event handling
+```
+automated news ingestion
+multi-supplier event detection
+real-time alerting
+risk trend analytics
+```
 
 ---
 
-# 12. Final System Goal
+# 11. Final System Goal
 
-SRA provides:
+SRA transforms risk from **static reporting** into **real-time supply chain intelligence**.
 
-* Unified supplier risk score
-* Explainable breakdown
-* Time-aware planning signal
-* Cross-module integration capability
+The system provides:
 
-It transforms risk from reporting into a structured planning intelligence layer.
+* unified supplier risk scoring
+* explainable AI risk detection
+* time-aware planning signals
+* integration with optimization and inventory modules
+
+It acts as the **risk intelligence layer for the entire supply chain platform**.
 
 ---
