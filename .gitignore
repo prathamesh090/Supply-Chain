@@ -44,5 +44,6 @@ __pycache__/
 
 Backend/plastic_inherent_risk/plastic_risk.db
 
-# ML model artifacts
-Backend/plastic_inherent_risk/model/
+# ML model artifacts (ignore model weights but keep README)
+Backend/plastic_inherent_risk/model/*
+!Backend/plastic_inherent_risk/model/README.md
