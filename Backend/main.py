@@ -22,6 +22,10 @@ from plastic_inherent_risk.database import init_db
 from risk_integration.router import router as integrated_risk_router
 from risk_global.router import router as global_risk_router
 from risk_feed.router import router as risk_feed_router
+from plastic_inherent_risk.event_router import router as risk_event_router
+from plastic_inherent_risk.news_simulator import start_news_simulator
+import threading
+from risk_global.event_loader import load_global_events
 
 try:
     from supplier_risk import router as supplier_router
@@ -88,6 +92,13 @@ if PLASTIC_INHERENT_RISK_AVAILABLE:
     print("✓ Plastic inherent risk routes registered")
 else:
     print("✗ Plastic inherent risk routes not available")
+
+# Risk Event Monitoring Router
+try:
+    app.include_router(risk_event_router)
+    print("✓ Risk event monitoring routes registered")
+except Exception as e:
+    print(f"✗ Risk event monitoring routes not available: {e}")
 
 # Integrated Risk Router
 try:
@@ -1012,8 +1023,11 @@ async def startup_event():
     init_database()
 
     # Initialize Plastic Inherent Risk SQLite DB
-    init_db() # this is actually done by me only. everything except the financial SRA in the whole SRA is my work.
+    init_db() 
     
+    load_global_events()
+    print("✓ Global geopolitical events loaded")
+
     # Create uploads directory
     uploads_dir = Path("uploads")
     uploads_dir.mkdir(exist_ok=True)
@@ -1025,6 +1039,17 @@ async def startup_event():
     if not df_foreign.empty:
         sample_foreign = df_foreign.iloc[0]
         logger.info(f"Sample Foreign company: {sample_foreign['company_name']} - Country: {sample_foreign['country']}")
+
+    # Start real-time news simulator
+    try:
+        news_thread = threading.Thread(
+            target=start_news_simulator,
+            daemon=True
+        )
+        news_thread.start()
+        logger.info("✓ News simulation engine running")
+    except Exception as e:
+        logger.error(f"✗ News simulator failed to start: {e}")
     
 # Start server when running this file directly
 # At the bottom of main.py, change this:

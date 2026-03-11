@@ -79,6 +79,25 @@ def init_db():
         );
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS risk_event_history (
+
+            event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            supplier_id TEXT,
+
+            event_text TEXT NOT NULL,
+
+            category TEXT NOT NULL,
+            risk_level TEXT NOT NULL,
+            risk_score REAL NOT NULL,
+
+            source TEXT DEFAULT 'news',
+
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
     conn.commit()
 
     # -------------------------
