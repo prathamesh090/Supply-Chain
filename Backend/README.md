@@ -228,6 +228,16 @@ http://localhost:8000/docs
 
 ---
 
+# Quick API Test
+
+After starting the backend you can verify the system using:
+
+curl http://localhost:8000/
+
+To test the full Supplier Risk Assessment workflow using terminal commands, see:
+
+Backend/docs/SRA_API_REFERENCE.md
+
 # Key API Endpoints
 
 ### Integrated Supplier Risk

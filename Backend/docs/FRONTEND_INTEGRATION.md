@@ -1,99 +1,113 @@
 # Frontend Integration Guide for Supplier Risk Assessment (SRA)
 
-This document explains how the frontend application should interact with the Supplier Risk Assessment backend APIs to display risk insights, monitoring dashboards, and supplier analytics.
+## 1. Purpose
 
-The frontend communicates with the backend using REST APIs exposed by the FastAPI server.
+This document explains how the frontend application interacts with the Supplier Risk Assessment backend.
 
-Base API URL (local development):
+The frontend uses SRA APIs to visualize:
+
+* supplier reliability
+* operational disruptions
+* financial risk
+* geopolitical supply chain risks
+
+The frontend acts as a **monitoring and decision support interface** for supply chain managers.
+
+---
+
+# 2. Base API URL
+
+Local development server:
 
 ```
 http://localhost:8000
 ```
 
+All frontend requests are sent to this backend server.
+
 ---
 
-# 1. Recommended Integration Strategy
+# 3. Core Frontend Data Sources
 
-Frontend applications should avoid calling multiple APIs individually when possible.
+The frontend uses four main APIs.
 
-Instead, the **primary endpoint for supplier risk visualization** is:
+| API                                  | Purpose                         |
+| ------------------------------------ | ------------------------------- |
+| `/api/risk-feed/{supplier_id}`       | Main supplier risk data         |
+| `/api/risk-events/recent`            | Recent operational incidents    |
+| `/api/global-risk`                   | Global supply chain disruptions |
+| `/api/integrated-risk/{supplier_id}` | Detailed supplier risk analysis |
+
+---
+
+# 4. Main Supplier Risk Dashboard
+
+The dashboard shows overall supplier reliability.
+
+Frontend should call:
 
 ```
 GET /api/risk-feed/{supplier_id}
 ```
 
-This endpoint aggregates:
-
-* financial risk
-* inherent operational risk
-* integrated supplier risk
-
 Example request:
 
 ```
-GET http://localhost:8000/api/risk-feed/PLASTIC-19749e1e
+http://localhost:8000/api/risk-feed/PLASTIC-19749e1e
 ```
 
 Example response:
 
 ```json
 {
-  "supplier_id": "PLASTIC-19749e1e",
-  "financial_risk": {
-    "risk_score": 5,
-    "risk_level": "Low"
-  },
-  "inherent_risk": {
-    "rolling_risk_score": 65.5,
-    "risk_level": "Medium",
-    "event_count": 11
-  },
-  "integrated_risk": {
-    "score": 29.2,
-    "level": "Low"
-  }
+ "supplier_id": "PLASTIC-19749e1e",
+ "financial_risk": {
+   "risk_score": 5,
+   "risk_level": "Low"
+ },
+ "inherent_risk": {
+   "rolling_risk_score": 65.5,
+   "risk_level": "Medium",
+   "event_count": 11
+ },
+ "integrated_risk": {
+   "score": 29.2,
+   "level": "Low"
+ }
 }
 ```
 
-This response can power the **supplier risk dashboard**.
-
 ---
 
-# 2. Supplier Risk Dashboard
+# 5. Recommended UI Layout
 
-The main frontend dashboard should visualize supplier risk levels.
-
-Recommended UI components:
-
-### Risk Summary Cards
-
-Display three main metrics:
-
-| Metric           | Source API                     |
-| ---------------- | ------------------------------ |
-| Financial Risk   | `/api/risk-feed/{supplier_id}` |
-| Operational Risk | `/api/risk-feed/{supplier_id}` |
-| Integrated Risk  | `/api/risk-feed/{supplier_id}` |
-
-Example UI layout:
+Example dashboard:
 
 ```
----------------------------------
 Supplier: BASF
----------------------------------
 
-Financial Risk      Low
-Operational Risk    Medium
-Integrated Risk     Low
+Financial Risk     Low
+Operational Risk   Medium
+Integrated Risk    Low
 ```
+
+Recommended visual indicators:
+
+| Risk Level | Color  |
+| ---------- | ------ |
+| Low        | Green  |
+| Medium     | Yellow |
+| High       | Red    |
+
+This allows supply chain managers to quickly identify risky suppliers.
 
 ---
 
-# 3. Operational Incident Feed
+# 6. Operational Incident Feed
 
-The frontend can display recent incidents affecting suppliers.
+Frontend should display recent incidents.
 
-Endpoint:
+API:
 
 ```
 GET /api/risk-events/recent
@@ -103,32 +117,32 @@ Example response:
 
 ```json
 {
-  "events": [
-    {
-      "supplier_id": "PLASTIC-19749e1e",
-      "event_text": "Explosion at BASF polymer production plant",
-      "category": "Safety & Chemical",
-      "risk_level": "High",
-      "created_at": "2026-03-11T17:37:33"
-    }
-  ]
+ "events":[
+   {
+     "supplier_id":"PLASTIC-19749e1e",
+     "event_text":"Explosion at BASF polymer production plant",
+     "risk_level":"High"
+   }
+ ]
 }
 ```
 
 Suggested UI:
 
 ```
-Recent Risk Events
+Recent Incidents
 
-• Explosion at BASF polymer production plant (High Risk)
-• Cooling system failure halts BASF polymer extrusion unit (Medium Risk)
+Explosion at BASF polymer production plant (High Risk)
+Cooling system failure at BASF plant (Medium Risk)
 ```
 
 ---
 
-# 4. Global Risk Monitoring
+# 7. Global Supply Chain Risk Dashboard
 
-To visualize geopolitical or macro supply chain disruptions, the frontend should call:
+Frontend should visualize macro disruptions.
+
+API:
 
 ```
 GET /api/global-risk
@@ -138,14 +152,14 @@ Example response:
 
 ```json
 {
-  "event_count": 3,
-  "events": [
-    {
-      "event_type": "Trade Sanctions",
-      "risk_level": "High",
-      "affected_regions": ["Europe"]
-    }
-  ]
+ "event_count":3,
+ "events":[
+   {
+     "event_type":"Trade Sanctions",
+     "risk_level":"High",
+     "affected_regions":["Europe"]
+   }
+ ]
 }
 ```
 
@@ -154,113 +168,136 @@ Suggested UI:
 ```
 Global Supply Chain Risks
 
-Trade Sanctions affecting Europe
-Regional Conflict in Middle East
-Port Strike in Asia-Pacific
+Trade Sanctions – Europe
+Regional Conflict – Middle East
+Port Strike – Asia-Pacific
 ```
 
 ---
 
-# 5. Supplier Risk Drilldown
+# 8. Supplier Risk Drilldown Page
 
-For detailed risk analysis, the frontend can query the integrated risk endpoint directly.
+Detailed supplier analysis page.
 
-Endpoint:
+API:
 
 ```
 GET /api/integrated-risk/{supplier_id}
 ```
 
-Example usage:
+Frontend can display:
+
+* supplier risk score
+* historical incidents
+* risk trend
+
+Example UI:
 
 ```
-GET /api/integrated-risk/PLASTIC-19749e1e
+Supplier Risk Details
+
+Financial Risk Score: 5
+Operational Risk Score: 65
+Integrated Risk Score: 29
 ```
-
-Suggested UI components:
-
-* supplier risk timeline
-* risk trend chart
-* event breakdown by category
 
 ---
 
-# 6. Data Refresh Strategy
+# 9. Risk Explanation Display
 
-Risk data should be refreshed periodically.
+Risk APIs return explanations describing why a supplier is considered risky.
 
-Recommended polling intervals:
-
-| Data Type          | Refresh Interval |
-| ------------------ | ---------------- |
-| Supplier Risk      | 30 seconds       |
-| Operational Events | 10 seconds       |
-| Global Risk Events | 5 minutes        |
-
-This ensures dashboards remain up-to-date without excessive API traffic.
-
----
-
-# 7. Error Handling
-
-Frontend should handle API failures gracefully.
-
-Example error response:
+Example:
 
 ```json
 {
-  "status": "error",
-  "message": "supplier_not_found"
+ "financial_risk":{
+   "risk_level":"Low",
+   "explanation":"Predicted low financial risk based on financial indicators"
+ }
 }
 ```
 
-Recommended behavior:
+Frontend should display this explanation to improve transparency.
 
-* show fallback UI
-* retry API request
-* notify user if supplier is unavailable
-
----
-
-# 8. Performance Recommendations
-
-To reduce network overhead:
-
-* cache supplier risk responses
-* batch supplier queries if possible
-* avoid frequent polling of global risk events
-
----
-
-# 9. Security Considerations
-
-When deployed in production:
-
-* restrict API access via authentication
-* configure CORS to allow trusted frontend domains
-* validate supplier IDs before sending requests
-
----
-
-# 10. Frontend Architecture Recommendation
-
-A typical frontend integration flow:
+Example UI:
 
 ```
-User selects supplier
-       ↓
-Call /api/risk-feed/{supplier_id}
-       ↓
-Render risk dashboard
-       ↓
-Fetch /api/risk-events/recent
-       ↓
-Display incident timeline
-       ↓
-Fetch /api/global-risk
-       ↓
-Show macro supply chain risks
+Risk Explanation
+
+Financial Risk:
+Predicted low financial risk based on financial indicators.
+
+Operational Risk:
+Recent safety incidents increased risk score.
 ```
 
-This approach provides a complete risk view for each supplier.
+---
+
+# 10. Data Refresh Strategy
+
+Recommended polling intervals:
+
+| Data Type     | Refresh Rate |
+| ------------- | ------------ |
+| Supplier Risk | 30 seconds   |
+| Risk Events   | 10 seconds   |
+| Global Risk   | 5 minutes    |
+
+---
+
+# 11. Supplier Risk Update Flow
+
+Supplier risk automatically updates when new events occur.
+
+Process:
+
+```
+News Event
+↓
+Inherent Risk Engine
+↓
+Event stored in SQLite
+↓
+Supplier risk index updated
+↓
+Integrated risk recalculated
+↓
+Frontend dashboard refresh
+```
+
+This allows the system to detect disruptions **in real time**.
+
+---
+
+# 12. Integration with Other Modules
+
+SRA is connected to two major systems.
+
+### Route Optimization (RO)
+
+RO uses supplier risk scores to:
+
+* avoid high risk suppliers
+* select safer supply routes
+
+API used:
+
+```
+/api/integrated-risk/{supplier_id}
+```
+
+---
+
+### Inventory Management (IM)
+
+IM uses supplier risk to adjust inventory levels.
+
+Example logic:
+
+```
+High supplier risk
+→ increase safety stock
+→ choose alternate supplier
+```
 

@@ -1,8 +1,14 @@
 # Supplier Risk Assessment (SRA) API Reference
 
-This document describes all API endpoints exposed by the Supplier Risk Assessment system. These endpoints are used by the frontend dashboard, Route Optimization (RO), and Inventory Management (IM).
+This document describes all API endpoints exposed by the **Supplier Risk Assessment (SRA)** backend.
 
-All endpoints are served from the FastAPI backend.
+These APIs are consumed by:
+
+* Frontend risk dashboards
+* Route Optimization (RO)
+* Inventory Management (IM)
+
+All endpoints are served through the **FastAPI backend server**.
 
 Base URL (local development):
 
@@ -12,82 +18,73 @@ http://localhost:8000
 
 ---
 
-# 1. Supplier Financial Risk
+# 1. Complete System Testing Guide (Terminal)
 
-## Endpoint
+The following steps allow developers to **fully test the SRA system using only terminal commands**.
 
-```
-GET /api/supplier-risk/{supplier_id}
-```
+This guide demonstrates:
 
-## Description
-
-Returns the financial risk prediction for a supplier using the trained machine learning model.
-
-## Path Parameters
-
-| Parameter   | Type   | Description                |
-| ----------- | ------ | -------------------------- |
-| supplier_id | string | Unique supplier identifier |
-
-Example:
-
-```
-/api/supplier-risk/PLASTIC-19749e1e
-```
-
-## Response
-
-```json
-{
-  "status": "ok",
-  "supplier_name": "basf",
-  "risk_score": 5,
-  "risk_level": "Low",
-  "probabilities": {
-    "Low": 0.82,
-    "Medium": 0.18
-  },
-  "explanation": "Predicted low risk (score: 5.0/100)",
-  "model_type": "financial_operational_xgboost_v1"
-}
-```
-
-## Fields
-
-| Field         | Description                                        |
-| ------------- | -------------------------------------------------- |
-| risk_score    | numeric financial risk score                       |
-| risk_level    | categorical risk classification                    |
-| probabilities | probability distribution of predicted risk classes |
-| explanation   | model explanation                                  |
-| model_type    | ML model used                                      |
+* starting the backend
+* triggering risk events
+* verifying database updates
+* observing supplier risk changes
+* validating integrated risk calculations
 
 ---
 
-# 2. Inherent Risk Event Processing
+## Step 1 — Start Backend Server
 
-## Endpoint
+From the project root run:
 
 ```
-POST /api/plastic-inherent-risk
+python Backend/main.py
 ```
 
-## Description
+Expected output:
 
-Processes an operational event and computes the inherent risk impact on a supplier.
+```
+Uvicorn running on http://0.0.0.0:8000
+```
 
-## Request Body
+API documentation:
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+## Step 2 — Verify Backend Health
+
+Test if the backend is running:
+
+```
+curl http://localhost:8000/
+```
+
+Example response:
 
 ```json
 {
-  "text": "Explosion at BASF polymer production plant"
+  "message": "Company Verification API is running",
+  "status": "healthy",
+  "version": "1.0.0"
 }
 ```
 
-Supplier detection is performed automatically.
+---
 
-## Response
+## Step 3 — Trigger an Operational Risk Event
+
+Send an event describing a disruption affecting a supplier.
+
+```
+curl -X POST http://localhost:8000/api/plastic-inherent-risk \
+-H "Content-Type: application/json" \
+-d '{"text": "Explosion at BASF polymer production plant"}'
+```
+
+Example response:
 
 ```json
 {
@@ -104,34 +101,48 @@ Supplier detection is performed automatically.
 }
 ```
 
-## Fields
-
-| Field               | Description                 |
-| ------------------- | --------------------------- |
-| risk_category       | classified risk category    |
-| risk_level          | severity level              |
-| risk_score          | raw model risk score        |
-| normalized_score    | normalized risk score       |
-| decayed_score       | time-decayed score          |
-| supplier_risk_index | rolling supplier risk score |
+This step runs the **DistilBERT inherent risk classifier**.
 
 ---
 
-# 3. Risk Event Monitoring
+## Step 4 — Verify Event Stored in Database
 
-## Endpoint
+Open the SQLite database:
 
 ```
-GET /api/risk-events/recent
+sqlite3 Backend/plastic_inherent_risk/plastic_risk.db
 ```
 
-## Description
+Check stored events:
 
-Returns recently recorded operational risk events.
+```
+SELECT supplier_id,event_text,risk_level,created_at
+FROM risk_event_history
+ORDER BY created_at DESC
+LIMIT 5;
+```
 
-Used by monitoring dashboards and analytics tools.
+Example result:
 
-## Response
+```
+PLASTIC-19749e1e | Explosion at BASF polymer production plant | High | 2026-03-11
+```
+
+Exit database:
+
+```
+.quit
+```
+
+---
+
+## Step 5 — View Recent Risk Events
+
+```
+curl http://localhost:8000/api/risk-events/recent
+```
+
+Example response:
 
 ```json
 {
@@ -150,7 +161,217 @@ Used by monitoring dashboards and analytics tools.
 
 ---
 
-# 4. Integrated Supplier Risk
+## Step 6 — Check Integrated Supplier Risk
+
+```
+curl http://localhost:8000/api/integrated-risk/PLASTIC-19749e1e
+```
+
+Example response:
+
+```json
+{
+  "integrated_risk_score": 29.2,
+  "integrated_risk_level": "Low"
+}
+```
+
+This endpoint combines:
+
+* Financial risk
+* Inherent risk
+
+---
+
+## Step 7 — View Unified Risk Feed
+
+```
+curl http://localhost:8000/api/risk-feed/PLASTIC-19749e1e
+```
+
+This endpoint aggregates all risk signals used by the **frontend dashboard**.
+
+---
+
+## Step 8 — View Global Supply Chain Risk Events
+
+```
+curl http://localhost:8000/api/global-risk
+```
+
+Example response:
+
+```json
+{
+  "event_count": 3,
+  "events": [
+    {
+      "event_type": "Trade Sanctions",
+      "risk_level": "High"
+    }
+  ]
+}
+```
+
+---
+
+# 2. Supplier Financial Risk
+
+## Endpoint
+
+```
+GET /api/supplier-risk/{supplier_id}
+```
+
+## Purpose
+
+Predicts financial stability of a supplier using the **XGBoost model**.
+
+---
+
+## Example Request
+
+```
+curl http://localhost:8000/api/supplier-risk/PLASTIC-19749e1e
+```
+
+---
+
+## Example Response
+
+```json
+{
+  "status": "ok",
+  "supplier_name": "basf",
+  "risk_score": 5,
+  "risk_level": "Low",
+  "probabilities": {
+    "Low": 0.82,
+    "Medium": 0.18
+  },
+  "explanation": "Predicted low risk (score: 5.0/100)",
+  "model_type": "financial_operational_xgboost_v1"
+}
+```
+
+---
+
+## Edge Cases
+
+### Supplier not found
+
+```json
+{
+  "status": "error",
+  "message": "supplier_not_found"
+}
+```
+
+### Invalid supplier ID
+
+The system validates supplier IDs before computing risk.
+
+---
+
+# 3. Inherent Risk Event Processing
+
+## Endpoint
+
+```
+POST /api/plastic-inherent-risk
+```
+
+## Purpose
+
+Processes unstructured event text using **DistilBERT NLP model**.
+
+Steps performed:
+
+```
+Event Text
+↓
+Supplier detection
+↓
+Risk classification
+↓
+Risk normalization
+↓
+Time decay
+↓
+Database storage
+```
+
+---
+
+## Request
+
+```json
+{
+ "text": "Explosion at BASF polymer production plant"
+}
+```
+
+---
+
+## Response
+
+```json
+{
+ "status": "stored",
+ "result": {
+   "risk_category": "Safety & Chemical",
+   "risk_level": "High",
+   "risk_score": 82,
+   "normalized_score": 76.4,
+   "decayed_score": 74.2
+ },
+ "supplier_risk_index": 63.5
+}
+```
+
+---
+
+## Edge Cases
+
+### Supplier not detected in text
+
+```json
+{
+ "status": "no_supplier_found"
+}
+```
+
+### Duplicate event
+
+If the same event text already exists:
+
+```
+status: exists
+```
+
+The system prevents duplicate entries.
+
+---
+
+# 4. Risk Event Monitoring
+
+## Endpoint
+
+```
+GET /api/risk-events/recent
+```
+
+Returns the most recent operational risk events stored in SQLite.
+
+Used for:
+
+* monitoring dashboards
+* risk analytics
+* incident timeline visualization
+
+---
+
+# 5. Integrated Supplier Risk
 
 ## Endpoint
 
@@ -158,41 +379,34 @@ Used by monitoring dashboards and analytics tools.
 GET /api/integrated-risk/{supplier_id}
 ```
 
-## Description
+Computes combined supplier risk.
 
-Computes the combined risk score for a supplier using financial and operational risk signals.
+---
 
-## Response
-
-```json
-{
-  "status": "ok",
-  "supplier_id": "PLASTIC-19749e1e",
-  "supplier_name": "basf",
-  "financial_risk": { ... },
-  "inherent_risk": {
-    "rolling_risk_score": 65.5,
-    "risk_level": "Medium",
-    "event_count": 11
-  },
-  "integrated_risk_score": 29.2,
-  "integrated_risk_level": "Low",
-  "valid_from": "2026-03-11",
-  "valid_to": "2026-04-10"
-}
-```
-
-## Integration Formula
+## Formula
 
 ```
-Integrated Risk =
-    0.6 × Financial Risk
-  + 0.4 × Inherent Risk
+IntegratedRisk =
+0.6 × FinancialRisk
++
+0.4 × InherentRisk
 ```
 
 ---
 
-# 5. Global Risk Events
+## Example Response
+
+```json
+{
+ "supplier_id": "PLASTIC-19749e1e",
+ "integrated_risk_score": 29.2,
+ "integrated_risk_level": "Low"
+}
+```
+
+---
+
+# 6. Global Risk Events
 
 ## Endpoint
 
@@ -200,42 +414,17 @@ Integrated Risk =
 GET /api/global-risk
 ```
 
-## Description
+Returns macro supply chain disruptions.
 
-Returns currently active geopolitical or macro supply chain risk events.
+Examples:
 
-## Response
-
-```json
-{
-  "status": "ok",
-  "event_count": 3,
-  "events": [
-    {
-      "event_id": "GEO-001",
-      "event_type": "Trade Sanctions",
-      "risk_score": 85,
-      "risk_level": "High",
-      "affected_regions": ["Europe"],
-      "affects": ["suppliers", "routes"],
-      "valid_from": "2026-03-01",
-      "valid_to": "2026-05-01"
-    }
-  ]
-}
-```
-
-## Fields
-
-| Field            | Description                      |
-| ---------------- | -------------------------------- |
-| event_type       | type of geopolitical disruption  |
-| affected_regions | impacted geographic regions      |
-| affects          | impacted supply chain components |
+* trade sanctions
+* regional conflicts
+* port strikes
 
 ---
 
-# 6. Unified Risk Feed
+# 7. Unified Risk Feed
 
 ## Endpoint
 
@@ -243,55 +432,31 @@ Returns currently active geopolitical or macro supply chain risk events.
 GET /api/risk-feed/{supplier_id}
 ```
 
-## Description
-
-Provides a unified risk response combining multiple risk modules.
-
 Recommended endpoint for frontend dashboards.
 
-## Response
+Aggregates:
 
-```json
-{
-  "supplier_id": "PLASTIC-19749e1e",
-  "financial_risk": {...},
-  "inherent_risk": {...},
-  "integrated_risk": {
-    "score": 29.2,
-    "level": "Low"
-  }
-}
+```
+financial risk
+inherent risk
+integrated risk
 ```
 
 ---
 
-# 7. Health Check
-
-## Endpoint
+# 8. Health Check
 
 ```
 GET /
-```
-
-## Response
-
-```json
-{
-  "message": "Company Verification API is running",
-  "status": "healthy",
-  "version": "1.0.0"
-}
 ```
 
 Used to verify backend availability.
 
 ---
 
-# 8. API Consumption Strategy
+# 9. Recommended API Usage
 
-Recommended usage for applications.
-
-## Frontend Dashboard
+### Frontend Dashboard
 
 Use:
 
@@ -299,13 +464,9 @@ Use:
 /api/risk-feed/{supplier_id}
 ```
 
-Display:
+---
 
-* financial risk
-* operational risk
-* integrated risk
-
-## Route Optimization (RO)
+### Route Optimization
 
 Use:
 
@@ -313,9 +474,11 @@ Use:
 /api/integrated-risk/{supplier_id}
 ```
 
-to evaluate supplier reliability when computing routes.
+to evaluate supplier reliability.
 
-## Inventory Management (IM)
+---
+
+### Inventory Management
 
 Use:
 
@@ -323,5 +486,4 @@ Use:
 /api/integrated-risk/{supplier_id}
 ```
 
-to adjust safety stock levels and supplier selection.
-
+to adjust safety stock levels.
