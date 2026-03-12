@@ -29,7 +29,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
     location.pathname.includes('/sign-in') ||
     location.pathname.includes('/sign-up') ||
     location.pathname.includes('/verify-company') ||
-    location.pathname.includes('/dashboard');
+    location.pathname.includes('/dashboard') ||
+    location.pathname.includes('/supplier-risk');
 
   if (isHiddenPage) {
     return <>{children}</>;
