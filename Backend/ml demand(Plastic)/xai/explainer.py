@@ -1,1276 +1,731 @@
-# # xai/explainer.py - COMPLETELY DYNAMIC VERSION
-# import numpy as np
-# import pandas as pd
-# import shap
-# from io import BytesIO
-# import base64
-# import matplotlib
-# matplotlib.use('Agg')
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-
-# class XAIExplainer:
-#     def __init__(self, models, feature_names):
-#         self.models = models
-#         self.feature_names = feature_names
-#         self.shap_explainer = None
-#         self.column_mappings = self._create_column_mappings()
-        
-#     def _create_column_mappings(self):
-#         """Dynamically create mappings based on actual feature names"""
-#         mappings = {}
-        
-#         # Map feature names to human-readable labels
-#         for feature in self.feature_names:
-#             if 'sale_amount' in feature:
-#                 mappings[feature] = 'Product Price'
-#             elif 'discount' in feature:
-#                 mappings[feature] = 'Discount Rate'
-#             elif 'Plastic_Type' in feature:
-#                 mappings[feature] = 'Material Type'
-#             elif 'product_type' in feature:
-#                 mappings[feature] = 'Product Category'
-#             elif 'application_segment' in feature:
-#                 mappings[feature] = 'Market Application'
-#             elif 'precpt' in feature:
-#                 mappings[feature] = 'Weather Conditions'
-#             elif 'holiday_flag' in feature:
-#                 mappings[feature] = 'Holiday Effect'
-#             elif 'is_weekend' in feature:
-#                 mappings[feature] = 'Weekend Effect'
-#             elif 'quantity' in feature:
-#                 mappings[feature] = 'Historical Sales'
-#             elif 'lag_' in feature:
-#                 mappings[feature] = f'Previous Day {feature.split("_")[1]}'
-#             elif 'rolling_' in feature:
-#                 mappings[feature] = f'{feature.split("_")[1]}-Day Average'
-#             elif 'sale_per_hour' in feature:
-#                 mappings[feature] = 'Sales Rate per Hour'
-#             elif 'effective_price' in feature:
-#                 mappings[feature] = 'Final Price'
-#             elif 'price_discount' in feature:
-#                 mappings[feature] = 'Price-Discount Strategy'
-#             elif 'cluster' in feature:
-#                 mappings[feature] = 'Product Grouping'
-#             elif 'percentile' in feature:
-#                 mappings[feature] = 'Market Position'
-#             elif 'competitor' in feature:
-#                 mappings[feature] = 'Competitive Pressure'
-#             else:
-#                 # Default: humanize the feature name
-#                 mappings[feature] = feature.replace('_', ' ').title()
-        
-#         return mappings
-    
-#     def explain(self, input_data, feature_names, row_data=None):
-#         """Generate dynamic XAI explanations based on actual data"""
-#         model_for_explanation = self._get_model_for_explanation()
-        
-#         if model_for_explanation is None:
-#             return {"error": "No valid model available for explanation"}
-        
-#         # Get SHAP explanation
-#         shap_explanation = self.shap_explanation(input_data, feature_names, model_for_explanation)
-        
-#         # Generate insights based on actual data values
-#         manufacturing_insights = self.generate_dynamic_insights(shap_explanation, row_data)
-#         supply_recommendations = self.generate_dynamic_recommendations(shap_explanation, row_data)
-        
-#         explanations = {
-#             "manufacturing_insights": manufacturing_insights,
-#             "supply_recommendations": supply_recommendations,
-#             "product_context": self._get_product_context(row_data) if row_data else {},
-#             "demand_indicators": self.get_dynamic_indicators(row_data),
-#             "risk_assessment": self.assess_dynamic_risk(row_data),
-#             "feature_analysis": self.analyze_feature_impacts(shap_explanation),
-#             "data_quality": self.assess_data_quality(row_data)
-#         }
-        
-#         return explanations
-    
-#     def generate_dynamic_insights(self, shap_explanation, row_data):
-#         """Generate insights dynamically based on actual data values"""
-#         insights = []
-        
-#         if not row_data:
-#             return [{"text": "Upload data to generate insights", "type": "neutral", "icon": "📊"}]
-        
-#         if 'error' in shap_explanation:
-#             return [{"text": "Analyzing your data patterns...", "type": "neutral", "icon": "🔍"}]
-        
-#         # Extract actual values from the data
-#         values = self._extract_values(row_data)
-        
-#         # Generate insights based on actual values, not hardcoded thresholds
-#         insights.extend(self._generate_price_insights(values))
-#         insights.extend(self._generate_demand_insights(values))
-#         insights.extend(self._generate_market_insights(values))
-#         insights.extend(self._generate_temporal_insights(values))
-        
-#         # Add SHAP-based insights if available
-#         if 'error' not in shap_explanation:
-#             insights.extend(self._generate_shap_insights(shap_explanation, values))
-        
-#         # Ensure we have meaningful insights
-#         if not insights:
-#             insights.append({
-#                 "text": "Review your product data for specific opportunities",
-#                 "type": "neutral", 
-#                 "icon": "📈",
-#                 "impact": "medium"
-#             })
-        
-#         return insights[:6]  # Return top 6 insights
-    
-#     def _extract_values(self, row_data):
-#         """Extract and normalize values from row data"""
-#         values = {}
-        
-#         # Your actual column names
-#         columns = [
-#             'product_id', 'sale_amount', 'discount', 'holiday_flag', 'precpt',
-#             'Plastic_Type', 'quantity', 'year', 'month', 'day', 'week_of_year',
-#             'is_weekend', 'lag_1', 'rolling_7', 'sale_per_hour', 'product_type',
-#             'application_segment'
-#         ]
-        
-#         for col in columns:
-#             values[col] = row_data.get(col, None)
-        
-#         # Calculate derived values
-#         values['effective_price'] = values.get('sale_amount', 0) * (1 - values.get('discount', 0))
-#         values['revenue'] = values.get('sale_amount', 0) * values.get('quantity', 0)
-        
-#         return values
-    
-#     def _generate_price_insights(self, values):
-#         """Generate price-related insights based on actual values"""
-#         insights = []
-#         sale_amount = values.get('sale_amount', 0)
-#         discount = values.get('discount', 0)
-        
-#         if sale_amount > 0:
-#             # Dynamic thresholds based on typical ranges
-#             if sale_amount > 150:
-#                 insights.append({
-#                     "text": "Premium pricing segment indicates high-value product positioning",
-#                     "type": "positive",
-#                     "icon": "💰",
-#                     "impact": "high"
-#                 })
-#             elif sale_amount < 50:
-#                 insights.append({
-#                     "text": "Competitive pricing may drive volume in value segments",
-#                     "type": "info",
-#                     "icon": "📊",
-#                     "impact": "medium"
-#                 })
-            
-#             if discount > 0.2:
-#                 insights.append({
-#                     "text": "Significant discounting may stimulate demand but impact margins",
-#                     "type": "warning",
-#                     "icon": "🎯",
-#                     "impact": "medium"
-#                 })
-#             elif discount < 0.05:
-#                 insights.append({
-#                     "text": "Minimal discounting suggests strong brand positioning",
-#                     "type": "positive",
-#                     "icon": "🛡️",
-#                     "impact": "high"
-#                 })
-        
-#         return insights
-    
-#     def _generate_demand_insights(self, values):
-#         """Generate demand-related insights"""
-#         insights = []
-#         quantity = values.get('quantity', 0)
-#         rolling_avg = values.get('rolling_7', 0)
-        
-#         if quantity > 0:
-#             # Dynamic demand analysis
-#             if quantity > 1000:
-#                 insights.append({
-#                     "text": "High volume product with significant market demand",
-#                     "type": "positive",
-#                     "icon": "📈",
-#                     "impact": "high"
-#                 })
-#             elif quantity > 500:
-#                 insights.append({
-#                     "text": "Solid demand levels supporting current production",
-#                     "type": "positive",
-#                     "icon": "✅",
-#                     "impact": "medium"
-#                 })
-            
-#             # Trend analysis
-#             if rolling_avg > 0 and quantity > rolling_avg * 1.2:
-#                 insights.append({
-#                     "text": "Current demand exceeds 7-day average trend",
-#                     "type": "positive",
-#                     "icon": "🚀",
-#                     "impact": "high"
-#                 })
-        
-#         return insights
-    
-#     def _generate_market_insights(self, values):
-#         """Generate market and segment insights"""
-#         insights = []
-        
-#         plastic_type = values.get('Plastic_Type', '')
-#         product_type = values.get('product_type', '')
-#         application = values.get('application_segment', '')
-        
-#         # Material-specific insights
-#         if plastic_type:
-#             material_context = {
-#                 'PET': "widely used in packaging and beverages",
-#                 'HDPE': "preferred for durable containers and industrial use",
-#                 'PP': "versatile material with automotive and consumer applications",
-#                 'PVC': "common in construction and infrastructure projects"
-#             }
-            
-#             if plastic_type in material_context:
-#                 insights.append({
-#                     "text": f"{plastic_type} is {material_context[plastic_type]}",
-#                     "type": "info",
-#                     "icon": "🔬",
-#                     "impact": "medium"
-#                 })
-        
-#         # Application segment insights
-#         if application:
-#             segment_context = {
-#                 'Packaging': "subject to retail and consumer demand patterns",
-#                 'Industrial': "driven by B2B contracts and industrial activity",
-#                 'Consumer': "influenced by seasonal and promotional activities",
-#                 'Construction': "dependent on infrastructure and building cycles"
-#             }
-            
-#             if application in segment_context:
-#                 insights.append({
-#                     "text": f"{application} segment {segment_context[application]}",
-#                     "type": "info",
-#                     "icon": "🏢",
-#                     "impact": "medium"
-#                 })
-        
-#         return insights
-    
-#     def _generate_temporal_insights(self, values):
-#         """Generate time-based insights"""
-#         insights = []
-        
-#         month = values.get('month', None)
-#         is_weekend = values.get('is_weekend', 0)
-#         holiday_flag = values.get('holiday_flag', 0)
-        
-#         # Seasonal patterns
-#         if month in [4, 5, 6]:  # Spring months
-#             insights.append({
-#                 "text": "Spring season typically shows increased packaging demand",
-#                 "type": "info",
-#                 "icon": "🌱",
-#                 "impact": "medium"
-#             })
-#         elif month in [10, 11, 12]:  # Fall/Winter
-#             insights.append({
-#                 "text": "Year-end period may affect industrial demand patterns",
-#                 "type": "info",
-#                 "icon": "🎄",
-#                 "impact": "medium"
-#             })
-        
-#         # Weekend/holiday effects
-#         if is_weekend == 1:
-#             insights.append({
-#                 "text": "Weekend data may reflect different consumption patterns",
-#                 "type": "info",
-#                 "icon": "📅",
-#                 "impact": "low"
-#             })
-        
-#         if holiday_flag == 1:
-#             insights.append({
-#                 "text": "Holiday period can influence retail and packaging demand",
-#                 "type": "info",
-#                 "icon": "🎉",
-#                 "impact": "medium"
-#             })
-        
-#         return insights
-    
-#     def _generate_shap_insights(self, shap_explanation, values):
-#         """Generate insights from SHAP values"""
-#         insights = []
-        
-#         # Get top influential features
-#         feature_impacts = []
-#         for i, feature in enumerate(shap_explanation.get('feature_names', [])):
-#             impact = shap_explanation['shap_values'][i]
-#             feature_impacts.append((feature, impact))
-        
-#         # Sort by absolute impact
-#         feature_impacts.sort(key=lambda x: abs(x[1]), reverse=True)
-        
-#         # Create insights from top features
-#         for feature, impact in feature_impacts[:3]:
-#             human_name = self.column_mappings.get(feature, feature)
-            
-#             if abs(impact) > 0.1:  # Significant impact threshold
-#                 direction = "increasing" if impact > 0 else "reducing"
-#                 insights.append({
-#                     "text": f"{human_name} is {direction} predicted demand",
-#                     "type": "positive" if impact > 0 else "warning",
-#                     "icon": "📊",
-#                     "impact": "high" if abs(impact) > 0.2 else "medium"
-#                 })
-        
-#         return insights
-    
-#     def generate_dynamic_recommendations(self, shap_explanation, row_data):
-#         """Generate recommendations based on actual data patterns"""
-#         recommendations = []
-        
-#         if not row_data:
-#             return [{
-#                 "text": "Upload your product data for specific recommendations",
-#                 "type": "neutral",
-#                 "icon": "📥",
-#                 "action": "data_upload"
-#             }]
-        
-#         values = self._extract_values(row_data)
-        
-#         # Production recommendations based on volume
-#         quantity = values.get('quantity', 0)
-#         if quantity > 800:
-#             recommendations.append({
-#                 "text": "Consider scaling production to meet high demand levels",
-#                 "type": "urgent",
-#                 "icon": "🏭",
-#                 "action": "scale_production"
-#             })
-#         elif quantity > 400:
-#             recommendations.append({
-#                 "text": "Maintain current production with quality focus",
-#                 "type": "stable",
-#                 "icon": "⚖️",
-#                 "action": "maintain_production"
-#             })
-        
-#         # Inventory recommendations based on material type
-#         plastic_type = values.get('Plastic_Type', '')
-#         if plastic_type:
-#             recommendations.append({
-#                 "text": f"Monitor {plastic_type} raw material market trends",
-#                 "type": "planning",
-#                 "icon": "📦",
-#                 "action": "inventory_management"
-#             })
-        
-#         # Pricing strategy recommendations
-#         discount = values.get('discount', 0)
-#         if discount > 0.15:
-#             recommendations.append({
-#                 "text": "Review discount strategy for optimal margin balance",
-#                 "type": "optimization",
-#                 "icon": "💳",
-#                 "action": "pricing_review"
-#             })
-        
-#         # Market segment recommendations
-#         application = values.get('application_segment', '')
-#         if application:
-#             recommendations.append({
-#                 "text": f"Analyze {application} segment growth opportunities",
-#                 "type": "strategic",
-#                 "icon": "🎯",
-#                 "action": "market_analysis"
-#             })
-        
-#         return recommendations[:4]
-    
-#     def get_dynamic_indicators(self, row_data):
-#         """Get dynamic indicators based on actual data"""
-#         if not row_data:
-#             return {}
-        
-#         values = self._extract_values(row_data)
-#         indicators = {}
-        
-#         # Price positioning (dynamic ranges)
-#         sale_amount = values.get('sale_amount', 0)
-#         if sale_amount > 120:
-#             indicators['price_position'] = 'premium'
-#         elif sale_amount > 70:
-#             indicators['price_position'] = 'mid-market'
-#         else:
-#             indicators['price_position'] = 'value'
-        
-#         # Volume classification
-#         quantity = values.get('quantity', 0)
-#         if quantity > 750:
-#             indicators['volume_tier'] = 'high-volume'
-#         elif quantity > 350:
-#             indicators['volume_tier'] = 'medium-volume'
-#         else:
-#             indicators['volume_tier'] = 'low-volume'
-        
-#         # Market timing
-#         month = values.get('month', None)
-#         if month in [3, 4, 5]:
-#             indicators['seasonal_trend'] = 'spring-demand'
-#         elif month in [9, 10, 11]:
-#             indicators['seasonal_trend'] = 'autumn-demand'
-#         else:
-#             indicators['seasonal_trend'] = 'standard-demand'
-        
-#         return indicators
-    
-#     def assess_dynamic_risk(self, row_data):
-#         """Dynamically assess risks based on data patterns"""
-#         risks = []
-        
-#         if not row_data:
-#             return {
-#                 "overall_risk": "unknown",
-#                 "risk_factors": [{"factor": "Data Required", "risk_level": "unknown", "description": "Upload data for risk assessment"}],
-#                 "confidence": "low"
-#             }
-        
-#         values = self._extract_values(row_data)
-        
-#         # Demand volatility risk
-#         quantity = values.get('quantity', 0)
-#         rolling_avg = values.get('rolling_7', 0)
-        
-#         if rolling_avg > 0 and abs(quantity - rolling_avg) / rolling_avg > 0.3:
-#             risks.append({
-#                 "factor": "Demand Volatility",
-#                 "risk_level": "medium",
-#                 "description": "Current demand significantly differs from recent average",
-#                 "mitigation": "Implement flexible production planning"
-#             })
-        
-#         # Price competition risk
-#         discount = values.get('discount', 0)
-#         if discount > 0.25:
-#             risks.append({
-#                 "factor": "Price Competition",
-#                 "risk_level": "medium",
-#                 "description": "High discount rates may indicate market pressure",
-#                 "mitigation": "Review competitive positioning and value proposition"
-#             })
-        
-#         # General risks
-#         risks.extend([
-#             {
-#                 "factor": "Supply Chain",
-#                 "risk_level": "low",
-#                 "description": "Standard supply chain monitoring recommended",
-#                 "mitigation": "Maintain supplier relationships and safety stock"
-#             },
-#             {
-#                 "factor": "Market Conditions",
-#                 "risk_level": "low",
-#                 "description": "Monitor industry trends and economic indicators",
-#                 "mitigation": "Regular market analysis and scenario planning"
-#             }
-#         ])
-        
-#         return {
-#             "overall_risk": "low" if len([r for r in risks if r['risk_level'] == 'high']) == 0 else "medium",
-#             "risk_factors": risks[:3],
-#             "confidence": "high"
-#         }
-    
-#     def assess_data_quality(self, row_data):
-#         """Assess the quality and completeness of provided data"""
-#         if not row_data:
-#             return {"score": 0, "issues": ["No data provided"], "status": "poor"}
-        
-#         # Check for critical fields
-#         critical_fields = ['product_id', 'sale_amount', 'quantity', 'Plastic_Type']
-#         missing_fields = [field for field in critical_fields if field not in row_data or row_data[field] is None]
-        
-#         # Check data validity
-#         issues = []
-#         if missing_fields:
-#             issues.append(f"Missing critical fields: {', '.join(missing_fields)}")
-        
-#         sale_amount = row_data.get('sale_amount', 0)
-#         if sale_amount <= 0:
-#             issues.append("Invalid sale amount")
-        
-#         quantity = row_data.get('quantity', 0)
-#         if quantity < 0:
-#             issues.append("Invalid quantity")
-        
-#         # Calculate quality score
-#         score = max(0, 100 - len(issues) * 20)
-#         status = "excellent" if score >= 80 else "good" if score >= 60 else "fair" if score >= 40 else "poor"
-        
-#         return {
-#             "score": score,
-#             "issues": issues,
-#             "status": status,
-#             "message": "Data quality good" if score >= 60 else "Review data quality"
-#         }
-    
-#     def analyze_feature_impacts(self, shap_explanation):
-#         """Analyze feature impacts dynamically"""
-#         if 'error' in shap_explanation:
-#             return {"error": "Unable to analyze feature impacts"}
-        
-#         feature_impacts = []
-#         for i, feature in enumerate(shap_explanation.get('feature_names', [])):
-#             impact = shap_explanation['shap_values'][i]
-#             human_name = self.column_mappings.get(feature, feature)
-            
-#             feature_impacts.append({
-#                 "feature": human_name,
-#                 "technical_name": feature,
-#                 "impact": impact,
-#                 "direction": "increases" if impact > 0 else "decreases",
-#                 "magnitude": abs(impact),
-#                 "significance": "high" if abs(impact) > 0.2 else "medium" if abs(impact) > 0.1 else "low"
-#             })
-        
-#         # Sort by impact magnitude
-#         feature_impacts.sort(key=lambda x: x['magnitude'], reverse=True)
-        
-#         return {
-#             "top_positive": [f for f in feature_impacts if f['impact'] > 0][:3],
-#             "top_negative": [f for f in feature_impacts if f['impact'] < 0][:3],
-#             "most_influential": feature_impacts[:5],
-#             "total_features": len(feature_impacts)
-#         }
-    
-#     def _get_product_context(self, row_data):
-#         """Extract product context dynamically"""
-#         if not row_data:
-#             return {}
-        
-#         return {
-#             "product_id": row_data.get('product_id', 'Unknown'),
-#             "plastic_type": row_data.get('Plastic_Type', 'Unknown'),
-#             "product_type": row_data.get('product_type', 'Unknown'),
-#             "application": row_data.get('application_segment', 'Unknown'),
-#             "current_price": f"${row_data.get('sale_amount', 0):.2f}",
-#             "discount_rate": f"{(row_data.get('discount', 0) * 100):.1f}%",
-#             "historical_volume": row_data.get('quantity', 0),
-#             "data_quality": self.assess_data_quality(row_data)['status']
-#         }
-    
-#     def _get_model_for_explanation(self):
-#         """Get the best model for explanations"""
-#         if not self.models:
-#             return None
-        
-#         preferred_models = ['xgboost', 'lightgbm', 'random_forest']
-#         for model_name in preferred_models:
-#             if model_name in self.models:
-#                 return self.models[model_name]
-        
-#         return list(self.models.values())[0]
-    
-#     def shap_explanation(self, input_data, feature_names, model):
-#         """Generate SHAP values explanation"""
-#         try:
-#             if hasattr(input_data, 'iloc'):
-#                 input_data_values = input_data.values
-#             else:
-#                 input_data_values = input_data.reshape(1, -1) if len(input_data.shape) == 1 else input_data
-            
-#             explainer = shap.TreeExplainer(model)
-#             shap_values = explainer.shap_values(input_data_values)
-            
-#             if isinstance(shap_values, list):
-#                 shap_values = shap_values[0]
-            
-#             if hasattr(shap_values, 'shape') and len(shap_values.shape) > 1:
-#                 shap_values = shap_values[0]
-            
-#             return {
-#                 "shap_values": shap_values.tolist() if hasattr(shap_values, 'tolist') else [float(shap_values)],
-#                 "base_value": float(explainer.expected_value),
-#                 "feature_names": feature_names
-#             }
-#         except Exception as e:
-#             print(f"SHAP explanation error: {e}")
-#             return {"error": f"SHAP explanation failed: {str(e)}"}
-
-# xai/explainer.py - IMPROVED VERSION
 import numpy as np
 import pandas as pd
-import shap
-from io import BytesIO
-import base64
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import seaborn as sns
+import logging
+from typing import Dict, List, Any, Optional
 
-class XAIExplainer:
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class EnhancedXAIExplainer:
+    """
+    Enhanced XAI Explainer with improved manufacturing insights, 
+    supply chain recommendations, and demand indicators
+    """
+    
     def __init__(self, models, feature_names):
         self.models = models
         self.feature_names = feature_names
-        self.shap_explainer = None
-        
-    def explain(self, input_data, feature_names, row_data=None):
-        """Generate explanations based on actual product data and SHAP analysis"""
-        print(f"Starting explanation for product: {row_data.get('product_id', 'Unknown') if row_data else 'Unknown'}")
-        
-        # Get model for explanation
-        model_for_explanation = self._get_model_for_explanation()
-        if model_for_explanation is None:
-            return {"error": "No valid model available for explanation"}
-        
-        # Get SHAP explanation
-        shap_explanation = self.shap_explanation(input_data, feature_names, model_for_explanation)
-        
-        # Generate explanations based on actual data
-        manufacturing_insights = self.generate_product_specific_insights(shap_explanation, row_data)
-        supply_recommendations = self.generate_actionable_recommendations(shap_explanation, row_data)
-        feature_analysis = self.analyze_feature_impacts_detailed(shap_explanation, row_data)
-        
-        explanations = {
-            "manufacturing_insights": manufacturing_insights,
-            "supply_recommendations": supply_recommendations,
-            "product_context": self._get_detailed_product_context(row_data),
-            "demand_indicators": self.get_demand_indicators(row_data),
-            "risk_assessment": self.assess_comprehensive_risk(row_data, shap_explanation),
-            "feature_analysis": feature_analysis,
-            "prediction_quality": self.assess_prediction_quality(shap_explanation),
-            "unique_product_characteristics": self.identify_unique_factors(row_data, shap_explanation)
+        self.column_mappings = self._create_column_mappings()
+        logger.info("✅ Enhanced XAI Explainer initialized")
+    
+    def _create_column_mappings(self) -> Dict[str, str]:
+        """Create human-readable feature mappings"""
+        mappings = {
+            'sale_amount': '💰 Product Price',
+            'discount': '🏷️ Discount Rate',
+            'Plastic_Type': '🔬 Material Type',
+            'plastic_type': '🔬 Material Type',
+            'product_type': '📦 Product Category',
+            'category': '📦 Product Category',
+            'application_segment': '🏭 Market Application',
+            'precpt': '☔ Weather Conditions',
+            'holiday_flag': '🎉 Holiday Effect',
+            'is_weekend': '📅 Weekend Effect',
+            'quantity': '📊 Historical Sales Volume',
+            'sale_per_hour': '⏱️ Sales Rate per Hour',
+            'effective_price': '💵 Final Price',
+            'price_discount': '📈 Price-Discount Strategy',
+            'cluster': '🎯 Product Grouping',
+            'percentile': '📍 Market Position',
+            'competitor': '🏆 Competitive Pressure'
         }
         
-        print(f"Generated {len(manufacturing_insights)} insights and {len(supply_recommendations)} recommendations")
-        return explanations
+        # Auto-map remaining features
+        for feature in self.feature_names:
+            if feature not in mappings:
+                human_readable = feature.replace('_', ' ').title()
+                mappings[feature] = human_readable
+        
+        return mappings
     
-    def generate_product_specific_insights(self, shap_explanation, row_data):
-        """Generate insights based on actual product characteristics"""
+    def explain(self, processed_data: pd.DataFrame, feature_names: List[str], 
+                row_data: Optional[Dict] = None) -> Dict[str, Any]:
+        """
+        Generate comprehensive XAI explanation
+        
+        Returns:
+        {
+            'manufacturing_insights': List of actionable manufacturing insights,
+            'supply_recommendations': List of supply chain recommendations,
+            'demand_indicators': List of demand pattern indicators,
+            'risk_assessment': Risk factors and mitigation strategies,
+            'product_context': Product metadata and context,
+            'feature_importance': Top influencing factors,
+            'data_quality': Data quality assessment,
+            'forecast_summary': Summary of the forecast
+        }
+        """
+        try:
+            logger.info("🔍 Generating comprehensive XAI explanation...")
+            
+            explanation = {
+                "manufacturing_insights": self._generate_manufacturing_insights(processed_data, row_data),
+                "supply_recommendations": self._generate_supply_recommendations(processed_data, row_data),
+                "demand_indicators": self._generate_demand_indicators(processed_data, row_data),
+                "risk_assessment": self._generate_risk_assessment(processed_data, row_data),
+                "product_context": self._get_product_context(row_data),
+                "feature_importance": self._analyze_feature_importance(processed_data, row_data),
+                "data_quality": self._assess_data_quality(row_data),
+                "forecast_summary": self._generate_forecast_summary(processed_data, row_data)
+            }
+            
+            logger.info("✅ XAI explanation generated successfully")
+            return explanation
+            
+        except Exception as e:
+            logger.error(f"❌ Error generating explanation: {e}")
+            return self._get_fallback_explanation(row_data)
+    
+    def _generate_manufacturing_insights(self, processed_data: pd.DataFrame, 
+                                        row_data: Optional[Dict]) -> List[Dict[str, Any]]:
+        """Generate actionable manufacturing insights"""
         insights = []
         
-        if not row_data:
-            return [{"text": "Upload product data to generate specific insights", "type": "neutral", "icon": "📊"}]
+        if row_data is None:
+            return insights
         
-        # Extract product details
-        product_id = str(row_data.get('product_id', 'Unknown'))
-        plastic_type = str(row_data.get('Plastic_Type', 'Unknown'))
-        sale_amount = float(row_data.get('sale_amount', 0))
-        discount = float(row_data.get('discount', 0))
-        quantity = int(row_data.get('quantity', 0))
-        product_type = str(row_data.get('product_type', 'Unknown'))
-        application = str(row_data.get('application_segment', 'Unknown'))
-        
-        # Price analysis insights
-        if sale_amount > 0:
-            if sale_amount >= 120:
+        try:
+            # Insight 1: Material Type Optimization
+            plastic_type = row_data.get('Plastic_Type') or row_data.get('plastic_type')
+            if plastic_type:
+                if plastic_type in ['PET', 'HDPE', 'LDPE']:
+                    insights.append({
+                        "type": "optimization",
+                        "icon": "⚙️",
+                        "title": "Material Efficiency",
+                        "description": f"{plastic_type} is optimal for cost-effective production",
+                        "action": "Maintain current material sourcing strategy",
+                        "impact": "medium"
+                    })
+                elif plastic_type == 'PP':
+                    insights.append({
+                        "type": "optimization",
+                        "icon": "♻️",
+                        "title": "Sustainability Focus",
+                        "description": "Polypropylene offers excellent recyclability",
+                        "action": "Promote eco-friendly product positioning",
+                        "impact": "high"
+                    })
+            
+            # Insight 2: Production Capacity Planning
+            sale_amount = float(row_data.get('sale_amount', 0))
+            quantity = float(row_data.get('quantity', 0))
+            
+            if sale_amount > 0 and quantity > 0:
+                unit_price = sale_amount / quantity if quantity > 0 else 0
+                if sale_amount > 10000:
+                    insights.append({
+                        "type": "capacity",
+                        "icon": "🏭",
+                        "title": "High Volume Production",
+                        "description": f"High sales volume ({sale_amount:.2f}) indicates strong demand",
+                        "action": "Increase production capacity and ensure raw material availability",
+                        "impact": "high"
+                    })
+                elif sale_amount < 500:
+                    insights.append({
+                        "type": "capacity",
+                        "icon": "📉",
+                        "title": "Low Volume Production",
+                        "description": "Lower sales volume suggests niche or specialty products",
+                        "action": "Focus on quality control and specialized manufacturing",
+                        "impact": "medium"
+                    })
+            
+            # Insight 3: Pricing Strategy Impact
+            discount = float(row_data.get('discount', 0))
+            if discount > 0.2:
                 insights.append({
-                    "text": f"Product {product_id} commands premium pricing at ${sale_amount:.2f}, indicating strong value proposition",
-                    "type": "positive",
-                    "icon": "💰",
+                    "type": "pricing",
+                    "icon": "💸",
+                    "title": "Aggressive Discounting",
+                    "description": f"Discount rate of {discount*100:.1f}% indicates price competition",
+                    "action": "Review profit margins and production efficiency",
+                    "impact": "medium"
+                })
+            
+            # Insight 4: Seasonal/Temporal Impact
+            if row_data.get('holiday_flag') == 1:
+                insights.append({
+                    "type": "temporal",
+                    "icon": "🎊",
+                    "title": "Holiday Season Impact",
+                    "description": "Increased demand during holiday periods",
+                    "action": "Pre-plan inventory buildup 4-6 weeks before major holidays",
                     "impact": "high"
                 })
-            elif sale_amount <= 60:
+            
+            if row_data.get('is_weekend') == 1:
                 insights.append({
-                    "text": f"Competitive pricing at ${sale_amount:.2f} positions {product_id} for volume growth",
-                    "type": "info",
-                    "icon": "📈",
+                    "type": "temporal",
+                    "icon": "🗓️",
+                    "title": "Weekend Surge Pattern",
+                    "description": "Weekends show different demand patterns",
+                    "action": "Adjust shift schedules to match weekend demand patterns",
+                    "impact": "low"
+                })
+            
+            # Insight 5: Weather Sensitivity
+            precpt = float(row_data.get('precpt', 0))
+            if precpt > 0.5:
+                insights.append({
+                    "type": "environmental",
+                    "icon": "☔",
+                    "title": "Weather-Dependent Demand",
+                    "description": "High precipitation may affect product demand/logistics",
+                    "action": "Implement weather-responsive inventory management",
                     "impact": "medium"
                 })
-            else:
-                insights.append({
-                    "text": f"Mid-tier pricing at ${sale_amount:.2f} balances accessibility and profitability",
-                    "type": "neutral",
-                    "icon": "⚖️",
-                    "impact": "medium"
-                })
+            
+        except Exception as e:
+            logger.warning(f"Error generating manufacturing insights: {e}")
         
-        # Discount strategy insights
-        if discount > 0.20:
+        # Fallback insights
+        if not insights:
             insights.append({
-                "text": f"High discount rate of {discount*100:.1f}% may indicate competitive pressure or inventory clearance",
-                "type": "warning",
-                "icon": "⚠️",
-                "impact": "medium"
+                "type": "neutral",
+                "icon": "📊",
+                "title": "Standard Operations",
+                "description": "Data shows standard operating conditions",
+                "action": "Continue with current production strategy",
+                "impact": "low"
             })
-        elif discount > 0.10:
-            insights.append({
-                "text": f"Moderate discount of {discount*100:.1f}% supports market penetration strategy",
-                "type": "info",
-                "icon": "🎯",
-                "impact": "medium"
-            })
-        elif discount < 0.05:
-            insights.append({
-                "text": f"Minimal discounting ({discount*100:.1f}%) suggests strong brand equity",
-                "type": "positive",
-                "icon": "🛡️",
-                "impact": "high"
-            })
-        
-        # Volume analysis
-        if quantity >= 800:
-            insights.append({
-                "text": f"High volume product ({quantity} units) demonstrates strong market demand",
-                "type": "positive",
-                "icon": "🚀",
-                "impact": "high"
-            })
-        elif quantity >= 400:
-            insights.append({
-                "text": f"Solid performance with {quantity} units indicating stable market position",
-                "type": "positive",
-                "icon": "✅",
-                "impact": "medium"
-            })
-        else:
-            insights.append({
-                "text": f"Lower volume ({quantity} units) suggests niche market or growth opportunity",
-                "type": "info",
-                "icon": "🌱",
-                "impact": "medium"
-            })
-        
-        # Material-specific insights
-        material_insights = {
-            'PET': {
-                "text": f"PET material benefits from growing sustainability focus in packaging sector",
-                "type": "positive",
-                "icon": "♻️"
-            },
-            'HDPE': {
-                "text": f"HDPE offers durability advantages in industrial and container applications",
-                "type": "info",
-                "icon": "🔧"
-            },
-            'PP': {
-                "text": f"Polypropylene provides versatility across automotive and consumer markets",
-                "type": "info",
-                "icon": "🔄"
-            },
-            'PVC': {
-                "text": f"PVC maintains cost-effectiveness in construction and infrastructure projects",
-                "type": "info",
-                "icon": "🏗️"
-            }
-        }
-        
-        if plastic_type in material_insights:
-            material_insight = material_insights[plastic_type]
-            insights.append({
-                **material_insight,
-                "impact": "medium"
-            })
-        
-        # Application segment insights
-        if 'Packaging' in application:
-            insights.append({
-                "text": "Packaging segment benefits from consistent consumer demand and e-commerce growth",
-                "type": "positive",
-                "icon": "📦",
-                "impact": "medium"
-            })
-        elif 'Industrial' in application:
-            insights.append({
-                "text": "Industrial segment offers stable B2B relationships and contract-based demand",
-                "type": "stable",
-                "icon": "🏭",
-                "impact": "medium"
-            })
-        elif 'Consumer' in application:
-            insights.append({
-                "text": "Consumer segment sensitive to economic trends and seasonal variations",
-                "type": "info",
-                "icon": "👥",
-                "impact": "medium"
-            })
-        
-        # SHAP-based insights
-        if 'error' not in shap_explanation:
-            shap_insights = self._generate_shap_based_insights(shap_explanation, row_data)
-            insights.extend(shap_insights)
-        
-        # Ensure we have sufficient insights
-        if len(insights) < 4:
-            insights.append({
-                "text": f"Monitor market trends for {plastic_type} products in {application} segment",
-                "type": "planning",
-                "icon": "📋",
-                "impact": "medium"
-            })
-        
-        return insights[:6]  # Return top 6 most relevant insights
-    
-    def _generate_shap_based_insights(self, shap_explanation, row_data):
-        """Generate insights based on SHAP feature importance"""
-        insights = []
-        
-        if 'shap_values' not in shap_explanation:
-            return insights
-        
-        # Get feature importance
-        shap_values = shap_explanation['shap_values']
-        feature_names = shap_explanation.get('feature_names', [])
-        
-        if len(shap_values) != len(feature_names):
-            return insights
-        
-        # Create feature impact pairs
-        feature_impacts = list(zip(feature_names, shap_values))
-        feature_impacts.sort(key=lambda x: abs(x[1]), reverse=True)
-        
-        # Generate insights for top features
-        for feature_name, impact in feature_impacts[:3]:
-            if abs(impact) > 0.1:  # Only significant impacts
-                readable_name = self._make_feature_readable(feature_name)
-                direction = "positively" if impact > 0 else "negatively"
-                
-                insights.append({
-                    "text": f"{readable_name} is {direction} influencing demand prediction (impact: {abs(impact):.2f})",
-                    "type": "positive" if impact > 0 else "warning",
-                    "icon": "📊",
-                    "impact": "high" if abs(impact) > 0.2 else "medium"
-                })
         
         return insights
     
-    def generate_actionable_recommendations(self, shap_explanation, row_data):
-        """Generate specific, actionable recommendations"""
+    def _generate_supply_recommendations(self, processed_data: pd.DataFrame, 
+                                        row_data: Optional[Dict]) -> List[Dict[str, Any]]:
+        """Generate supply chain recommendations"""
         recommendations = []
         
-        if not row_data:
-            return [{
-                "text": "Upload product data to receive specific recommendations",
-                "type": "neutral",
-                "icon": "📥",
-                "action": "data_upload"
-            }]
+        if row_data is None:
+            return recommendations
         
-        product_id = str(row_data.get('product_id', 'Unknown'))
-        quantity = int(row_data.get('quantity', 0))
-        sale_amount = float(row_data.get('sale_amount', 0))
-        discount = float(row_data.get('discount', 0))
-        plastic_type = str(row_data.get('Plastic_Type', 'Unknown'))
-        
-        # Production recommendations
-        if quantity >= 800:
-            recommendations.append({
-                "text": f"Scale production capacity for {product_id} to meet high demand levels",
-                "type": "urgent",
-                "icon": "🏭",
-                "action": "increase_production"
-            })
-        elif quantity >= 400:
-            recommendations.append({
-                "text": f"Maintain current production levels for {product_id} while optimizing efficiency",
-                "type": "stable",
-                "icon": "⚖️",
-                "action": "optimize_current"
-            })
-        else:
-            recommendations.append({
-                "text": f"Evaluate market expansion opportunities for {product_id}",
-                "type": "strategic",
-                "icon": "🎯",
-                "action": "market_development"
-            })
-        
-        # Pricing recommendations
-        if discount > 0.15:
-            recommendations.append({
-                "text": f"Review discount strategy for {product_id} to optimize profit margins",
-                "type": "review",
-                "icon": "💰",
-                "action": "pricing_analysis"
-            })
-        
-        if sale_amount > 100:
-            recommendations.append({
-                "text": f"Leverage premium positioning of {product_id} for brand strengthening",
-                "type": "strategic",
-                "icon": "💎",
-                "action": "brand_development"
-            })
-        
-        # Material-specific recommendations
-        material_recommendations = {
-            'PET': "Monitor PET resin prices and explore recycling partnerships",
-            'HDPE': "Secure HDPE supply chains for consistent quality delivery",
-            'PP': "Diversify PP sourcing to manage price volatility",
-            'PVC': "Plan PVC inventory around construction cycle demands"
-        }
-        
-        if plastic_type in material_recommendations:
-            recommendations.append({
-                "text": material_recommendations[plastic_type],
-                "type": "procurement",
-                "icon": "📦",
-                "action": "supply_chain"
-            })
-        
-        return recommendations[:4]
-    
-    def analyze_feature_impacts_detailed(self, shap_explanation, row_data):
-        """Provide detailed feature impact analysis"""
-        if 'error' in shap_explanation:
-            return {"error": "Unable to analyze feature impacts", "reason": shap_explanation.get('error')}
-        
-        if 'shap_values' not in shap_explanation or 'feature_names' not in shap_explanation:
-            return {"error": "Incomplete SHAP explanation data"}
-        
-        shap_values = shap_explanation['shap_values']
-        feature_names = shap_explanation['feature_names']
-        
-        if len(shap_values) != len(feature_names):
-            return {"error": "Mismatch between SHAP values and feature names"}
-        
-        # Create detailed feature analysis
-        feature_impacts = []
-        for i, (feature_name, impact) in enumerate(zip(feature_names, shap_values)):
-            readable_name = self._make_feature_readable(feature_name)
-            actual_value = self._get_feature_value(feature_name, row_data)
-            
-            feature_impacts.append({
-                "feature": readable_name,
-                "technical_name": feature_name,
-                "impact": float(impact),
-                "actual_value": actual_value,
-                "direction": "increases" if impact > 0 else "decreases",
-                "magnitude": abs(float(impact)),
-                "significance": self._classify_impact_significance(abs(float(impact))),
-                "interpretation": self._interpret_feature_impact(feature_name, impact, actual_value)
-            })
-        
-        # Sort by impact magnitude
-        feature_impacts.sort(key=lambda x: x['magnitude'], reverse=True)
-        
-        return {
-            "top_positive": [f for f in feature_impacts if f['impact'] > 0][:3],
-            "top_negative": [f for f in feature_impacts if f['impact'] < 0][:3],
-            "most_influential": feature_impacts[:5],
-            "total_features": len(feature_impacts),
-            "analysis_summary": f"Analyzed {len(feature_impacts)} features with {len([f for f in feature_impacts if f['significance'] == 'high'])} high-impact factors"
-        }
-    
-    def _get_feature_value(self, feature_name, row_data):
-        """Get the actual value of a feature from row data"""
-        if not row_data:
-            return "N/A"
-        
-        # Direct mapping
-        if feature_name in row_data:
-            value = row_data[feature_name]
-            if isinstance(value, (int, float)):
-                return f"{value:.2f}" if isinstance(value, float) else str(value)
-            return str(value)
-        
-        # Pattern matching for encoded features
-        if 'sale_amount' in feature_name.lower():
-            return f"${row_data.get('sale_amount', 0):.2f}"
-        elif 'discount' in feature_name.lower():
-            return f"{row_data.get('discount', 0)*100:.1f}%"
-        elif 'quantity' in feature_name.lower():
-            return f"{row_data.get('quantity', 0)} units"
-        elif 'plastic' in feature_name.lower():
-            return str(row_data.get('Plastic_Type', 'Unknown'))
-        
-        return "N/A"
-    
-    def _interpret_feature_impact(self, feature_name, impact, actual_value):
-        """Create meaningful interpretation of feature impact"""
-        direction = "driving up" if impact > 0 else "reducing"
-        
-        interpretations = {
-            'sale_amount': f"Price level ({actual_value}) is {direction} demand expectations",
-            'discount': f"Discount rate ({actual_value}) is {direction} predicted sales",
-            'quantity': f"Historical volume ({actual_value}) is {direction} future demand",
-            'Plastic_Type': f"Material choice ({actual_value}) is {direction} market appeal",
-            'product_type': f"Product category is {direction} demand prediction",
-            'application_segment': f"Market segment is {direction} forecasted demand"
-        }
-        
-        # Find matching interpretation
-        for key, interpretation in interpretations.items():
-            if key.lower() in feature_name.lower():
-                return interpretation
-        
-        return f"Factor is {direction} demand prediction"
-    
-    def _classify_impact_significance(self, magnitude):
-        """Classify impact magnitude"""
-        if magnitude > 0.2:
-            return "high"
-        elif magnitude > 0.1:
-            return "medium"
-        else:
-            return "low"
-    
-    def assess_comprehensive_risk(self, row_data, shap_explanation):
-        """Comprehensive risk assessment"""
-        risks = []
-        
-        if not row_data:
-            return {
-                "overall_risk": "unknown",
-                "risk_factors": [{"factor": "Data Required", "risk_level": "unknown", "description": "Upload data for assessment"}],
-                "confidence": "low"
-            }
-        
-        quantity = int(row_data.get('quantity', 0))
-        discount = float(row_data.get('discount', 0))
-        sale_amount = float(row_data.get('sale_amount', 0))
-        plastic_type = str(row_data.get('Plastic_Type', 'Unknown'))
-        
-        # Volume-based risks
-        if quantity > 1000:
-            risks.append({
-                "factor": "High Volume Sustainability",
-                "risk_level": "medium",
-                "description": f"Very high volume ({quantity} units) may be challenging to maintain",
-                "mitigation": "Diversify customer base and strengthen supply chain resilience"
-            })
-        elif quantity < 200:
-            risks.append({
-                "factor": "Low Market Penetration",
-                "risk_level": "medium",
-                "description": f"Low volume ({quantity} units) indicates limited market reach",
-                "mitigation": "Develop targeted marketing and distribution expansion"
-            })
-        
-        # Pricing risks
-        if discount > 0.25:
-            risks.append({
-                "factor": "Margin Compression",
-                "risk_level": "high",
-                "description": f"High discount rate ({discount*100:.1f}%) threatens profitability",
-                "mitigation": "Reassess pricing strategy and value proposition"
-            })
-        
-        if sale_amount > 150:
-            risks.append({
-                "factor": "Price Sensitivity",
-                "risk_level": "low",
-                "description": f"Premium pricing (${sale_amount:.2f}) may limit addressable market",
-                "mitigation": "Monitor competitive positioning and customer value perception"
-            })
-        
-        # Material-specific risks
-        material_risks = {
-            'PET': {"factor": "Recycling Regulations", "risk_level": "medium", "description": "Increasing sustainability requirements may impact costs"},
-            'HDPE': {"factor": "Supply Chain Stability", "risk_level": "low", "description": "Generally stable supply with multiple sources"},
-            'PP': {"factor": "Price Volatility", "risk_level": "medium", "description": "PP prices subject to oil market fluctuations"},
-            'PVC': {"factor": "Environmental Concerns", "risk_level": "medium", "description": "Growing environmental restrictions on PVC usage"}
-        }
-        
-        if plastic_type in material_risks:
-            risk_info = material_risks[plastic_type]
-            risks.append({
-                **risk_info,
-                "mitigation": f"Monitor {plastic_type} market trends and regulatory developments"
-            })
-        
-        # Calculate overall risk
-        risk_levels = [r['risk_level'] for r in risks]
-        if 'high' in risk_levels:
-            overall_risk = "high"
-        elif risk_levels.count('medium') > 1:
-            overall_risk = "medium"
-        else:
-            overall_risk = "low"
-        
-        return {
-            "overall_risk": overall_risk,
-            "risk_factors": risks[:4],
-            "confidence": "high",
-            "assessment_basis": f"Based on {len(risks)} identified risk factors"
-        }
-    
-    def _get_detailed_product_context(self, row_data):
-        """Extract comprehensive product context"""
-        if not row_data:
-            return {}
-        
-        return {
-            "product_id": str(row_data.get('product_id', 'Unknown')),
-            "plastic_type": str(row_data.get('Plastic_Type', 'Unknown')),
-            "product_type": str(row_data.get('product_type', 'Unknown')),
-            "application": str(row_data.get('application_segment', 'Unknown')),
-            "current_price": f"${float(row_data.get('sale_amount', 0)):.2f}",
-            "discount_rate": f"{float(row_data.get('discount', 0))*100:.1f}%",
-            "historical_volume": int(row_data.get('quantity', 0)),
-            "effective_price": f"${float(row_data.get('sale_amount', 0)) * (1 - float(row_data.get('discount', 0))):.2f}",
-            "revenue_potential": f"${float(row_data.get('sale_amount', 0)) * int(row_data.get('quantity', 0)):.2f}"
-        }
-    
-    def get_demand_indicators(self, row_data):
-        """Generate demand indicators"""
-        if not row_data:
-            return {}
-        
-        sale_amount = float(row_data.get('sale_amount', 0))
-        quantity = int(row_data.get('quantity', 0))
-        
-        return {
-            "price_tier": "premium" if sale_amount > 120 else "mid-market" if sale_amount > 70 else "value",
-            "volume_category": "high" if quantity > 750 else "medium" if quantity > 350 else "low",
-            "market_position": f"{row_data.get('Plastic_Type', 'Unknown')} in {row_data.get('application_segment', 'Unknown')}"
-        }
-    
-    def assess_prediction_quality(self, shap_explanation):
-        """Assess the quality of the prediction"""
-        if 'error' in shap_explanation:
-            return {"quality": "poor", "reason": "SHAP analysis failed"}
-        
-        if 'shap_values' not in shap_explanation:
-            return {"quality": "poor", "reason": "No SHAP values available"}
-        
-        shap_values = shap_explanation['shap_values']
-        total_impact = sum(abs(val) for val in shap_values)
-        
-        if total_impact > 1.0:
-            return {"quality": "high", "total_impact": total_impact, "confidence": "strong feature influences"}
-        elif total_impact > 0.5:
-            return {"quality": "medium", "total_impact": total_impact, "confidence": "moderate feature influences"}
-        else:
-            return {"quality": "low", "total_impact": total_impact, "confidence": "weak feature influences"}
-    
-    def identify_unique_factors(self, row_data, shap_explanation):
-        """Identify unique characteristics of this product"""
-        if not row_data:
-            return {"characteristics": ["Analysis pending - upload product data"]}
-        
-        factors = []
-        sale_amount = float(row_data.get('sale_amount', 0))
-        quantity = int(row_data.get('quantity', 0))
-        discount = float(row_data.get('discount', 0))
-        plastic_type = str(row_data.get('Plastic_Type', 'Unknown'))
-        
-        # Price-volume combinations
-        if sale_amount > 120 and quantity > 600:
-            factors.append("High-value product with strong volume performance - premium market leader")
-        elif sale_amount < 60 and quantity > 500:
-            factors.append("High-volume value product - cost leadership strategy")
-        elif sale_amount > 100 and quantity < 300:
-            factors.append("Premium niche product - specialized market focus")
-        
-        # Material-application combinations
-        app_segment = str(row_data.get('application_segment', ''))
-        if plastic_type == 'PET' and 'Packaging' in app_segment:
-            factors.append("PET packaging product - positioned for sustainability trends")
-        elif plastic_type == 'HDPE' and 'Industrial' in app_segment:
-            factors.append("Industrial HDPE product - durability-focused positioning")
-        
-        # Discount strategy analysis
-        if discount < 0.05:
-            factors.append("Premium brand positioning with minimal price competition")
-        elif discount > 0.20:
-            factors.append("Aggressive pricing strategy - market share focus")
-        
-        if not factors:
-            factors.append("Balanced product with standard market characteristics")
-        
-        return {
-            "characteristics": factors,
-            "market_positioning": f"{plastic_type} product in {app_segment} segment",
-            "competitive_stance": "premium" if sale_amount > 100 else "value" if sale_amount < 70 else "competitive"
-        }
-    
-    def _make_feature_readable(self, feature_name):
-        """Convert technical feature names to readable format"""
-        mappings = {
-            'sale_amount': 'Product Price',
-            'discount': 'Discount Rate',
-            'quantity': 'Historical Volume',
-            'Plastic_Type': 'Material Type',
-            'product_type': 'Product Category',
-            'application_segment': 'Market Application',
-            'precpt': 'Weather Impact',
-            'holiday_flag': 'Holiday Effect',
-            'is_weekend': 'Weekend Pattern'
-        }
-        
-        for key, readable in mappings.items():
-            if key in feature_name:
-                return readable
-        
-        return feature_name.replace('_', ' ').title()
-    
-    def _get_model_for_explanation(self):
-        """Get the best available model for explanations"""
-        if not self.models:
-            return None
-        
-        # Prefer tree-based models for SHAP
-        preferred_models = ['xgboost', 'lightgbm', 'random_forest', 'decision_tree']
-        for model_name in preferred_models:
-            if model_name in self.models:
-                print(f"Using {model_name} for explanations")
-                return self.models[model_name]
-        
-        # Fall back to any available model
-        model_name = list(self.models.keys())[0]
-        print(f"Using fallback model {model_name} for explanations")
-        return self.models[model_name]
-    
-    def shap_explanation(self, input_data, feature_names, model):
-        """Generate SHAP values with improved error handling"""
         try:
-            print("Starting SHAP explanation...")
+            # Recommendation 1: Inventory Management
+            predicted_demand = float(row_data.get('predicted_demand', 0)) if 'predicted_demand' in row_data else 0
+            quantity = float(row_data.get('quantity', 0))
             
-            # Prepare input data
-            if hasattr(input_data, 'iloc'):
-                input_data_values = input_data.values
-                print(f"Input data shape from DataFrame: {input_data_values.shape}")
+            if predicted_demand > quantity * 1.2:
+                recommendations.append({
+                    "type": "inventory",
+                    "icon": "📦",
+                    "title": "Increase Inventory Buffer",
+                    "priority": "high",
+                    "description": f"Predicted demand exceeds current stock levels",
+                    "action": "Increase safety stock by 25-30%",
+                    "estimated_cost": "medium",
+                    "timeline": "Immediate"
+                })
+            elif predicted_demand < quantity * 0.5:
+                recommendations.append({
+                    "type": "inventory",
+                    "icon": "📉",
+                    "title": "Reduce Inventory Holding",
+                    "priority": "medium",
+                    "description": "Excess inventory risk detected",
+                    "action": "Reduce purchase orders and clear excess stock",
+                    "estimated_cost": "low",
+                    "timeline": "1-2 weeks"
+                })
             else:
-                input_data_values = np.array(input_data).reshape(1, -1) if np.array(input_data).ndim == 1 else np.array(input_data)
-                print(f"Input data shape from array: {input_data_values.shape}")
+                recommendations.append({
+                    "type": "inventory",
+                    "icon": "⚖️",
+                    "title": "Optimize Inventory Levels",
+                    "priority": "low",
+                    "description": "Current inventory aligns with predicted demand",
+                    "action": "Maintain current stock management strategy",
+                    "estimated_cost": "none",
+                    "timeline": "Ongoing"
+                })
             
-            # Create SHAP explainer
-            explainer = shap.TreeExplainer(model)
-            print("Created SHAP TreeExplainer")
+            # Recommendation 2: Supplier Diversification
+            plastic_type = row_data.get('Plastic_Type') or row_data.get('plastic_type')
+            if plastic_type in ['PET', 'HDPE']:
+                recommendations.append({
+                    "type": "sourcing",
+                    "icon": "🌍",
+                    "title": "Diversify Material Suppliers",
+                    "priority": "medium",
+                    "description": "Critical materials may have limited supplier base",
+                    "action": "Establish relationships with 2-3 backup suppliers",
+                    "estimated_cost": "medium",
+                    "timeline": "2-4 weeks"
+                })
             
-            # Generate SHAP values
-            shap_values = explainer.shap_values(input_data_values)
-            print(f"Generated SHAP values, type: {type(shap_values)}")
+            # Recommendation 3: Lead Time Management
+            discount = float(row_data.get('discount', 0))
+            if discount > 0.15:
+                recommendations.append({
+                    "type": "sourcing",
+                    "icon": "⏰",
+                    "title": "Optimize Lead Times",
+                    "priority": "medium",
+                    "description": "High discounts may indicate urgent ordering",
+                    "action": "Negotiate longer lead times for volume discounts",
+                    "estimated_cost": "savings",
+                    "timeline": "Ongoing"
+                })
             
-            # Handle different SHAP value formats
-            if isinstance(shap_values, list):
-                shap_values = shap_values[0] if len(shap_values) > 0 else shap_values
-                print("Used first element from SHAP values list")
+            # Recommendation 4: Quality Assurance
+            sale_amount = float(row_data.get('sale_amount', 0))
+            if sale_amount > 5000:
+                recommendations.append({
+                    "type": "quality",
+                    "icon": "✓",
+                    "title": "Enhanced QA Process",
+                    "priority": "high",
+                    "description": "High-value products require rigorous quality control",
+                    "action": "Implement 100% inspection protocol",
+                    "estimated_cost": "medium",
+                    "timeline": "Immediate"
+                })
             
-            if hasattr(shap_values, 'shape') and len(shap_values.shape) > 1:
-                shap_values = shap_values[0]
-                print("Used first row from SHAP values array")
-            
-            # Convert to list
-            if hasattr(shap_values, 'tolist'):
-                shap_values_list = shap_values.tolist()
-            else:
-                shap_values_list = [float(shap_values)] if np.isscalar(shap_values) else list(shap_values)
-            
-            print(f"Final SHAP values length: {len(shap_values_list)}")
-            print(f"Feature names length: {len(feature_names)}")
-            
-            return {
-                "shap_values": shap_values_list,
-                "base_value": float(explainer.expected_value),
-                "feature_names": feature_names,
-                "success": True
-            }
+            # Recommendation 5: Logistics Planning
+            holiday_flag = row_data.get('holiday_flag', 0)
+            if holiday_flag == 1:
+                recommendations.append({
+                    "type": "logistics",
+                    "icon": "🚚",
+                    "title": "Holiday Shipping Preparation",
+                    "priority": "high",
+                    "description": "Holiday periods have peak logistics demands",
+                    "action": "Pre-book shipping capacity 30 days in advance",
+                    "estimated_cost": "medium",
+                    "timeline": "1-2 months ahead"
+                })
             
         except Exception as e:
-            print(f"SHAP explanation error: {str(e)}")
-            import traceback
-            print(f"Full error trace: {traceback.format_exc()}")
-            return {
-                "error": f"SHAP explanation failed: {str(e)}",
-                "success": False
+            logger.warning(f"Error generating supply recommendations: {e}")
+        
+        # Fallback recommendation
+        if not recommendations:
+            recommendations.append({
+                "type": "general",
+                "icon": "📋",
+                "title": "Standard Supply Chain",
+                "priority": "low",
+                "description": "Current supply chain processes are adequate",
+                "action": "Maintain existing supplier relationships",
+                "estimated_cost": "none",
+                "timeline": "Ongoing"
+            })
+        
+        return recommendations
+    
+    def _generate_demand_indicators(self, processed_data: pd.DataFrame, 
+                                   row_data: Optional[Dict]) -> List[Dict[str, Any]]:
+        """Generate demand pattern indicators"""
+        indicators = []
+        
+        if row_data is None:
+            return indicators
+        
+        try:
+            # Indicator 1: Trend Direction
+            predicted_demand = float(row_data.get('predicted_demand', 0)) if 'predicted_demand' in row_data else 0
+            quantity = float(row_data.get('quantity', 0))
+            
+            trend = "📈 Upward" if predicted_demand > quantity * 1.1 else "📉 Downward" if predicted_demand < quantity * 0.9 else "➡️ Stable"
+            
+            indicators.append({
+                "indicator": "Demand Trend",
+                "value": trend,
+                "assessment": "positive" if "Up" in trend else "negative" if "Down" in trend else "neutral",
+                "insight": f"Predicted demand trending {'upward' if 'Up' in trend else 'downward' if 'Down' in trend else 'stable'} compared to historical average"
+            })
+            
+            # Indicator 2: Volatility Assessment
+            sale_amount = float(row_data.get('sale_amount', 0))
+            discount = float(row_data.get('discount', 0))
+            volatility_score = min(10, abs(discount * 100) + (5 if sale_amount > 10000 else 0))
+            
+            vol_level = "High 📊" if volatility_score > 7 else "Medium 📊" if volatility_score > 4 else "Low 📊"
+            indicators.append({
+                "indicator": "Demand Volatility",
+                "value": vol_level,
+                "assessment": "warning" if volatility_score > 7 else "neutral",
+                "insight": f"Volatility score: {volatility_score:.1f}/10 - {'Consider buffer stock' if volatility_score > 7 else 'Stable demand patterns'}"
+            })
+            
+            # Indicator 3: Seasonality
+            month = row_data.get('month', 0)
+            is_peak_season = month in [10, 11, 12, 3, 4]
+            
+            indicators.append({
+                "indicator": "Seasonal Factor",
+                "value": "🎊 Peak Season" if is_peak_season else "🌤️ Off-Season",
+                "assessment": "positive" if is_peak_season else "neutral",
+                "insight": "Peak season detected - higher margins and volumes expected" if is_peak_season else "Off-season conditions - focus on cost optimization"
+            })
+            
+            # Indicator 4: Market Position
+            percentile = row_data.get('percentile', 50)
+            if percentile > 75:
+                position = "🥇 Premium"
+            elif percentile > 50:
+                position = "🥈 Mid-tier"
+            else:
+                position = "🥉 Value"
+            
+            indicators.append({
+                "indicator": "Market Position",
+                "value": position,
+                "assessment": "positive" if "Premium" in position else "neutral",
+                "insight": f"Product positioned in {position.split()[1].lower()} segment"
+            })
+            
+            # Indicator 5: Growth Potential
+            product_type = row_data.get('product_type') or row_data.get('category', 'Standard')
+            plastic_type = row_data.get('Plastic_Type') or row_data.get('plastic_type', 'Unknown')
+            
+            growth_products = ['Bottle', 'Container', 'Packaging']
+            is_growth = product_type in growth_products
+            
+            indicators.append({
+                "indicator": "Growth Potential",
+                "value": "📈 High" if is_growth else "➡️ Moderate",
+                "assessment": "positive" if is_growth else "neutral",
+                "insight": f"{product_type} in {plastic_type} category {'shows growth trajectory' if is_growth else 'is stable'}"
+            })
+            
+        except Exception as e:
+            logger.warning(f"Error generating demand indicators: {e}")
+        
+        return indicators
+    
+    def _generate_risk_assessment(self, processed_data: pd.DataFrame, 
+                                 row_data: Optional[Dict]) -> Dict[str, Any]:
+        """Generate comprehensive risk assessment"""
+        risk_data = {
+            "overall_risk_level": "medium",
+            "risk_score": 50,
+            "risks": [],
+            "mitigation_strategies": []
+        }
+        
+        if row_data is None:
+            return risk_data
+        
+        try:
+            risk_score = 0
+            
+            # Risk 1: Supply Uncertainty
+            discount = float(row_data.get('discount', 0))
+            if discount > 0.2:
+                risk_score += 15
+                risk_data["risks"].append({
+                    "name": "Supply Uncertainty",
+                    "level": "medium",
+                    "description": "High discount rates indicate volatile pricing",
+                    "probability": "medium",
+                    "impact": "medium"
+                })
+                risk_data["mitigation_strategies"].append({
+                    "strategy": "Lock in long-term supplier contracts at fixed prices",
+                    "cost": "medium",
+                    "implementation_time": "2-3 weeks"
+                })
+            
+            # Risk 2: Demand Volatility
+            predicted_demand = float(row_data.get('predicted_demand', 0)) if 'predicted_demand' in row_data else 0
+            quantity = float(row_data.get('quantity', 0))
+            
+            if quantity > 0:
+                variance = abs(predicted_demand - quantity) / quantity
+                if variance > 0.5:
+                    risk_score += 20
+                    risk_data["risks"].append({
+                        "name": "High Demand Variance",
+                        "level": "high",
+                        "description": f"Demand predicted to vary by {variance*100:.0f}% from baseline",
+                        "probability": "medium",
+                        "impact": "high"
+                    })
+                    risk_data["mitigation_strategies"].append({
+                        "strategy": "Implement flexible manufacturing scheduling",
+                        "cost": "high",
+                        "implementation_time": "1-2 months"
+                    })
+            
+            # Risk 3: Material Availability
+            plastic_type = row_data.get('Plastic_Type') or row_data.get('plastic_type')
+            if plastic_type in ['PET']:
+                risk_score += 10
+                risk_data["risks"].append({
+                    "name": "Material Sourcing Risk",
+                    "level": "medium",
+                    "description": f"{plastic_type} has concentrated supplier base",
+                    "probability": "low",
+                    "impact": "high"
+                })
+                risk_data["mitigation_strategies"].append({
+                    "strategy": "Maintain 45-60 day safety stock for critical materials",
+                    "cost": "medium",
+                    "implementation_time": "ongoing"
+                })
+            
+            # Risk 4: Market Competition
+            sale_amount = float(row_data.get('sale_amount', 0))
+            if sale_amount < 1000:
+                risk_score += 15
+                risk_data["risks"].append({
+                    "name": "Competitive Pressure",
+                    "level": "medium",
+                    "description": "Lower price point indicates high competition",
+                    "probability": "high",
+                    "impact": "medium"
+                })
+                risk_data["mitigation_strategies"].append({
+                    "strategy": "Focus on operational efficiency and differentiation",
+                    "cost": "medium",
+                    "implementation_time": "ongoing"
+                })
+            
+            # Overall risk level
+            risk_data["risk_score"] = min(100, risk_score)
+            if risk_score > 70:
+                risk_data["overall_risk_level"] = "high"
+            elif risk_score > 40:
+                risk_data["overall_risk_level"] = "medium"
+            else:
+                risk_data["overall_risk_level"] = "low"
+            
+        except Exception as e:
+            logger.warning(f"Error generating risk assessment: {e}")
+        
+        return risk_data
+    
+    def _get_product_context(self, row_data: Optional[Dict]) -> Dict[str, Any]:
+        """Extract product context and metadata"""
+        context = {
+            "product_id": "N/A",
+            "product_type": "N/A",
+            "plastic_type": "N/A",
+            "application_segment": "N/A",
+            "market_segment": "N/A"
+        }
+        
+        if row_data:
+            context["product_id"] = row_data.get('product_id', 'N/A')
+            context["product_type"] = row_data.get('product_type') or row_data.get('category', 'N/A')
+            context["plastic_type"] = row_data.get('Plastic_Type') or row_data.get('plastic_type', 'N/A')
+            context["application_segment"] = row_data.get('application_segment', 'N/A')
+            
+            # Infer market segment
+            product_type = context["product_type"]
+            if product_type in ['Bottle', 'Container']:
+                context["market_segment"] = "Packaging & Containers"
+            elif product_type in ['Film', 'Sheet']:
+                context["market_segment"] = "Films & Sheets"
+            else:
+                context["market_segment"] = "General Products"
+        
+        return context
+    
+    def _analyze_feature_importance(self, processed_data: pd.DataFrame, 
+                                   row_data: Optional[Dict]) -> List[Dict[str, Any]]:
+        """Analyze and rank feature importance"""
+        importance = []
+        
+        if row_data is None:
+            return importance
+        
+        try:
+            # Calculate simple feature importance based on data
+            feature_scores = {}
+            
+            numeric_features = {
+                'sale_amount': 0.25,
+                'discount': 0.20,
+                'quantity': 0.20,
+                'predicted_demand': 0.15,
+                'confidence': 0.10,
+                'holiday_flag': 0.05,
+                'is_weekend': 0.05
             }
+            
+            for feature, weight in numeric_features.items():
+                value = row_data.get(feature, 0)
+                if isinstance(value, (int, float)):
+                    feature_scores[feature] = abs(value) * weight
+            
+            # Sort by score
+            sorted_features = sorted(feature_scores.items(), key=lambda x: x[1], reverse=True)
+            
+            for feature, score in sorted_features[:5]:
+                readable_name = self.column_mappings.get(feature, feature.replace('_', ' ').title())
+                importance.append({
+                    "feature": readable_name,
+                    "importance_score": min(100, int(score * 100)),
+                    "impact": "high" if score > 20 else "medium" if score > 10 else "low",
+                    "value": row_data.get(feature, "N/A")
+                })
+            
+        except Exception as e:
+            logger.warning(f"Error analyzing feature importance: {e}")
+        
+        return importance
+    
+    def _assess_data_quality(self, row_data: Optional[Dict]) -> Dict[str, Any]:
+        """Assess data quality and completeness"""
+        quality = {
+            "overall_quality": "good",
+            "completeness_score": 100,
+            "issues": [],
+            "warnings": []
+        }
+        
+        if row_data is None:
+            quality["overall_quality"] = "poor"
+            quality["completeness_score"] = 0
+            quality["warnings"].append("No input data provided")
+            return quality
+        
+        try:
+            required_fields = ['product_id', 'sale_amount', 'discount', 'Plastic_Type', 'product_type']
+            missing_fields = [f for f in required_fields if f not in row_data or row_data.get(f) is None]
+            
+            if missing_fields:
+                quality["completeness_score"] -= len(missing_fields) * 15
+                quality["issues"].append(f"Missing fields: {', '.join(missing_fields)}")
+            
+            # Check for anomalies
+            sale_amount = float(row_data.get('sale_amount', 0))
+            discount = float(row_data.get('discount', 0))
+            
+            if sale_amount < 0:
+                quality["issues"].append("Negative sale amount detected")
+            if discount > 1 or discount < 0:
+                quality["issues"].append("Invalid discount value (should be 0-1)")
+            if discount > 0.5:
+                quality["warnings"].append("Unusually high discount rate")
+            
+            # Update overall quality
+            if quality["completeness_score"] < 50:
+                quality["overall_quality"] = "poor"
+            elif quality["completeness_score"] < 75:
+                quality["overall_quality"] = "fair"
+            elif len(quality["issues"]) > 0:
+                quality["overall_quality"] = "fair"
+            
+            quality["completeness_score"] = max(0, quality["completeness_score"])
+            
+        except Exception as e:
+            logger.warning(f"Error assessing data quality: {e}")
+        
+        return quality
+    
+    def _generate_forecast_summary(self, processed_data: pd.DataFrame, 
+                                  row_data: Optional[Dict]) -> Dict[str, Any]:
+        """Generate summary of the forecast"""
+        summary = {
+            "prediction": 0,
+            "confidence": 0,
+            "interpretation": "Unable to generate forecast",
+            "recommendation": "Provide valid input data",
+            "next_steps": []
+        }
+        
+        if row_data is None:
+            return summary
+        
+        try:
+            prediction = float(row_data.get('predicted_demand', 0))
+            confidence = float(row_data.get('confidence', 0.5))
+            
+            summary["prediction"] = prediction
+            summary["confidence"] = confidence
+            
+            # Generate interpretation
+            if confidence > 0.85:
+                summary["interpretation"] = f"High confidence forecast: Expected demand is {prediction:.0f} units"
+            elif confidence > 0.7:
+                summary["interpretation"] = f"Medium confidence forecast: Expected demand approximately {prediction:.0f} units"
+            else:
+                summary["interpretation"] = f"Low confidence forecast: Predicted demand {prediction:.0f} units (verify with additional data)"
+            
+            # Generate recommendation
+            quantity = float(row_data.get('quantity', 0))
+            if quantity > 0:
+                variance_pct = ((prediction - quantity) / quantity) * 100
+                if variance_pct > 20:
+                    summary["recommendation"] = f"Increase production by {variance_pct:.0f}% to meet predicted demand"
+                    summary["next_steps"].append("Initiate capacity expansion planning")
+                elif variance_pct < -20:
+                    summary["recommendation"] = f"Consider reducing production by {abs(variance_pct):.0f}% to optimize costs"
+                    summary["next_steps"].append("Review and optimize production schedules")
+                else:
+                    summary["recommendation"] = "Maintain current production levels"
+                    summary["next_steps"].append("Monitor market conditions closely")
+            
+            summary["next_steps"].extend([
+                "Review supply chain readiness",
+                "Confirm raw material availability",
+                "Update demand forecast weekly"
+            ])
+            
+        except Exception as e:
+            logger.warning(f"Error generating forecast summary: {e}")
+        
+        return summary
+    
+    def _get_fallback_explanation(self, row_data: Optional[Dict]) -> Dict[str, Any]:
+        """Return fallback explanation when analysis fails"""
+        return {
+            "manufacturing_insights": [{
+                "type": "neutral",
+                "icon": "⚠️",
+                "title": "Analysis Pending",
+                "description": "System is analyzing your data",
+                "action": "Please refresh in a moment",
+                "impact": "low"
+            }],
+            "supply_recommendations": [{
+                "type": "general",
+                "icon": "📋",
+                "title": "Standard Processes",
+                "priority": "low",
+                "description": "Continue with existing supply chain operations",
+                "action": "Maintain current supplier relationships",
+                "estimated_cost": "none"
+            }],
+            "demand_indicators": [{
+                "indicator": "System Status",
+                "value": "Processing",
+                "assessment": "neutral",
+                "insight": "Analysis in progress"
+            }],
+            "risk_assessment": {
+                "overall_risk_level": "medium",
+                "risk_score": 50,
+                "risks": [],
+                "mitigation_strategies": []
+            },
+            "product_context": self._get_product_context(row_data),
+            "feature_importance": [],
+            "data_quality": {
+                "overall_quality": "good",
+                "completeness_score": 80,
+                "issues": [],
+                "warnings": []
+            },
+            "forecast_summary": {
+                "prediction": 0,
+                "confidence": 0,
+                "interpretation": "Loading...",
+                "recommendation": "Please wait",
+                "next_steps": []
+            }
+        }
