@@ -1,5 +1,6 @@
 import mysql.connector
 import json
+import traceback
 from datetime import datetime
 import os
 from dotenv import load_dotenv
@@ -10,11 +11,28 @@ class DatabaseService:
     def __init__(self):
         self.host = os.getenv('DB_HOST', 'localhost')
         self.user = os.getenv('DB_USER', 'root')
-        self.password = os.getenv('DB_PASSWORD', 'root')
+        self.password = os.getenv('DB_PASSWORD', 'Satyam@mysql')
         self.database = os.getenv('DB_NAME', 'chainlink_pro')
         self.port = os.getenv('DB_PORT', '3306')
 
     def get_connection(self):
+        # Step 1: connect to MySQL server (without selecting DB)
+        conn = mysql.connector.connect(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            port=int(self.port)
+        )
+
+        cursor = conn.cursor()
+
+        # Step 2: create database if it doesn't exist
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.database}")
+
+        cursor.close()
+        conn.close()
+
+        # Step 3: connect again but now with database
         return mysql.connector.connect(
             host=self.host,
             user=self.user,
@@ -121,6 +139,11 @@ class DatabaseService:
 
         except Exception as e:
             print(f"❌ Error saving analysis session: {e}")
+            traceback.print_exc()
+            try:
+                conn.rollback()
+            except:
+                pass
             return False
         finally:
             cursor.close()
@@ -160,6 +183,11 @@ class DatabaseService:
 
         except Exception as e:
             print(f"❌ Error saving predictions: {e}")
+            traceback.print_exc()
+            try:
+                conn.rollback()
+            except:
+                pass
             return False
         finally:
             cursor.close()
@@ -194,6 +222,11 @@ class DatabaseService:
 
         except Exception as e:
             print(f"❌ Error saving explanations: {e}")
+            traceback.print_exc()
+            try:
+                conn.rollback()
+            except:
+                pass
             return False
         finally:
             cursor.close()

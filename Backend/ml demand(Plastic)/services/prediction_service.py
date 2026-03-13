@@ -787,64 +787,164 @@ class PredictionService:
             raise
     
     def save_analysis_to_db(self, session_id, file_name, predictions, explanations):
-        """Save analysis results to MySQL database"""
+        """Save analysis results to MySQL database - handles various data shapes"""
         try:
-            # Calculate session statistics
+            logger.info(f"🔄 Starting DB save for session: {session_id}")
+            logger.info(f"   File: {file_name}")
+            logger.info(f"   Predictions count: {len(predictions) if predictions else 0}")
+            logger.info(f"   Explanations count: {len(explanations) if explanations else 0}")
+            
+            if predictions and len(predictions) > 0:
+                logger.info(f"   Sample prediction keys: {list(predictions[0].keys())}")
+            
+            # === Helper to safely extract fields from nested or flat structures ===
+            def safe_get(obj, *keys, default=None):
+                """Try multiple keys/paths to extract a value"""
+                for key in keys:
+                    if isinstance(key, tuple):
+                        # Nested path like ('input_data', 'product_id')
+                        val = obj
+                        for k in key:
+                            if isinstance(val, dict):
+                                val = val.get(k)
+                            else:
+                                val = None
+                                break
+                        if val is not None:
+                            return val
+                    elif isinstance(obj, dict) and key in obj and obj[key] is not None:
+                        return obj[key]
+                return default
+            
+            # === Calculate session statistics ===
             product_ids = set()
-            for p in predictions:
-                product_id = p.get('input_data', {}).get('product_id')
+            demand_values = []
+            confidence_values = []
+            
+            for p in (predictions or []):
+                # Extract product_id from various possible locations
+                product_id = safe_get(p,
+                    ('input_data', 'product_id'),
+                    'product_id',
+                    'id',
+                    default=None
+                )
                 if product_id:
-                    product_ids.add(product_id)
+                    product_ids.add(str(product_id))
+                
+                # Extract prediction value from various possible keys
+                pred_val = safe_get(p,
+                    'prediction',
+                    'predicted_demand',
+                    default=0
+                )
+                demand_values.append(float(pred_val) if pred_val else 0)
+                
+                # Extract confidence
+                conf_val = safe_get(p, 'confidence', default=0.5)
+                confidence_values.append(float(conf_val) if conf_val else 0.5)
             
             total_products = len(product_ids)
-            total_predictions = len(predictions)
-            avg_demand = np.mean([p['prediction'] for p in predictions]) if predictions else 0
-            avg_confidence = np.mean([p['confidence'] for p in predictions]) if predictions else 0
+            total_predictions = len(predictions) if predictions else 0
+            avg_demand = float(np.mean(demand_values)) if demand_values else 0
+            avg_confidence = float(np.mean(confidence_values)) if confidence_values else 0
             
-            # Save session
+            logger.info(f"   Calculated stats: {total_products} products, avg_demand={avg_demand:.2f}, avg_confidence={avg_confidence:.4f}")
+            
+            # === Save session ===
             session_data = {
                 'session_id': session_id,
                 'file_name': file_name,
                 'total_products': total_products,
                 'total_predictions': total_predictions,
-                'avg_demand': float(avg_demand),
-                'avg_confidence': float(avg_confidence)
+                'avg_demand': avg_demand,
+                'avg_confidence': avg_confidence
             }
             
-            db_service.save_analysis_session(session_data)
+            session_saved = db_service.save_analysis_session(session_data)
+            if not session_saved:
+                logger.error("❌ Failed to save analysis session - aborting")
+                return False
+            logger.info("   ✅ Session saved")
             
-            # Prepare predictions for database
+            # === Prepare and save predictions ===
             db_predictions = []
-            for pred in predictions:
+            for i, pred in enumerate(predictions or []):
                 input_data = pred.get('input_data', {})
-                db_predictions.append({
-                    'product_id': input_data.get('product_id'),
-                    'product_type': input_data.get('product_type'),
-                    'plastic_type': input_data.get('Plastic_Type'),
-                    'sale_amount': input_data.get('sale_amount', 0),
-                    'discount': input_data.get('discount', 0),
-                    'predicted_demand': pred.get('prediction', 0),
-                    'confidence': pred.get('confidence', 0),
+                if isinstance(input_data, str):
+                    try:
+                        import json
+                        input_data = json.loads(input_data)
+                    except:
+                        input_data = {}
+                
+                if not isinstance(input_data, dict):
+                    input_data = {}
+                
+                db_pred = {
+                    'product_id': safe_get(pred, ('input_data', 'product_id'), 'product_id', 'id', default=f'product_{i}'),
+                    'product_type': safe_get(pred, ('input_data', 'product_type'), 'product_type', default='Unknown'),
+                    'plastic_type': safe_get(pred, ('input_data', 'Plastic_Type'), ('input_data', 'plastic_type'), 'Plastic_Type', 'plastic_type', default='Unknown'),
+                    'sale_amount': float(safe_get(pred, ('input_data', 'sale_amount'), 'sale_amount', default=0) or 0),
+                    'discount': float(safe_get(pred, ('input_data', 'discount'), 'discount', default=0) or 0),
+                    'predicted_demand': float(safe_get(pred, 'prediction', 'predicted_demand', default=0) or 0),
+                    'confidence': float(safe_get(pred, 'confidence', default=0.5) or 0.5),
                     'input_data': input_data
-                })
+                }
+                db_predictions.append(db_pred)
             
-            db_service.save_predictions(session_id, db_predictions)
+            if db_predictions:
+                preds_saved = db_service.save_predictions(session_id, db_predictions)
+                if preds_saved:
+                    logger.info(f"   ✅ {len(db_predictions)} predictions saved")
+                else:
+                    logger.error("   ❌ Failed to save predictions")
             
-            # Prepare explanations for database
+            # === Prepare and save explanations ===
             db_explanations = []
-            for exp in explanations:
-                db_explanations.append({
-                    'product_id': exp.get('product_id'),
-                    'product_type': exp.get('product_type'),
-                    'manufacturing_insights': exp.get('manufacturing_insights', []),
-                    'supply_recommendations': exp.get('supply_recommendations', [])
-                })
+            for i, exp in enumerate(explanations or []):
+                # Extract manufacturing_insights - may be nested inside 'explanation' key
+                mfg_insights = (
+                    exp.get('manufacturing_insights') or
+                    exp.get('explanation', {}).get('manufacturing_insights', [])
+                    if isinstance(exp.get('explanation'), dict) else
+                    exp.get('manufacturing_insights', [])
+                )
+                
+                # Extract supply_recommendations
+                supply_recs = (
+                    exp.get('supply_recommendations') or
+                    exp.get('explanation', {}).get('supply_recommendations', [])
+                    if isinstance(exp.get('explanation'), dict) else
+                    exp.get('supply_recommendations', [])
+                )
+                
+                # Ensure they're lists
+                if not isinstance(mfg_insights, list):
+                    mfg_insights = [mfg_insights] if mfg_insights else []
+                if not isinstance(supply_recs, list):
+                    supply_recs = [supply_recs] if supply_recs else []
+                
+                db_exp = {
+                    'product_id': safe_get(exp, 'product_id', ('input_data', 'product_id'), default=f'product_{i}'),
+                    'product_type': safe_get(exp, 'product_type', ('input_data', 'product_type'), default='Unknown'),
+                    'manufacturing_insights': mfg_insights,
+                    'supply_recommendations': supply_recs
+                }
+                db_explanations.append(db_exp)
             
-            db_service.save_explanations(session_id, db_explanations)
+            if db_explanations:
+                exps_saved = db_service.save_explanations(session_id, db_explanations)
+                if exps_saved:
+                    logger.info(f"   ✅ {len(db_explanations)} explanations saved")
+                else:
+                    logger.error("   ❌ Failed to save explanations")
             
-            logger.info(f"✅ Analysis saved to database with session ID: {session_id}")
+            logger.info(f"✅ Analysis fully saved to database with session ID: {session_id}")
             return True
             
         except Exception as e:
             logger.error(f"❌ Error saving analysis to database: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return False

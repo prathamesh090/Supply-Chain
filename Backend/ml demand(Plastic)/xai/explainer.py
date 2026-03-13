@@ -639,6 +639,26 @@ class XAIExplainer:
         supply_recommendations = self.generate_actionable_recommendations(shap_explanation, row_data)
         feature_analysis = self.analyze_feature_impacts_detailed(shap_explanation, row_data)
         
+        # Enhanced: add temporal, lag/momentum, and price elasticity analysis
+        temporal_insights = self._generate_temporal_pattern_analysis(shap_explanation, input_data, row_data)
+        lag_momentum = self._generate_lag_momentum_analysis(shap_explanation, input_data)
+        price_elasticity = self._generate_price_elasticity_insights(shap_explanation, input_data, row_data)
+        
+        # Merge extra insights into manufacturing_insights
+        manufacturing_insights.extend(temporal_insights)
+        manufacturing_insights.extend(lag_momentum)
+        manufacturing_insights.extend(price_elasticity)
+        
+        # Deduplicate and cap
+        seen_texts = set()
+        unique_insights = []
+        for insight in manufacturing_insights:
+            text = insight.get('text', '')
+            if text and text not in seen_texts:
+                seen_texts.add(text)
+                unique_insights.append(insight)
+        manufacturing_insights = unique_insights[:8]  # Return top 8 insights
+        
         explanations = {
             "manufacturing_insights": manufacturing_insights,
             "supply_recommendations": supply_recommendations,
@@ -652,6 +672,439 @@ class XAIExplainer:
         
         print(f"Generated {len(manufacturing_insights)} insights and {len(supply_recommendations)} recommendations")
         return explanations
+    
+    def _generate_temporal_pattern_analysis(self, shap_explanation, input_data, row_data):
+        """Analyze temporal features like cyclical encodings, shock periods, and seasons"""
+        insights = []
+        
+        if not hasattr(input_data, 'iloc') and not hasattr(input_data, 'columns'):
+            return insights
+        
+        try:
+            df = input_data if hasattr(input_data, 'iloc') else pd.DataFrame([input_data])
+            
+            # Check shock period indicators
+            if 'covid_period' in df.columns and df['covid_period'].iloc[0] == 1:
+                insights.append({
+                    "text": "Data falls within COVID impact period (2021-2022) — demand patterns may reflect pandemic disruptions",
+                    "type": "warning",
+                    "icon": "🦠",
+                    "impact": "high",
+                    "category": "temporal"
+                })
+            
+            if 'plastic_ban_period' in df.columns and df['plastic_ban_period'].iloc[0] == 1:
+                insights.append({
+                    "text": "Post-plastic-ban period (after Jul 2022) — regulatory shifts are influencing material demand",
+                    "type": "info",
+                    "icon": "⚖️",
+                    "impact": "high",
+                    "category": "temporal"
+                })
+            
+            if 'price_spike_period' in df.columns and df['price_spike_period'].iloc[0] == 1:
+                insights.append({
+                    "text": "Historical price spike period (Mar-Sep 2022) — pricing volatility affects baseline demand",
+                    "type": "warning",
+                    "icon": "📈",
+                    "impact": "medium",
+                    "category": "temporal"
+                })
+            
+            if 'export_period' in df.columns and df['export_period'].iloc[0] == 1:
+                insights.append({
+                    "text": "Export-active period (post Feb 2025) — international demand channels contributing to forecast",
+                    "type": "positive",
+                    "icon": "🌍",
+                    "impact": "medium",
+                    "category": "temporal"
+                })
+            
+            # Seasonal analysis
+            if 'quarter' in df.columns:
+                quarter = int(df['quarter'].iloc[0])
+                quarter_context = {
+                    1: ("Q1 (Jan-Mar) typically shows lower packaging demand post-holiday season", "info"),
+                    2: ("Q2 (Apr-Jun) spring season drives increased production and packaging needs", "positive"),
+                    3: ("Q3 (Jul-Sep) monsoon/summer season creates mixed demand patterns", "info"),
+                    4: ("Q4 (Oct-Dec) festival season drives peak demand for consumer plastics", "positive")
+                }
+                if quarter in quarter_context:
+                    text, itype = quarter_context[quarter]
+                    insights.append({
+                        "text": text,
+                        "type": itype,
+                        "icon": "📅",
+                        "impact": "medium",
+                        "category": "temporal"
+                    })
+            
+            # Weekend effect
+            if 'weekend' in df.columns and df['weekend'].iloc[0] == 1:
+                insights.append({
+                    "text": "Weekend data point — industrial demand typically lower, consumer patterns may differ",
+                    "type": "info",
+                    "icon": "🗓️",
+                    "impact": "low",
+                    "category": "temporal"
+                })
+            
+            # Festival effects
+            if 'festival_flag' in df.columns and df['festival_flag'].iloc[0] == 1:
+                extra = ""
+                if 'major_festival' in df.columns and df['major_festival'].iloc[0] == 1:
+                    extra = " (major festival detected — Diwali/Holi/Ganesh Chaturthi/Dussehra level)"
+                insights.append({
+                    "text": f"Festival period active{extra} — consumer packaging demand may spike 15-30%",
+                    "type": "positive",
+                    "icon": "🎉",
+                    "impact": "high",
+                    "category": "temporal"
+                })
+        except Exception as e:
+            print(f"Temporal analysis error: {e}")
+        
+        return insights[:3]  # Limit temporal insights
+    
+    def _generate_lag_momentum_analysis(self, shap_explanation, input_data):
+        """Analyze lag features, rolling means, and EWMA to describe recent demand trends"""
+        insights = []
+        
+        if not hasattr(input_data, 'iloc') and not hasattr(input_data, 'columns'):
+            return insights
+        
+        try:
+            df = input_data if hasattr(input_data, 'iloc') else pd.DataFrame([input_data])
+            
+            # Check lag differences for trend
+            lag_diff_1 = float(df['lag_diff_1'].iloc[0]) if 'lag_diff_1' in df.columns else None
+            lag_diff_7 = float(df['lag_diff_7'].iloc[0]) if 'lag_diff_7' in df.columns else None
+            
+            if lag_diff_1 is not None and lag_diff_7 is not None:
+                if lag_diff_1 > 0 and lag_diff_7 > 0:
+                    insights.append({
+                        "text": f"Demand momentum is positive — both daily (+{lag_diff_1:.0f}) and weekly (+{lag_diff_7:.0f}) trends are upward",
+                        "type": "positive",
+                        "icon": "📈",
+                        "impact": "high",
+                        "category": "momentum"
+                    })
+                elif lag_diff_1 < 0 and lag_diff_7 < 0:
+                    insights.append({
+                        "text": f"Demand is declining — daily ({lag_diff_1:.0f}) and weekly ({lag_diff_7:.0f}) momentum both negative",
+                        "type": "warning",
+                        "icon": "📉",
+                        "impact": "high",
+                        "category": "momentum"
+                    })
+                elif lag_diff_1 > 0 and lag_diff_7 < 0:
+                    insights.append({
+                        "text": "Short-term recovery detected — daily trend is positive despite negative weekly trend",
+                        "type": "info",
+                        "icon": "🔄",
+                        "impact": "medium",
+                        "category": "momentum"
+                    })
+            
+            # Rolling mean comparison
+            rm3 = float(df['rolling_mean_3'].iloc[0]) if 'rolling_mean_3' in df.columns else None
+            rm28 = float(df['rolling_mean_28'].iloc[0]) if 'rolling_mean_28' in df.columns else None
+            
+            if rm3 is not None and rm28 is not None and rm28 > 0:
+                ratio = rm3 / rm28
+                if ratio > 1.15:
+                    insights.append({
+                        "text": f"Short-term demand ({rm3:.0f} avg/3d) is {((ratio-1)*100):.0f}% above monthly baseline ({rm28:.0f} avg/28d) — surge detected",
+                        "type": "positive",
+                        "icon": "🚀",
+                        "impact": "high",
+                        "category": "momentum"
+                    })
+                elif ratio < 0.85:
+                    insights.append({
+                        "text": f"Short-term demand ({rm3:.0f} avg/3d) is {((1-ratio)*100):.0f}% below monthly baseline ({rm28:.0f} avg/28d) — slowdown detected",
+                        "type": "warning",
+                        "icon": "⏬",
+                        "impact": "medium",
+                        "category": "momentum"
+                    })
+                else:
+                    insights.append({
+                        "text": f"Demand is stable — 3-day average ({rm3:.0f}) aligns with 28-day baseline ({rm28:.0f})",
+                        "type": "positive",
+                        "icon": "✅",
+                        "impact": "low",
+                        "category": "momentum"
+                    })
+            
+            # Volatility from rolling std
+            rs3 = float(df['rolling_std_3'].iloc[0]) if 'rolling_std_3' in df.columns else None
+            if rs3 is not None and rm3 is not None and rm3 > 0:
+                cv = rs3 / rm3  # coefficient of variation
+                if cv > 0.3:
+                    insights.append({
+                        "text": f"High demand volatility detected (CV={cv:.2f}) — consider safety stock buffers",
+                        "type": "warning",
+                        "icon": "⚡",
+                        "impact": "medium",
+                        "category": "momentum"
+                    })
+        except Exception as e:
+            print(f"Lag momentum analysis error: {e}")
+        
+        return insights[:2]  # Limit momentum insights
+    
+    def _generate_price_elasticity_insights(self, shap_explanation, input_data, row_data):
+        """Analyze price features and discount interactions"""
+        insights = []
+        
+        if not hasattr(input_data, 'iloc') and not hasattr(input_data, 'columns'):
+            return insights
+        
+        try:
+            df = input_data if hasattr(input_data, 'iloc') else pd.DataFrame([input_data])
+            
+            unit_price = float(df['unit_price'].iloc[0]) if 'unit_price' in df.columns else None
+            effective_price = float(df['effective_price'].iloc[0]) if 'effective_price' in df.columns else None
+            discount_pct = float(df['discount_pct'].iloc[0]) if 'discount_pct' in df.columns else None
+            discount_intensity = float(df['discount_intensity'].iloc[0]) if 'discount_intensity' in df.columns else None
+            is_discount = int(df['is_discount'].iloc[0]) if 'is_discount' in df.columns else None
+            
+            if unit_price and effective_price and unit_price > 0:
+                price_gap = unit_price - effective_price
+                if price_gap > 0:
+                    insights.append({
+                        "text": f"Pricing analysis: ₹{unit_price:.0f} list price → ₹{effective_price:.0f} effective price (₹{price_gap:.0f} discount value captured by buyer)",
+                        "type": "info",
+                        "icon": "💲",
+                        "impact": "medium",
+                        "category": "pricing"
+                    })
+            
+            if discount_pct is not None and discount_pct > 15:
+                # Check SHAP impact of discount features
+                if 'shap_values' in shap_explanation and 'feature_names' in shap_explanation:
+                    discount_features = ['discount_pct', 'discount_intensity', 'is_discount', 'effective_price']
+                    total_discount_impact = 0
+                    for fn, sv in zip(shap_explanation['feature_names'], shap_explanation['shap_values']):
+                        if fn in discount_features:
+                            total_discount_impact += sv
+                    
+                    if total_discount_impact > 0.1:
+                        insights.append({
+                            "text": f"Heavy discounting ({discount_pct:.0f}%) is actively driving demand up (SHAP impact: +{total_discount_impact:.3f}) — price-sensitive segment",
+                            "type": "positive",
+                            "icon": "🎯",
+                            "impact": "high",
+                            "category": "pricing"
+                        })
+                    elif total_discount_impact < -0.1:
+                        insights.append({
+                            "text": f"Despite {discount_pct:.0f}% discount, model predicts lower demand — discounting alone may not drive this product's sales",
+                            "type": "warning",
+                            "icon": "⚠️",
+                            "impact": "medium",
+                            "category": "pricing"
+                        })
+        except Exception as e:
+            print(f"Price elasticity analysis error: {e}")
+        
+        return insights[:2]  # Limit pricing insights
+    
+    def _make_feature_readable(self, feature_name):
+        """Convert technical feature names to readable format — comprehensive mapping"""
+        mappings = {
+            # Time features
+            'year': 'Year',
+            'month': 'Month',
+            'week_of_year': 'Week of Year',
+            'day_of_week': 'Day of Week',
+            'day_of_month': 'Day of Month',
+            'quarter': 'Quarter',
+            'day_of_year': 'Day of Year',
+            'weekend': 'Weekend Flag',
+            'is_month_start': 'Month Start',
+            'is_month_end': 'Month End',
+            'days_to_month_end': 'Days to Month End',
+            'days_from_month_start': 'Days from Month Start',
+            # Cyclical encodings
+            'sin_dayofyear': 'Seasonal Cycle (sin)',
+            'cos_dayofyear': 'Seasonal Cycle (cos)',
+            'sin_month': 'Monthly Cycle (sin)',
+            'cos_month': 'Monthly Cycle (cos)',
+            'sin_dayofweek': 'Weekly Cycle (sin)',
+            'cos_dayofweek': 'Weekly Cycle (cos)',
+            # Shock indicators
+            'covid_period': 'COVID Period',
+            'plastic_ban_period': 'Plastic Ban Period',
+            'price_spike_period': 'Price Spike Period',
+            'post_customer_loss': 'Post Customer Loss',
+            'export_period': 'Export Period',
+            # Price features
+            'unit_price': 'Unit Price',
+            'discount_pct': 'Discount %',
+            'price_discount_interaction': 'Price×Discount Effect',
+            'is_discount': 'Discount Active',
+            'discount_intensity': 'Discount Intensity',
+            'effective_price': 'Effective Price',
+            # Weather
+            'avg_temperature': 'Temperature',
+            'rainfall_mm': 'Rainfall (mm)',
+            'temp_rain_interaction': 'Temp×Rain Effect',
+            'is_rainy': 'Rainy Day',
+            'is_heavy_rain': 'Heavy Rain',
+            'is_hot': 'Hot Day (>32°C)',
+            'is_cold': 'Cold Day (<20°C)',
+            'extreme_weather': 'Extreme Weather',
+            # Festival
+            'festival_flag': 'Festival Active',
+            'festival_week': 'Festival Week',
+            'major_festival': 'Major Festival',
+            'festival_season': 'Festival Season (Q4)',
+            # Lag features
+            'lag_2': '2-Day Lag',
+            'lag_3': '3-Day Lag',
+            'lag_14': '14-Day Lag',
+            'lag_21': '21-Day Lag',
+            'lag_28': '28-Day Lag',
+            'rolling_mean_3': '3-Day Moving Avg',
+            'rolling_mean_14': '14-Day Moving Avg',
+            'rolling_mean_21': '21-Day Moving Avg',
+            'rolling_mean_28': '28-Day Moving Avg',
+            'rolling_std_3': '3-Day Volatility',
+            'rolling_std_14': '14-Day Volatility',
+            'rolling_std_21': '21-Day Volatility',
+            'rolling_std_28': '28-Day Volatility',
+            'exp_weighted_mean_7': '7-Day Exp. Weighted Avg',
+            'exp_weighted_mean_14': '14-Day Exp. Weighted Avg',
+            'lag_diff_1': 'Daily Change',
+            'lag_diff_7': 'Weekly Change',
+            'lag_pct_change_1': 'Daily % Change',
+            'lag_pct_change_7': 'Weekly % Change',
+            'rolling_min_7': '7-Day Min',
+            'rolling_max_7': '7-Day Max',
+            # Encoded categoricals
+            'product_id_encoded': 'Product ID',
+            'customer_segment_encoded': 'Customer Segment',
+            'plastic_type_encoded': 'Plastic Type',
+            'grade_encoded': 'Material Grade',
+            'application_encoded': 'Application',
+            'category_encoded': 'Product Category',
+            'festival_name_encoded': 'Festival Name',
+            # Interactions
+            'product_segment_interaction': 'Product×Segment',
+            'plastic_category_interaction': 'Plastic×Category',
+            # Statistical features
+            'quantity_sold_group_mean': 'Product Avg Sales',
+            'quantity_sold_group_std': 'Product Sales Volatility',
+            'quantity_sold_group_median': 'Product Median Sales',
+            'quantity_sold_group_min': 'Product Min Sales',
+            'quantity_sold_group_max': 'Product Max Sales',
+            'quantity_sold_group_range': 'Product Sales Range',
+            'quantity_sold_group_cv': 'Product Sales CV',
+            'quantity_sold_z_score': 'Sales Z-Score',
+            'unit_price_group_mean': 'Avg Product Price',
+            'unit_price_group_std': 'Price Volatility',
+            'unit_price_group_median': 'Median Product Price',
+            'unit_price_group_min': 'Min Product Price',
+            'unit_price_group_max': 'Max Product Price',
+            'unit_price_group_range': 'Price Range',
+            'unit_price_group_cv': 'Price CV',
+            # Legacy/input mappings
+            'sale_amount': 'Product Price',
+            'discount': 'Discount Rate',
+            'quantity': 'Historical Volume',
+            'Plastic_Type': 'Material Type',
+            'product_type': 'Product Category',
+            'application_segment': 'Market Application',
+            'precpt': 'Weather Impact',
+            'holiday_flag': 'Holiday Effect',
+            'is_weekend': 'Weekend Pattern'
+        }
+        
+        # Direct lookup first
+        if feature_name in mappings:
+            return mappings[feature_name]
+        
+        # Partial match
+        for key, readable in mappings.items():
+            if key in feature_name:
+                return readable
+        
+        return feature_name.replace('_', ' ').title()
+    
+    def _get_model_for_explanation(self):
+        """Get the best available model for explanations"""
+        if not self.models:
+            return None
+        
+        # Prefer tree-based models for SHAP
+        preferred_models = ['xgboost', 'lightgbm', 'random_forest', 'decision_tree']
+        for model_name in preferred_models:
+            if model_name in self.models:
+                print(f"Using {model_name} for explanations")
+                return self.models[model_name]
+        
+        # Fall back to any available model
+        model_name = list(self.models.keys())[0]
+        print(f"Using fallback model {model_name} for explanations")
+        return self.models[model_name]
+    
+    def shap_explanation(self, input_data, feature_names, model):
+        """Generate SHAP values with improved error handling"""
+        try:
+            print("Starting SHAP explanation...")
+            
+            # Prepare input data
+            if hasattr(input_data, 'iloc'):
+                input_data_values = input_data.values
+                print(f"Input data shape from DataFrame: {input_data_values.shape}")
+            else:
+                input_data_values = np.array(input_data).reshape(1, -1) if np.array(input_data).ndim == 1 else np.array(input_data)
+                print(f"Input data shape from array: {input_data_values.shape}")
+            
+            # Create SHAP explainer
+            explainer = shap.TreeExplainer(model)
+            print("Created SHAP TreeExplainer")
+            
+            # Generate SHAP values
+            shap_values = explainer.shap_values(input_data_values)
+            print(f"Generated SHAP values, type: {type(shap_values)}")
+            
+            # Handle different SHAP value formats
+            if isinstance(shap_values, list):
+                shap_values = shap_values[0] if len(shap_values) > 0 else shap_values
+                print("Used first element from SHAP values list")
+            
+            if hasattr(shap_values, 'shape') and len(shap_values.shape) > 1:
+                shap_values = shap_values[0]
+                print("Used first row from SHAP values array")
+            
+            # Convert to list
+            if hasattr(shap_values, 'tolist'):
+                shap_values_list = shap_values.tolist()
+            else:
+                shap_values_list = [float(shap_values)] if np.isscalar(shap_values) else list(shap_values)
+            
+            print(f"Final SHAP values length: {len(shap_values_list)}")
+            print(f"Feature names length: {len(feature_names)}")
+            
+            return {
+                "shap_values": shap_values_list,
+                "base_value": float(explainer.expected_value),
+                "feature_names": feature_names,
+                "success": True
+            }
+            
+        except Exception as e:
+            print(f"SHAP explanation error: {str(e)}")
+            import traceback
+            print(f"Full error trace: {traceback.format_exc()}")
+            return {
+                "error": f"SHAP explanation failed: {str(e)}",
+                "success": False
+            }
+
     
     def generate_product_specific_insights(self, shap_explanation, row_data):
         """Generate insights based on actual product characteristics"""

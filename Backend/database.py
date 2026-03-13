@@ -9,7 +9,7 @@ class Database:
     def __init__(self):
         self.host = os.getenv('DB_HOST', 'localhost')
         self.user = os.getenv('DB_USER', 'root')
-        self.password = os.getenv('DB_PASSWORD', '')
+        self.password = os.getenv('DB_PASSWORD', 'Satyam@mysql')
         self.database = os.getenv('DB_NAME', 'chainlink_pro')
         self.port = os.getenv('DB_PORT', '3306')
 

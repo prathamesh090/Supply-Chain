@@ -700,11 +700,34 @@ const DemandForecast = () => {
       
       // Create and save session
       const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Structure predictions for DB save - ensure product_id/product_type at top level
+      const dbPredictions = predictionsWithIds.map((p, idx) => ({
+        product_id: p.input_data?.product_id || `product_${idx}`,
+        product_type: p.input_data?.product_type || 'Unknown',
+        Plastic_Type: p.input_data?.Plastic_Type || 'Unknown',
+        plastic_type: p.input_data?.Plastic_Type || 'Unknown',
+        sale_amount: p.input_data?.sale_amount || 0,
+        discount: p.input_data?.discount || 0,
+        prediction: p.prediction || 0,
+        predicted_demand: p.prediction || 0,
+        confidence: p.confidence || 0.5,
+        input_data: p.input_data || {}
+      }));
+      
+      // Structure explanations for DB save - ensure manufacturing_insights/supply_recommendations at top level
+      const dbExplanations = allExplanations.map((exp: any, idx: number) => ({
+        product_id: exp.product_id || csvData[idx]?.product_id || `product_${idx}`,
+        product_type: exp.product_type || csvData[idx]?.product_type || 'Unknown',
+        manufacturing_insights: exp.manufacturing_insights || [],
+        supply_recommendations: exp.supply_recommendations || []
+      }));
+      
       const sessionData = {
         session_id: sessionId,
         file_name: file?.name || 'unknown.csv',
-        predictions: predictionsWithIds,
-        explanations: allExplanations,
+        predictions: dbPredictions,
+        explanations: dbExplanations,
         created_at: new Date().toISOString(),
         prediction_count: predictionsWithIds.length,
         total_products: new Set(predictionsWithIds.map(p => p.input_data?.product_id)).size,
@@ -1628,6 +1651,245 @@ const DemandForecast = () => {
                         <p className="text-sm text-gray-600 mt-1">Q1 demand -7% below average</p>
                       </div>
                     </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* ========== XAI EXPLANATIONS SECTION ========== */}
+                <AccordionItem value="xai-explanations">
+                  <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                    <div className="flex items-center space-x-2">
+                      <Activity className="h-5 w-5 text-emerald-600" />
+                      <span className="font-medium">AI Explainability Analysis (XAI)</span>
+                      <Badge variant="secondary" className="ml-2">
+                        {explanations.length} products analyzed
+                      </Badge>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-6 pb-4">
+                    {explanations.length > 0 ? (
+                      <div className="space-y-4">
+                        {explanations.slice(0, 10).map((exp: any, idx: number) => {
+                          const mfgInsights = Array.isArray(exp.manufacturing_insights) ? exp.manufacturing_insights : [];
+                          const supplyRecs = Array.isArray(exp.supply_recommendations) ? exp.supply_recommendations : [];
+                          const riskAssessment = exp.risk_assessment || null;
+                          const featureAnalysis = exp.feature_analysis || null;
+                          const predQuality = exp.prediction_quality || null;
+                          const uniqueFactors = exp.unique_product_characteristics || null;
+                          const productContext = exp.product_context || null;
+                          
+                          return (
+                            <div key={exp.unique_id || idx} className="border rounded-lg overflow-hidden">
+                              {/* Product Header */}
+                              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-5 py-3 border-b">
+                                <div className="flex justify-between items-center">
+                                  <div>
+                                    <p className="font-semibold text-gray-800">
+                                      {exp.product_id || `Product ${idx + 1}`}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {exp.product_type || 'Unknown Type'}
+                                      {productContext?.plastic_type && productContext.plastic_type !== 'Unknown' && 
+                                        ` • ${productContext.plastic_type}`}
+                                      {productContext?.application && productContext.application !== 'Unknown' && 
+                                        ` • ${productContext.application}`}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    {predQuality && (
+                                      <Badge variant={predQuality.quality === 'high' ? 'default' : 'secondary'}
+                                        className={predQuality.quality === 'high' ? 'bg-green-100 text-green-800' : 
+                                                   predQuality.quality === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                   'bg-red-100 text-red-800'}>
+                                        {predQuality.quality === 'high' ? '✅' : predQuality.quality === 'medium' ? '⚠️' : '❌'}
+                                        {' '}{predQuality.quality} confidence
+                                      </Badge>
+                                    )}
+                                    {riskAssessment && (
+                                      <Badge variant="outline"
+                                        className={riskAssessment.overall_risk === 'high' ? 'border-red-400 text-red-700' : 
+                                                   riskAssessment.overall_risk === 'medium' ? 'border-yellow-400 text-yellow-700' :
+                                                   'border-green-400 text-green-700'}>
+                                        Risk: {riskAssessment.overall_risk}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="p-5 space-y-4">
+                                {/* Manufacturing Insights */}
+                                {mfgInsights.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                      <Factory className="h-4 w-4 mr-1.5 text-blue-600" />
+                                      Manufacturing Insights
+                                    </h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                      {mfgInsights.map((insight: any, i: number) => (
+                                        <div key={i} className={`flex items-start space-x-2 p-2.5 rounded-lg text-sm ${
+                                          insight.type === 'positive' ? 'bg-green-50 border border-green-100' :
+                                          insight.type === 'warning' ? 'bg-amber-50 border border-amber-100' :
+                                          insight.type === 'info' ? 'bg-blue-50 border border-blue-100' :
+                                          'bg-gray-50 border border-gray-100'
+                                        }`}>
+                                          <span className="text-base flex-shrink-0 mt-0.5">{insight.icon || '📊'}</span>
+                                          <div>
+                                            <p className="text-gray-700">{insight.text || 'Analysis available'}</p>
+                                            {insight.impact && (
+                                              <span className={`text-xs mt-0.5 inline-block px-1.5 py-0.5 rounded ${
+                                                insight.impact === 'high' ? 'bg-red-100 text-red-700' :
+                                                insight.impact === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                                'bg-gray-100 text-gray-600'
+                                              }`}>
+                                                {insight.impact} impact
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Supply Chain Recommendations */}
+                                {supplyRecs.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                      <Truck className="h-4 w-4 mr-1.5 text-purple-600" />
+                                      Supply Chain Recommendations
+                                    </h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                      {supplyRecs.map((rec: any, i: number) => (
+                                        <div key={i} className="flex items-start space-x-2 p-2.5 rounded-lg bg-purple-50 border border-purple-100 text-sm">
+                                          <span className="text-base flex-shrink-0 mt-0.5">{rec.icon || '📋'}</span>
+                                          <div>
+                                            <p className="text-gray-700">{rec.text || 'Recommendation available'}</p>
+                                            {rec.action && (
+                                              <span className="text-xs text-purple-600 mt-0.5 inline-block">
+                                                Action: {rec.action.replace(/_/g, ' ')}
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Feature Impact Analysis */}
+                                {featureAnalysis && featureAnalysis.most_influential && (
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                      <BarChart3 className="h-4 w-4 mr-1.5 text-indigo-600" />
+                                      Top Feature Impacts (SHAP)
+                                    </h4>
+                                    <div className="space-y-1.5">
+                                      {featureAnalysis.most_influential.slice(0, 5).map((f: any, i: number) => (
+                                        <div key={i} className="flex items-center space-x-3 text-sm">
+                                          <span className="w-32 text-gray-600 truncate text-xs">{f.feature}</span>
+                                          <div className="flex-1 h-4 bg-gray-100 rounded-full relative overflow-hidden">
+                                            {f.impact > 0 ? (
+                                              <div className="absolute left-1/2 h-full bg-green-400 rounded-r-full"
+                                                style={{ width: `${Math.min(50, Math.abs(f.impact) * 100)}%` }} />
+                                            ) : (
+                                              <div className="absolute right-1/2 h-full bg-red-400 rounded-l-full"
+                                                style={{ width: `${Math.min(50, Math.abs(f.impact) * 100)}%` }} />
+                                            )}
+                                            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-300" />
+                                          </div>
+                                          <span className={`text-xs font-medium w-16 text-right ${
+                                            f.impact > 0 ? 'text-green-600' : 'text-red-600'
+                                          }`}>
+                                            {f.impact > 0 ? '+' : ''}{f.impact.toFixed(3)}
+                                          </span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                    {featureAnalysis.analysis_summary && (
+                                      <p className="text-xs text-gray-500 mt-2">{featureAnalysis.analysis_summary}</p>
+                                    )}
+                                  </div>
+                                )}
+                                
+                                {/* Risk Assessment */}
+                                {riskAssessment && riskAssessment.risk_factors && riskAssessment.risk_factors.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                      <Shield className="h-4 w-4 mr-1.5 text-orange-600" />
+                                      Risk Assessment
+                                    </h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                      {riskAssessment.risk_factors.map((risk: any, i: number) => (
+                                        <div key={i} className={`p-2.5 rounded-lg border text-sm ${
+                                          risk.risk_level === 'high' ? 'bg-red-50 border-red-200' :
+                                          risk.risk_level === 'medium' ? 'bg-amber-50 border-amber-200' :
+                                          'bg-green-50 border-green-200'
+                                        }`}>
+                                          <div className="flex items-center justify-between mb-1">
+                                            <span className="font-medium text-gray-800">{risk.factor}</span>
+                                            <Badge variant="outline" className={`text-xs ${
+                                              risk.risk_level === 'high' ? 'border-red-400 text-red-700' :
+                                              risk.risk_level === 'medium' ? 'border-yellow-400 text-yellow-700' :
+                                              'border-green-400 text-green-700'
+                                            }`}>
+                                              {risk.risk_level}
+                                            </Badge>
+                                          </div>
+                                          <p className="text-xs text-gray-600">{risk.description}</p>
+                                          {risk.mitigation && (
+                                            <p className="text-xs text-blue-600 mt-1">💡 {risk.mitigation}</p>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Unique Product Characteristics */}
+                                {uniqueFactors && uniqueFactors.characteristics && uniqueFactors.characteristics.length > 0 && (
+                                  <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-100">
+                                    <h4 className="text-sm font-semibold text-indigo-800 mb-1.5 flex items-center">
+                                      <Info className="h-3.5 w-3.5 mr-1.5" />
+                                      Product Characterization
+                                    </h4>
+                                    <ul className="space-y-1">
+                                      {uniqueFactors.characteristics.map((char: string, i: number) => (
+                                        <li key={i} className="text-xs text-indigo-700 flex items-start">
+                                          <span className="mr-1.5 mt-0.5">•</span>
+                                          {char}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                    {uniqueFactors.competitive_stance && (
+                                      <p className="text-xs text-indigo-600 mt-1.5">
+                                        Competitive stance: <span className="font-semibold">{uniqueFactors.competitive_stance}</span>
+                                      </p>
+                                    )}
+                                  </div>
+                                )}
+                                
+                                {/* No insights available fallback */}
+                                {mfgInsights.length === 0 && supplyRecs.length === 0 && !featureAnalysis && (
+                                  <p className="text-sm text-gray-400 text-center py-4">No detailed XAI data available for this product</p>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        
+                        {explanations.length > 10 && (
+                          <p className="text-center text-sm text-gray-500 py-2">
+                            Showing 10 of {explanations.length} product analyses. All data is saved in the session.
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <Activity className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                        <p className="text-sm">No explainability data available</p>
+                        <p className="text-xs text-gray-400 mt-1">Run an analysis to generate AI explanations</p>
+                      </div>
+                    )}
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
