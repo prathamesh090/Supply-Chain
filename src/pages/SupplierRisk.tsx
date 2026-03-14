@@ -11,6 +11,7 @@ import { GlobalRiskPanel } from '@/components/supplier-risk/GlobalRiskPanel';
 import { SupplierDetailPanel } from '@/components/supplier-risk/SupplierDetailPanel';
 import { RiskTrendCharts } from '@/components/supplier-risk/RiskTrendCharts';
 import { fetchGlobalRiskEvents, fetchRecentRiskEvents, fetchSupplierDetail, fetchSupplierMonitoringData } from '@/components/supplier-risk/api';
+import { AuthenticatedShell } from '@/components/AuthenticatedShell';
 import type { GlobalRiskEventItem, RiskEventItem, SupplierDetailData, SupplierRiskRow } from '@/components/supplier-risk/types';
 
 export default function SupplierRisk() {
@@ -107,8 +108,8 @@ export default function SupplierRisk() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 space-y-6">
+    <AuthenticatedShell>
+      <div className="space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -167,6 +168,6 @@ export default function SupplierRisk() {
           rawMaterialDependency: 'Loading...',
         },
       } : null)} />
-    </div>
+    </AuthenticatedShell>
   );
 }

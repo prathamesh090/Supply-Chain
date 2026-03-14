@@ -1,30 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarTrigger,
-  SidebarProvider,
-  useSidebar,
-} from '@/components/ui/sidebar';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   Activity,
   AlertTriangle,
-  BarChart3,
   CheckCircle,
   Clock,
-  FileText,
-  LayoutDashboard,
-  Package,
-  Settings,
   TrendingUp,
   Truck,
   Users,
@@ -33,6 +16,7 @@ import { getCurrentUser, getRiskDistribution, getSupplierRankings, getToken } fr
 import { fetchGlobalRiskEvents, fetchRecentRiskEvents } from '@/components/supplier-risk/api';
 import { mlApi } from '@/lib/api';
 import { useAuth } from '@/hooks/use-auth';
+import { AuthenticatedShell } from '@/components/AuthenticatedShell';
 
 interface User {
   id: number;
@@ -41,69 +25,6 @@ interface User {
   role: string;
   is_active: boolean;
   created_at: string;
-}
-
-const sidebarItems = [
-  { title: 'Dashboard Overview', url: '/dashboard', icon: LayoutDashboard },
-  { title: 'Demand Forecasting', url: '/demand-forecast', icon: TrendingUp },
-  { title: 'Supplier Risk', url: '/supplier-risk', icon: AlertTriangle },
-  { title: 'Inventory Management', url: '#', icon: Package, disabled: true },
-  { title: 'Supply Chain', url: '#', icon: Truck, disabled: true },
-  { title: 'Analytics', url: '#', icon: BarChart3, disabled: true },
-  { title: 'Reports', url: '#', icon: FileText, disabled: true },
-  { title: 'Customers', url: '#', icon: Users, disabled: true },
-  { title: 'Settings', url: '#', icon: Settings, disabled: true },
-];
-
-function AppSidebar() {
-  const { state } = useSidebar();
-  const location = useLocation();
-  const isCollapsed = state === 'collapsed';
-
-  return (
-    <Sidebar className={`${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300 ease-in-out border-r border-border/40 bg-card`} collapsible="icon">
-      <div className="p-3 border-b border-border/40 flex items-center justify-center">
-        <SidebarTrigger className="h-10 w-10 transition-all duration-200 hover:scale-110 hover:bg-primary/10 rounded-lg" />
-      </div>
-      <SidebarContent className="pt-4 px-2">
-        <SidebarGroup>
-          {!isCollapsed && <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground px-3 mb-3">Main Navigation</SidebarGroupLabel>}
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1.5">
-              {sidebarItems.map((item) => {
-                const active = location.pathname === item.url;
-                const baseClass = `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative overflow-hidden ${isCollapsed ? 'justify-center px-2' : ''}`;
-                const visualClass = item.disabled
-                  ? 'text-muted-foreground/60 cursor-not-allowed bg-muted/30'
-                  : active
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-md';
-
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    {item.disabled ? (
-                      <div className={`${baseClass} ${visualClass}`}>
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
-                        {!isCollapsed && <span className="font-medium text-sm whitespace-nowrap">{item.title}</span>}
-                      </div>
-                    ) : (
-                      <Link to={item.url} className="block">
-                        <div className={`${baseClass} ${visualClass}`}>
-                          {active && !isCollapsed && <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-primary/10 to-transparent animate-pulse opacity-50" />}
-                          <item.icon className={`h-5 w-5 flex-shrink-0 relative z-10 transition-all duration-200 ${active ? 'scale-110' : 'group-hover:scale-105'}`} />
-                          {!isCollapsed && <span className="font-medium text-sm whitespace-nowrap relative z-10">{item.title}</span>}
-                        </div>
-                      </Link>
-                    )}
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
-  );
 }
 
 export default function Dashboard() {
@@ -205,12 +126,8 @@ export default function Dashboard() {
   }
 
   return (
-    <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
-
-        <main className="flex-1 overflow-hidden">
-          <div className="p-6 space-y-6 overflow-auto h-screen">
+    <AuthenticatedShell>
+      <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3 flex-wrap">
                 <h2 className="text-2xl font-bold">Welcome, {user?.full_name || 'User'}</h2>
@@ -277,9 +194,7 @@ export default function Dashboard() {
                 </Card>
               </div>
             </div>
-          </div>
-        </main>
       </div>
-    </SidebarProvider>
+    </AuthenticatedShell>
   );
 }

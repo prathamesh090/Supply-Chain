@@ -87,6 +87,7 @@ import {
 } from '@/components/ui/tooltip';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
+import { AuthenticatedShell } from '@/components/AuthenticatedShell';
 
 // Define types
 interface Prediction {
@@ -1061,20 +1062,21 @@ const DemandForecast = () => {
   const showDashboard = selectedSession !== null || predictions.length > 0;
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <AuthenticatedShell>
+    <div className="space-y-6">
       {/* Header with Upload/History */}
       <div className="flex justify-between items-center">
         <div>
           <Button 
             variant="ghost" 
             onClick={goToDashboard}
-            className="mb-2 flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            className="mb-2 flex items-center gap-2 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">Demand Intelligence</h1>
-          <p className="text-gray-600 mt-1">AI-powered demand forecasting with batch analysis</p>
+          <h1 className="text-3xl font-bold text-foreground">Demand Intelligence</h1>
+          <p className="text-muted-foreground mt-1">AI-powered demand forecasting with batch analysis</p>
         </div>
         
         <div className="flex space-x-3">
@@ -1187,7 +1189,7 @@ const DemandForecast = () => {
                       </Button>
                     </div>
                     <div className="mt-2 text-xs">
-                      <span className="text-gray-600">{session.prediction_count || 0} predictions</span>
+                      <span className="text-muted-foreground">{session.prediction_count || 0} predictions</span>
                     </div>
                   </div>
                 ))}
@@ -1285,7 +1287,7 @@ const DemandForecast = () => {
         <Card>
           <CardContent className="p-12 text-center">
             <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading session data...</p>
+            <p className="text-muted-foreground">Loading session data...</p>
           </CardContent>
         </Card>
       )}
@@ -1374,7 +1376,7 @@ const DemandForecast = () => {
                     
                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-gray-50 p-3 rounded-lg">
-                        <p className="text-xs text-gray-600 uppercase mb-1">Price Analysis</p>
+                        <p className="text-xs text-muted-foreground uppercase mb-1">Price Analysis</p>
                         <div className="flex justify-between text-sm">
                           <span>Min: <span className="font-bold">${dataSummary.priceRange.min}</span></span>
                           <span>Avg: <span className="font-bold">${dataSummary.priceRange.avg}</span></span>
@@ -1414,7 +1416,7 @@ const DemandForecast = () => {
                     {loading && (
                       <div className="mt-4">
                         <Progress value={progress} className="w-full h-2" />
-                        <p className="text-center text-sm text-gray-600 mt-2">{progress}% Complete</p>
+                        <p className="text-center text-sm text-muted-foreground mt-2">{progress}% Complete</p>
                       </div>
                     )}
 
@@ -1662,7 +1664,7 @@ const DemandForecast = () => {
                             <div className="mt-1 flex items-center text-sm">
                               {item.trend === 'up' && <TrendUp className="h-3 w-3 text-green-600 mr-1" />}
                               {item.trend === 'down' && <TrendingDown className="h-3 w-3 text-red-600 mr-1" />}
-                              <span className="text-gray-600">{item.recommendation}</span>
+                              <span className="text-muted-foreground">{item.recommendation}</span>
                             </div>
                             <div className="mt-2 text-xs text-gray-500">
                               {item.occurrences} records
@@ -1693,24 +1695,24 @@ const DemandForecast = () => {
                           <Thermometer className="h-4 w-4 text-red-500" />
                           <span className="font-medium">Temperature Effect</span>
                         </div>
-                        <p className="text-sm text-gray-600">+12% demand when temp &gt; 30°C</p>
-                        <p className="text-sm text-gray-600 mt-1">-5% demand when temp &lt; 20°C</p>
+                        <p className="text-sm text-muted-foreground">+12% demand when temp &gt; 30°C</p>
+                        <p className="text-sm text-muted-foreground mt-1">-5% demand when temp &lt; 20°C</p>
                       </div>
                       <div className="border rounded-lg p-4">
                         <div className="flex items-center space-x-2 mb-2">
                           <Droplets className="h-4 w-4 text-blue-500" />
                           <span className="font-medium">Rainfall Impact</span>
                         </div>
-                        <p className="text-sm text-gray-600">Heavy rain reduces demand by 8%</p>
-                        <p className="text-sm text-gray-600 mt-1">Light rain has minimal impact</p>
+                        <p className="text-sm text-muted-foreground">Heavy rain reduces demand by 8%</p>
+                        <p className="text-sm text-muted-foreground mt-1">Light rain has minimal impact</p>
                       </div>
                       <div className="border rounded-lg p-4">
                         <div className="flex items-center space-x-2 mb-2">
                           <Calendar className="h-4 w-4 text-purple-500" />
                           <span className="font-medium">Seasonal Pattern</span>
                         </div>
-                        <p className="text-sm text-gray-600">Q4 demand +23% above average</p>
-                        <p className="text-sm text-gray-600 mt-1">Q1 demand -7% below average</p>
+                        <p className="text-sm text-muted-foreground">Q4 demand +23% above average</p>
+                        <p className="text-sm text-muted-foreground mt-1">Q1 demand -7% below average</p>
                       </div>
                     </div>
                   </AccordionContent>
@@ -1801,7 +1803,7 @@ const DemandForecast = () => {
                                               <span className={`text-xs mt-0.5 inline-block px-1.5 py-0.5 rounded ${
                                                 insight.impact === 'high' ? 'bg-red-100 text-red-700' :
                                                 insight.impact === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                                'bg-gray-100 text-gray-600'
+                                                'bg-gray-100 text-muted-foreground'
                                               }`}>
                                                 {insight.impact} impact
                                               </span>
@@ -1848,7 +1850,7 @@ const DemandForecast = () => {
                                     <div className="space-y-1.5">
                                       {featureAnalysis.most_influential.slice(0, 5).map((f: any, i: number) => (
                                         <div key={i} className="flex items-center space-x-3 text-sm">
-                                          <span className="w-32 text-gray-600 truncate text-xs">{f.feature}</span>
+                                          <span className="w-32 text-muted-foreground truncate text-xs">{f.feature}</span>
                                           <div className="flex-1 h-4 bg-gray-100 rounded-full relative overflow-hidden">
                                             {f.impact > 0 ? (
                                               <div className="absolute left-1/2 h-full bg-green-400 rounded-r-full"
@@ -1897,7 +1899,7 @@ const DemandForecast = () => {
                                               {risk.risk_level}
                                             </Badge>
                                           </div>
-                                          <p className="text-xs text-gray-600">{risk.description}</p>
+                                          <p className="text-xs text-muted-foreground">{risk.description}</p>
                                           {risk.mitigation && (
                                             <p className="text-xs text-blue-600 mt-1">💡 {risk.mitigation}</p>
                                           )}
@@ -1964,7 +1966,7 @@ const DemandForecast = () => {
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex items-center space-x-2">
-                      <Activity className="h-5 w-5 text-gray-600" />
+                      <Activity className="h-5 w-5 text-muted-foreground" />
                       <CardTitle className="text-base">Forecast Accuracy & Trust Metrics</CardTitle>
                     </div>
                     <Button variant="ghost" size="sm">
@@ -1992,7 +1994,7 @@ const DemandForecast = () => {
                         <p className="text-2xl font-bold">{accuracyMetrics.lastMonthAccuracy}%</p>
                       </div>
                     </div>
-                    <div className="mt-4 text-sm text-gray-600">
+                    <div className="mt-4 text-sm text-muted-foreground">
                       <span className="inline-flex items-center">
                         Trend: {accuracyMetrics.trend === 'improving' ? '📈 Improving' : '📉 Declining'}
                       </span>
@@ -2008,7 +2010,7 @@ const DemandForecast = () => {
                     variant="outline" 
                     size="sm"
                     onClick={() => setShowDataSummary(true)}
-                    className="text-gray-600"
+                    className="text-muted-foreground"
                   >
                     <PieChart className="h-4 w-4 mr-2" />
                     Show Data Overview
@@ -2020,6 +2022,7 @@ const DemandForecast = () => {
         </>
       )}
     </div>
+    </AuthenticatedShell>
   );
 };
 
