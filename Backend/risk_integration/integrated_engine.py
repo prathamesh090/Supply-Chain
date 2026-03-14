@@ -1,8 +1,8 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 from risk_integration.financial_service import get_financial_risk_for_supplier
 from plastic_inherent_risk.supplier_repository import get_supplier_index
-from supplier_registry.repository import get_supplier_by_id
+from supplier_registry.repository import resolve_supplier_identifier
 from datetime import datetime, timedelta
 
 FINANCIAL_WEIGHT = 0.6
@@ -22,20 +22,21 @@ def compute_integrated_risk(supplier_id: str) -> Dict[str, Any]:
     Combines Financial + Inherent Risk into a unified score.
     """
 
-    supplier = get_supplier_by_id(supplier_id)
+    supplier = resolve_supplier_identifier(supplier_id)
     if not supplier:
         return {
             "status": "not_found",
-            "message": "Supplier not found in registry."
+            "message": f"Supplier '{supplier_id}' not found in registry."
         }
 
+    canonical_supplier_id = supplier["supplier_id"]
     supplier_name = supplier["supplier_name"]
 
     # Financial Risk
     financial = get_financial_risk_for_supplier(supplier_name)
 
     # Inherent Rolling Risk
-    inherent_index = get_supplier_index(supplier_id)
+    inherent_index = get_supplier_index(canonical_supplier_id)
 
     financial_score = financial.get("risk_score", 0) if financial["status"] == "ok" else 0
     inherent_score = inherent_index.get("rolling_risk_score", 0) if inherent_index else 0
@@ -66,7 +67,7 @@ def compute_integrated_risk(supplier_id: str) -> Dict[str, Any]:
 
     return {
         "status": "ok",
-        "supplier_id": supplier_id,
+        "supplier_id": canonical_supplier_id,
         "supplier_name": supplier_name,
 
         "financial_risk": financial if financial["status"] == "ok" else None,

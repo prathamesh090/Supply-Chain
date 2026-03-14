@@ -35,7 +35,18 @@ def get_financial_risk_for_supplier(supplier_name: str) -> Dict[str, Any]:
         "delivery_date": None
     }
 
-    result = _predictor.predict_single_supplier(input_data)
+    try:
+        result = _predictor.predict_single_supplier(input_data)
+    except Exception as exc:
+        return {
+            "status": "degraded",
+            "supplier_name": supplier_name,
+            "risk_score": 0,
+            "risk_level": "Low",
+            "probabilities": {"Low": 1.0},
+            "explanation": f"Financial model unavailable: {exc}",
+            "model_type": "financial_operational_xgboost_v1"
+        }
 
     return {
         "status": "ok",

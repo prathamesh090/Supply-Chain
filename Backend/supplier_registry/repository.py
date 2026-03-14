@@ -111,3 +111,23 @@ def resolve_supplier_by_name(name: str) -> Optional[Dict]:
                 return supplier
 
     return None
+
+
+def resolve_supplier_identifier(identifier: str) -> Optional[Dict]:
+    """
+    Resolve supplier by canonical supplier_id, supplier_name, or alias.
+    Matching is case-insensitive and trims whitespace.
+    """
+
+    if not identifier:
+        return None
+
+    normalized = identifier.strip()
+    if not normalized:
+        return None
+
+    by_id = get_supplier_by_id(normalized)
+    if by_id:
+        return by_id
+
+    return resolve_supplier_by_name(normalized)

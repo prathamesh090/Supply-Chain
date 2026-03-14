@@ -16,6 +16,9 @@ def get_integrated_risk(supplier_id: str):
     result = compute_integrated_risk(supplier_id)
 
     if result["status"] != "ok":
-        raise HTTPException(status_code=404, detail="Supplier not found")
+        raise HTTPException(
+            status_code=404,
+            detail=result.get("message", f"Supplier '{supplier_id}' not found")
+        )
 
     return result

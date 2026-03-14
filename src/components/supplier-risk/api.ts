@@ -40,8 +40,12 @@ const safeFetch = async <T>(path: string): Promise<T | null> => {
 };
 
 export const fetchSupplierMonitoringData = async (): Promise<SupplierRiskRow[]> => {
-  const rankings = await getSupplierRankings();
-  return (rankings.rankings ?? []).map(mapSupplier);
+  try {
+    const rankings = await getSupplierRankings();
+    return (rankings.rankings ?? []).map(mapSupplier);
+  } catch {
+    return [];
+  }
 };
 
 export const fetchRecentRiskEvents = async (): Promise<RiskEventItem[]> => {

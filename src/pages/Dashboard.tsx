@@ -132,8 +132,8 @@ export default function Dashboard() {
     const total = distribution?.distribution?.total_suppliers ?? ranked.length;
 
     setTotalSuppliers(total);
-    setHighRiskSuppliers(ranked.filter((supplier) => supplier.predicted_risk?.toLowerCase() === 'high').length);
-    setActiveAlerts((incidents ?? []).filter((event) => event.risk_level.toLowerCase() !== 'low').length);
+    setHighRiskSuppliers(ranked.filter((supplier) => supplier.predicted_risk?.toLowerCase?.() === 'high').length);
+    setActiveAlerts((incidents ?? []).filter((event) => event?.risk_level?.toLowerCase?.() !== 'low').length);
     setGlobalDisruptions((globalRisk ?? []).length);
 
     const sessionsList = sessions?.sessions ?? [];

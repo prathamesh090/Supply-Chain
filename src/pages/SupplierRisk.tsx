@@ -26,14 +26,23 @@ export default function SupplierRisk() {
   const loadMonitoringData = async () => {
     try {
       setError(null);
-      const [supplierRows, incidentRows, disruptionRows] = await Promise.all([
+      const [supplierResult, incidentResult, disruptionResult] = await Promise.allSettled([
         fetchSupplierMonitoringData(),
         fetchRecentRiskEvents(),
         fetchGlobalRiskEvents(),
       ]);
+      const supplierRows = supplierResult.status === 'fulfilled' ? supplierResult.value : [];
+      const incidentRows = incidentResult.status === 'fulfilled' ? incidentResult.value : [];
+      const disruptionRows = disruptionResult.status === 'fulfilled' ? disruptionResult.value : [];
+
       setSuppliers(supplierRows);
       setEvents(incidentRows);
       setGlobalEvents(disruptionRows);
+
+      const failedCalls = [supplierResult, incidentResult, disruptionResult].filter((r) => r.status === 'rejected').length;
+      if (failedCalls > 0) {
+        setError(`Some risk data sources are temporarily unavailable (${failedCalls}/3). Showing partial data.`);
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to load supplier monitoring data.');
     } finally {
@@ -47,9 +56,9 @@ export default function SupplierRisk() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const [incidentRows, disruptionRows] = await Promise.all([fetchRecentRiskEvents(), fetchGlobalRiskEvents()]);
-      setEvents(incidentRows);
-      setGlobalEvents(disruptionRows);
+      const [incidentResult, disruptionResult] = await Promise.allSettled([fetchRecentRiskEvents(), fetchGlobalRiskEvents()]);
+      if (incidentResult.status === 'fulfilled') setEvents(incidentResult.value);
+      if (disruptionResult.status === 'fulfilled') setGlobalEvents(disruptionResult.value);
     }, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -77,8 +86,24 @@ export default function SupplierRisk() {
     setSelectedSupplier(supplier);
     setDetailOpen(true);
     setDetail(null);
-    const supplierDetail = await fetchSupplierDetail(supplier);
-    setDetail(supplierDetail);
+    try {
+      const supplierDetail = await fetchSupplierDetail(supplier);
+      setDetail(supplierDetail);
+    } catch {
+      setDetail({
+        supplier,
+        riskExplanation: 'Detailed supplier APIs are unavailable right now. Showing baseline monitoring data.',
+        incidentTimeline: [],
+        trendSeries: trendSeed,
+        inherentRiskFactors: {
+          materialExposure: 'Unavailable',
+          recyclabilityRisk: 'Unavailable',
+          hazardousComposition: 'Unavailable',
+          regulatorySensitivity: 'Unavailable',
+          rawMaterialDependency: 'Unavailable',
+        },
+      });
+    }
   };
 
   return (

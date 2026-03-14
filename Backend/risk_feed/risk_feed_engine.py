@@ -23,11 +23,19 @@ def compute_risk_feed(supplier_id: str):
     if integrated["status"] != "ok":
         return integrated
 
-    global_risk = compute_global_risk()
+    try:
+        global_risk = compute_global_risk()
+    except Exception as exc:
+        global_risk = {
+            "status": "degraded",
+            "event_count": 0,
+            "events": [],
+            "message": f"Global risk unavailable: {exc}"
+        }
 
     supplier_score = integrated["integrated_risk_score"]
 
-    events = global_risk["events"]
+    events = global_risk.get("events", [])
 
     global_score = 0
 
@@ -47,7 +55,7 @@ def compute_risk_feed(supplier_id: str):
         "supplier_risk_level": integrated["integrated_risk_level"],
 
         "global_risk_score": global_score,
-        "global_event_count": global_risk["event_count"],
+        "global_event_count": global_risk.get("event_count", 0),
 
         "final_risk_score": final_score,
         "final_risk_level": final_level,
