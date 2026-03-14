@@ -1,73 +1,340 @@
-# Welcome to your Lovable project
+# 🚀 AI-Driven Supply Chain Management & Logistics Planning System
 
-## Project info
+An **AI-powered supply chain planning platform** that helps manufacturers optimize demand forecasting, supplier risk monitoring, inventory planning, and distribution allocation.
 
-**URL**: https://lovable.dev/projects/6d4828b8-55f9-4614-96bd-f931700682b6
+The system acts as a **planning-level supply chain decision-support engine**, enabling companies to make data-driven supply chain decisions before execution begins.
 
-## How can I edit this code?
+The platform is currently demonstrated for the **plastic manufacturing industry**, with a modular architecture that supports future expansion to industries such as:
 
-There are several ways of editing your application.
+- Food & Beverages  
+- Chemicals  
+- Paper & Packaging  
+- Consumer Goods  
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/6d4828b8-55f9-4614-96bd-f931700682b6) and start prompting.
+# 📌 Project Vision
 
-Changes made via Lovable will be committed automatically to this repo.
+Modern supply chains are highly complex and vulnerable to disruptions such as:
 
-**Use your preferred IDE**
+- demand uncertainty  
+- supplier failures  
+- inventory imbalance  
+- inefficient distribution planning  
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Traditional systems rely heavily on manual planning and fragmented tools.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+This project introduces an **AI-assisted supply chain planning platform** that integrates forecasting, risk intelligence, inventory planning, and distribution optimization into a single decision-support system.
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 🏗 System Architecture
+Demand Forecasting
+        ↓
+Supplier Risk Assessment
+        ↓
+Inventory Management
+        ↓
+Route Optimization
+        ↓
+Distribution Planning Output
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+Each module contributes critical insights to the next stage, forming a **complete supply chain planning pipeline**.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+# 📊 Feature 1 — AI-Powered Demand Forecasting
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Problem
 
-**Use GitHub Codespaces**
+Manufacturers struggle with demand uncertainty which leads to:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Overstocking (high inventory holding costs)
+- Stockouts causing lost revenue
+- Poor production planning
 
-## What technologies are used for this project?
+Traditional forecasting techniques fail to capture complex patterns like:
 
-This project is built with:
+- seasonality
+- pricing effects
+- promotions
+- market fluctuations
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## Solution
 
-Simply open [Lovable](https://lovable.dev/projects/6d4828b8-55f9-4614-96bd-f931700682b6) and click on Share -> Publish.
+The system uses an **XGBoost machine learning model** trained on historical sales data with advanced feature engineering.
 
-## Can I connect a custom domain to my Lovable project?
+It analyzes multiple demand drivers and produces accurate demand predictions along with explainable insights.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Technology Stack
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- Python  
+- XGBoost  
+- Flask REST API  
+- SHAP Explainability  
+- MySQL  
+- Pandas  
+- NumPy  
+
+---
+
+## Key Features
+
+- 98.57% prediction accuracy  
+- 92 engineered demand features  
+- Batch prediction for up to 1000 products  
+- SHAP-based model explainability  
+- REST API integration  
+- Prediction storage in database
+
+---
+
+## Business Impact
+
+- Reduced forecasting errors  
+- Improved production planning  
+- Better procurement decisions  
+- Early identification of demand spikes  
+
+---
+
+# ⚠️ Feature 2 — Supplier Risk Assessment (SRA)
+
+## Problem
+
+Supply chains are exposed to supplier disruptions including:
+
+- delivery delays  
+- quality defects  
+- regulatory violations  
+- operational instability  
+
+Traditional supplier evaluation relies only on historical performance and often fails to detect emerging risks early.
+
+---
+
+## Solution
+
+The Supplier Risk Assessment system evaluates suppliers using operational performance metrics and a machine learning–assisted risk scoring model.
+
+The system analyzes supplier data including:
+
+- delivery performance  
+- defect rates  
+- compliance records  
+- pricing variance  
+- trust scores  
+
+These metrics are combined into a unified supplier risk score.
+--
+## Risk Scoring Model
+Risk Score =
+0.30 × Delivery Risk
+0.25 × Defect Risk
+0.20 × Compliance Risk
+0.15 × Price Risk
+0.10 × Trust Risk
+
+---
+
+## Risk Categories
+- Low Risk  
+- Medium Risk  
+- High Risk  
+---
+## Technology
+
+- Python  
+- XGBoost  
+- FastAPI / Flask  
+- SQLite / MySQL  
+---
+## Business Value
+
+- Early identification of unreliable suppliers  
+- Data-driven supplier evaluation  
+- Risk-aware supply chain planning  
+- Improved procurement strategies  
+
+---
+
+# 📦 Feature 3 — Inventory Management (Risk-Aware Inventory Planning)
+
+## Problem
+
+Manufacturers must balance two critical risks:
+
+- Overstocking → higher storage costs  
+- Stockouts → production disruption and lost sales  
+
+Traditional inventory systems rarely integrate demand forecasts and supplier risk simultaneously.
+---
+## Solution
+The system integrates **demand forecasts and supplier risk scores** to calculate dynamic safety stock and reorder points.
+The inventory planning model follows a research-aligned approach.
+
+Reorder Point (ROP) =
+Demand During Lead Time + Safety Stock
+
+
+Safety stock is adjusted using supplier risk levels to represent uncertainty.
+
+---
+
+## Risk-Based Safety Stock Adjustment
+
+| Risk Level | Multiplier |
+|-------------|-------------|
+| Low | 1.0 |
+| Medium | 1.3 |
+| High | 1.6 |
+
+---
+
+## Inventory Status Classification
+
+The system categorizes inventory into:
+
+- Healthy Inventory  
+- Reorder Soon  
+- Stockout Risk  
+
+---
+
+## Example Dashboard Table
+
+| Product | Current Stock | Safety Stock | ROP | Status |
+|--------|---------------|--------------|-----|-------|
+| P101 | 120 | 60 | 150 | Reorder Soon |
+| P102 | 400 | 80 | 200 | Healthy |
+| P103 | 40 | 50 | 120 | Stockout Risk |
+
+---
+
+## Business Value
+
+- Reduced stockout incidents  
+- Smarter replenishment planning  
+- Risk-aware inventory decisions  
+- Better working capital management  
+
+---
+
+# 🚚 Feature 4 — Route Planning & Distribution Optimization
+
+## Problem
+
+Manufacturers must decide:
+
+**Which warehouse should supply which customer region at minimum cost while respecting inventory and risk constraints.**
+
+Manual planning often results in:
+
+- inefficient transportation costs  
+- longer delivery distances  
+- high reliance on risky supply sources  
+
+---
+
+## Solution
+
+The system implements a **planning-level distribution allocation algorithm** inspired by supply chain routing research.
+
+The algorithm determines:
+
+- best warehouse for each region  
+- optimal product allocation  
+- cost vs risk trade-offs  
+
+This module generates **distribution plans**, not vehicle routes.
+
+---
+
+## Inputs
+
+### From Demand Forecasting
+
+- forecast demand per region and product  
+
+### From Inventory Management
+
+- warehouse inventory levels  
+- safety stock constraints  
+
+### From Supplier Risk Assessment
+
+- warehouse risk scores  
+
+---
+
+## Decision Logic
+
+For each product and region:
+
+1. Filter warehouses with sufficient inventory  
+2. Calculate transportation cost  
+3. Apply risk penalty  
+4. Select warehouse with lowest total cost  
+5. Allocate demand and update inventory  
+
+---
+
+## Example Distribution Plan
+
+| Product | Region | Warehouse | Quantity |
+|--------|-------|-----------|---------|
+| PET | R2 | W1 | 10,000 kg |
+| HDPE | R1 | W1 | 5,000 kg |
+
+---
+
+## Business Impact
+
+- Reduced logistics cost  
+- Improved demand fulfillment  
+- Lower supply chain risk  
+- Balanced warehouse utilization  
+
+---
+
+# 🛠 Tech Stack
+
+### Frontend
+- React.js  
+- Tailwind CSS  
+
+### Backend
+- Python  
+- FastAPI / Flask  
+
+### Machine Learning
+- XGBoost  
+- Scikit-learn  
+- SHAP  
+
+### Database
+- MySQL  
+- SQLite  
+
+### Data Processing
+- Pandas  
+- NumPy  
+
+---
+
+# 🔮 Future Enhancements
+
+- Multi-period supply chain planning  
+- Scenario simulation for demand changes  
+- Real-time supplier monitoring  
+- ERP / logistics system integration  
+- Industry expansion beyond plastics  
+
+AI-Driven Supply Chain Management & Logistics Planning Project
+
+

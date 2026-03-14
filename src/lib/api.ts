@@ -103,6 +103,31 @@ export const mlApi = {
     }
   },
 
+  // Get latest forecast for a product
+  getLatestForecast: async (productId: string) => {
+    try {
+      const response = await fetch(`${ML_API_BASE_URL}/api/ml/latest-forecast/${productId}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          return {
+            success: false,
+            forecast: null,
+            message: `No forecast available for product ${productId}`
+          };
+        }
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Get latest forecast failed:', error);
+      return {
+        success: false,
+        forecast: null,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  },
+
   // Health check
   health: async () => {
     try {

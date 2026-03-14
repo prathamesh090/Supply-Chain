@@ -2,6 +2,7 @@
 
 from datetime import datetime, timezone
 
+from plastic_inherent_risk.event_repository import store_event
 from .predictor import predict_inherent_risk
 from .repository import exists, insert
 from .enrichment import enrich_risk
@@ -46,6 +47,15 @@ def process_inherent_risk(text: str, supplier_id: str | None):
         "created_at": created_at
     })
 
+    store_event(
+        supplier_id=supplier_id,
+        event_text=text,
+        category=enriched["risk_category"],
+        risk_level=enriched["risk_level"],
+        risk_score=enriched["risk_score"],
+        source="inherent_ai"
+    )
+    
     if exists(text, supplier_id):
         supplier_index = compute_supplier_index(supplier_id)
         return {
@@ -69,6 +79,7 @@ def process_inherent_risk(text: str, supplier_id: str | None):
     )
 
     supplier_index = compute_supplier_index(supplier_id)
+
 
     return {
         "status": "stored",

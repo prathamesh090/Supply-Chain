@@ -1,60 +1,89 @@
 import mysql.connector
+from mysql.connector import pooling, Error
 import json
-import traceback
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 class DatabaseService:
     def __init__(self):
+
         self.host = os.getenv('DB_HOST', 'localhost')
         self.user = os.getenv('DB_USER', 'root')
         self.password = os.getenv('DB_PASSWORD', 'Satyam@mysql')
         self.database = os.getenv('DB_NAME', 'chainlink_pro')
         self.port = os.getenv('DB_PORT', '3306')
 
+        try:
+            self.connection_pool = pooling.MySQLConnectionPool(
+                pool_name="ml_pool",
+                pool_size=5,
+                pool_reset_session=True,
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                database=self.database,
+                port=int(self.port),
+                autocommit=False
+            )
+            logger.info("✅ Database connection pool created successfully")
+
+        except Error as e:
+            logger.error(f"❌ Error creating connection pool: {e}")
+            self.connection_pool = None
+
+
     def get_connection(self):
-        # Step 1: connect to MySQL server (without selecting DB)
-        conn = mysql.connector.connect(
-            host=self.host,
-            user=self.user,
-            password=self.password,
-            port=int(self.port)
-        )
-
-        cursor = conn.cursor()
-
-        # Step 2: create database if it doesn't exist
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.database}")
-
-        cursor.close()
-        conn.close()
-
-        # Step 3: connect again but now with database
-        return mysql.connector.connect(
-            host=self.host,
-            user=self.user,
-            password=self.password,
-            database=self.database,
-            port=int(self.port)
-        )
-
-    def create_tables(self):
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        """Get connection from pool"""
 
         try:
+            if self.connection_pool:
+                return self.connection_pool.get_connection()
+
+            return mysql.connector.connect(
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                database=self.database,
+                port=int(self.port),
+                autocommit=False
+            )
+
+        except Error as e:
+            logger.error(f"❌ Connection failed: {e}")
+            raise
+
+
+    def create_tables(self):
+
+        conn = None
+        cursor = None
+
+        try:
+            conn = self.get_connection()
+            cursor = conn.cursor()
+
+            cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.database}")
+            cursor.execute(f"USE {self.database}")
+
+            logger.info("🔄 Creating/verifying tables...")
+
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS analysis_sessions (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    session_id VARCHAR(255) UNIQUE,
-                    file_name VARCHAR(255),
-                    total_products INT,
-                    total_predictions INT,
-                    avg_demand DECIMAL(10,2),
-                    avg_confidence DECIMAL(5,4),
+                    session_id VARCHAR(255) UNIQUE NOT NULL,
+                    file_name VARCHAR(500),
+                    total_products INT DEFAULT 0,
+                    total_predictions INT DEFAULT 0,
+                    avg_demand DECIMAL(15,2) DEFAULT 0,
+                    avg_confidence DECIMAL(5,4) DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
                         ON UPDATE CURRENT_TIMESTAMP
@@ -68,17 +97,15 @@ class DatabaseService:
                     product_id VARCHAR(255),
                     product_type VARCHAR(255),
                     plastic_type VARCHAR(100),
-                    sale_amount DECIMAL(10,2),
+                    sale_amount DECIMAL(15,2),
                     discount DECIMAL(5,4),
-                    predicted_demand DECIMAL(10,2),
+                    predicted_demand DECIMAL(15,2),
                     confidence DECIMAL(5,4),
-                    input_data JSON,
+                    input_data LONGTEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX session_idx (session_id),
-                    INDEX product_idx (product_id),
-                    FOREIGN KEY (session_id) 
-                        REFERENCES analysis_sessions(session_id)
-                        ON DELETE CASCADE
+                    FOREIGN KEY (session_id)
+                    REFERENCES analysis_sessions(session_id)
+                    ON DELETE CASCADE
                 )
             ''')
 
@@ -88,294 +115,207 @@ class DatabaseService:
                     session_id VARCHAR(255),
                     product_id VARCHAR(255),
                     product_type VARCHAR(255),
-                    manufacturing_insights JSON,
-                    supply_recommendations JSON,
+                    manufacturing_insights LONGTEXT,
+                    supply_recommendations LONGTEXT,
+                    demand_indicators LONGTEXT,
+                    risk_assessment LONGTEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX session_idx (session_id),
-                    INDEX product_idx (product_id),
-                    FOREIGN KEY (session_id) 
-                        REFERENCES analysis_sessions(session_id)
-                        ON DELETE CASCADE
+                    FOREIGN KEY (session_id)
+                    REFERENCES analysis_sessions(session_id)
+                    ON DELETE CASCADE
                 )
             ''')
 
             conn.commit()
-            print("✅ Database tables created successfully in chainlink_pro")
 
-        except Exception as e:
-            print(f"❌ Error creating tables: {e}")
+            logger.info("✅ Tables created/verified successfully")
+            return True
+
+        except Error as e:
+            logger.error(f"❌ Table creation failed: {e}")
+            if conn:
+                conn.rollback()
+            return False
+
         finally:
-            cursor.close()
-            conn.close()
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
 
     def save_analysis_session(self, session_data):
-        conn = self.get_connection()
-        cursor = conn.cursor()
+
+        conn = None
+        cursor = None
 
         try:
+
+            conn = self.get_connection()
+            cursor = conn.cursor()
+
             cursor.execute('''
-                INSERT INTO analysis_sessions 
-                (session_id, file_name, total_products, 
+                INSERT INTO analysis_sessions
+                (session_id, file_name, total_products,
                  total_predictions, avg_demand, avg_confidence)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                VALUES (%s,%s,%s,%s,%s,%s)
                 ON DUPLICATE KEY UPDATE
                 file_name = VALUES(file_name),
                 total_products = VALUES(total_products),
                 total_predictions = VALUES(total_predictions),
                 avg_demand = VALUES(avg_demand),
-                avg_confidence = VALUES(avg_confidence),
-                updated_at = CURRENT_TIMESTAMP
+                avg_confidence = VALUES(avg_confidence)
             ''', (
+
                 session_data['session_id'],
-                session_data['file_name'],
-                session_data['total_products'],
-                session_data['total_predictions'],
-                session_data['avg_demand'],
-                session_data['avg_confidence']
+                session_data.get('file_name', 'unknown'),
+                session_data.get('total_products', 0),
+                session_data.get('total_predictions', 0),
+                float(session_data.get('avg_demand', 0)),
+                float(session_data.get('avg_confidence', 0))
+
             ))
 
             conn.commit()
+
+            logger.info("✅ Session saved")
             return True
 
-        except Exception as e:
-            print(f"❌ Error saving analysis session: {e}")
-            traceback.print_exc()
-            try:
+        except Error as e:
+
+            logger.error(f"❌ Error saving session: {e}")
+
+            if conn:
                 conn.rollback()
-            except:
-                pass
+
             return False
+
         finally:
-            cursor.close()
-            conn.close()
+
+            if cursor:
+                cursor.close()
+
+            if conn:
+                conn.close()
+
 
     def save_predictions(self, session_id, predictions):
-        conn = self.get_connection()
-        cursor = conn.cursor()
+
+        conn = None
+        cursor = None
 
         try:
+
+            conn = self.get_connection()
+            cursor = conn.cursor()
+
             cursor.execute(
-                'DELETE FROM predictions WHERE session_id = %s',
+                "DELETE FROM predictions WHERE session_id=%s",
                 (session_id,)
             )
 
             for pred in predictions:
+
                 cursor.execute('''
-                    INSERT INTO predictions 
-                    (session_id, product_id, product_type, plastic_type,
-                     sale_amount, discount, predicted_demand, 
-                     confidence, input_data)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO predictions
+                    (session_id, product_id, product_type,
+                     plastic_type, sale_amount, discount,
+                     predicted_demand, confidence, input_data)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 ''', (
+
                     session_id,
-                    pred.get('product_id'),
-                    pred.get('product_type'),
-                    pred.get('plastic_type'),
-                    pred.get('sale_amount', 0),
-                    pred.get('discount', 0),
-                    pred.get('predicted_demand', 0),
-                    pred.get('confidence', 0),
-                    json.dumps(pred.get('input_data', {}))
+                    pred.get("product_id"),
+                    pred.get("product_type"),
+                    pred.get("plastic_type"),
+                    float(pred.get("sale_amount", 0)),
+                    float(pred.get("discount", 0)),
+                    float(pred.get("predicted_demand", 0)),
+                    float(pred.get("confidence", 0)),
+                    json.dumps(pred.get("input_data", {}))
                 ))
 
             conn.commit()
+
+            logger.info("✅ Predictions saved")
             return True
 
-        except Exception as e:
-            print(f"❌ Error saving predictions: {e}")
-            traceback.print_exc()
-            try:
+        except Error as e:
+
+            logger.error(f"❌ Error saving predictions: {e}")
+
+            if conn:
                 conn.rollback()
-            except:
-                pass
+
             return False
+
         finally:
-            cursor.close()
-            conn.close()
+
+            if cursor:
+                cursor.close()
+
+            if conn:
+                conn.close()
+
 
     def save_explanations(self, session_id, explanations):
-        conn = self.get_connection()
-        cursor = conn.cursor()
+
+        conn = None
+        cursor = None
 
         try:
+
+            conn = self.get_connection()
+            cursor = conn.cursor()
+
             cursor.execute(
-                'DELETE FROM explanations WHERE session_id = %s',
+                "DELETE FROM explanations WHERE session_id=%s",
                 (session_id,)
             )
 
             for exp in explanations:
+
                 cursor.execute('''
-                    INSERT INTO explanations 
+                    INSERT INTO explanations
                     (session_id, product_id, product_type,
-                     manufacturing_insights, supply_recommendations)
-                    VALUES (%s, %s, %s, %s, %s)
+                     manufacturing_insights,
+                     supply_recommendations,
+                     demand_indicators,
+                     risk_assessment)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s)
                 ''', (
+
                     session_id,
-                    exp.get('product_id'),
-                    exp.get('product_type'),
-                    json.dumps(exp.get('manufacturing_insights', [])),
-                    json.dumps(exp.get('supply_recommendations', []))
+                    exp.get("product_id"),
+                    exp.get("product_type"),
+                    json.dumps(exp.get("manufacturing_insights", [])),
+                    json.dumps(exp.get("supply_recommendations", [])),
+                    json.dumps(exp.get("demand_indicators", [])),
+                    json.dumps(exp.get("risk_assessment", {}))
                 ))
 
             conn.commit()
+
+            logger.info("✅ Explanations saved")
             return True
 
-        except Exception as e:
-            print(f"❌ Error saving explanations: {e}")
-            traceback.print_exc()
-            try:
+        except Error as e:
+
+            logger.error(f"❌ Error saving explanations: {e}")
+
+            if conn:
                 conn.rollback()
-            except:
-                pass
+
             return False
+
         finally:
-            cursor.close()
-            conn.close()
 
-    # ================= UPDATED METHOD =================
+            if cursor:
+                cursor.close()
 
-    def get_recent_sessions(self, limit=10):
-        """Get recent prediction sessions"""
-        connection = self.get_connection()
-        if not connection:
-            return []
-
-        try:
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute('''
-                SELECT 
-                    session_id,
-                    file_name,
-                    created_at,
-                    total_predictions AS prediction_count,
-                    total_products,
-                    avg_demand
-                FROM analysis_sessions 
-                ORDER BY created_at DESC 
-                LIMIT %s
-            ''', (limit,))
-
-            sessions = cursor.fetchall()
-
-            for session in sessions:
-                if session.get('created_at'):
-                    session['created_at'] = session['created_at'].isoformat()
-
-            return sessions
-
-        except Exception as e:
-            print(f"❌ Error getting sessions: {e}")
-            return []
-        finally:
-            cursor.close()
-            connection.close()
-
-    # ================= UPDATED METHOD =================
-
-    def get_session(self, session_id):
-        """Get session with all data"""
-        connection = self.get_connection()
-        if not connection:
-            return None
-
-        try:
-            cursor = connection.cursor(dictionary=True)
-
-            cursor.execute('''
-                SELECT 
-                    session_id,
-                    file_name,
-                    created_at,
-                    total_predictions,
-                    total_products,
-                    avg_demand,
-                    avg_confidence
-                FROM analysis_sessions 
-                WHERE session_id = %s
-            ''', (session_id,))
-
-            session = cursor.fetchone()
-            if not session:
-                return None
-
-            if session.get('created_at'):
-                session['created_at'] = session['created_at'].isoformat()
-
-            cursor.execute('''
-                SELECT 
-                    id,
-                    session_id,
-                    product_id,
-                    product_type,
-                    plastic_type AS Plastic_Type,
-                    sale_amount,
-                    discount,
-                    predicted_demand AS prediction,
-                    confidence,
-                    input_data
-                FROM predictions 
-                WHERE session_id = %s
-            ''', (session_id,))
-            predictions = cursor.fetchall()
-
-            for pred in predictions:
-                if isinstance(pred.get('input_data'), str):
-                    try:
-                        pred['input_data'] = json.loads(pred['input_data'])
-                    except:
-                        pred['input_data'] = {}
-
-            cursor.execute('''
-                SELECT 
-                    id,
-                    session_id,
-                    product_id,
-                    product_type,
-                    manufacturing_insights,
-                    supply_recommendations
-                FROM explanations 
-                WHERE session_id = %s
-            ''', (session_id,))
-            explanations_data = cursor.fetchall()
-
-            explanations = []
-            for exp in explanations_data:
-                mi = exp.get('manufacturing_insights', [])
-                sr = exp.get('supply_recommendations', [])
-
-                if isinstance(mi, str):
-                    try:
-                        mi = json.loads(mi)
-                    except:
-                        mi = []
-
-                if isinstance(sr, str):
-                    try:
-                        sr = json.loads(sr)
-                    except:
-                        sr = []
-
-                explanations.append({
-                    "product_id": exp.get("product_id"),
-                    "product_type": exp.get("product_type"),
-                    "manufacturing_insights": mi,
-                    "supply_recommendations": sr
-                })
-
-            return {
-                "session": session,
-                "predictions": predictions,
-                "explanations": explanations
-            }
-
-        except Exception as e:
-            print(f"❌ Error getting session: {e}")
-            return None
-        finally:
-            cursor.close()
-            connection.close()
+            if conn:
+                conn.close()
 
 
-# Initialize database tables
 db_service = DatabaseService()
 db_service.create_tables()
