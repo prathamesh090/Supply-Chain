@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   Sidebar,
   SidebarContent,
@@ -111,6 +111,7 @@ export default function Dashboard() {
   const { logout } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authWarning, setAuthWarning] = useState<string | null>(null);
 
   const [totalSuppliers, setTotalSuppliers] = useState(0);
   const [highRiskSuppliers, setHighRiskSuppliers] = useState(0);
@@ -159,17 +160,24 @@ export default function Dashboard() {
       try {
         const userData = await getCurrentUser(token);
         setUser(userData);
-        await loadDashboardData();
       } catch (err) {
-        logout();
-        navigate('/sign-in');
+        setUser({
+          id: 0,
+          email: 'local@chainlink.pro',
+          full_name: 'Local User',
+          role: 'user',
+          is_active: true,
+          created_at: new Date().toISOString(),
+        });
+        setAuthWarning('Unable to validate user profile from backend. Showing dashboard in local fallback mode.');
       } finally {
+        await loadDashboardData();
         setLoading(false);
       }
     };
 
     fetchUser();
-  }, [navigate, logout]);
+  }, [navigate]);
 
   const statsData = useMemo(() => [
     { title: 'Suppliers Connected', value: String(totalSuppliers), icon: Users, helper: 'Live supplier registry + rankings' },
@@ -215,6 +223,12 @@ export default function Dashboard() {
                 <Button onClick={handleSignOut} variant="outline" size="sm">Sign Out</Button>
               </div>
             </div>
+
+            {authWarning && (
+              <Card className="border-yellow-200 bg-yellow-50">
+                <CardContent className="p-4 text-sm text-yellow-800">{authWarning}</CardContent>
+              </Card>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
               {statsData.map((stat) => (
