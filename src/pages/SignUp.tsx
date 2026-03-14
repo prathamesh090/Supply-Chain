@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { signUp, createCompany, storeToken } from '@/lib/api';
+import { signUp, createCompany } from '@/lib/api';
+import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
 
 const businessTypes = [
@@ -43,6 +44,7 @@ const industries = [
 export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -123,7 +125,7 @@ export default function SignUp() {
     };
 
     const authResponse = await signUp(signUpData);
-    storeToken(authResponse.access_token);
+    login(authResponse.access_token);
 
     // Step 2: Create company profile (only if we have company data)
     if (formData.companyName) {
@@ -149,12 +151,10 @@ export default function SignUp() {
       description: 'Welcome to ChainLink Pro',
     });
     
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 1000);
+    navigate('/dashboard', { replace: true });
 
-  } catch (err: any) {
-    setError(err.message || 'An error occurred during sign up');
+  } catch (err: unknown) {
+    setError(err instanceof Error ? err.message : 'An error occurred during sign up');
   } finally {
     setIsSubmitting(false);
   }

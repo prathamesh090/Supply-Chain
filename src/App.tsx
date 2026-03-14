@@ -18,7 +18,7 @@ import DemandForecast from "./pages/DemandForcast";
 import NotFound from "./pages/NotFound";
 import SupplierRisk from "./pages/SupplierRisk";
 import SupplierDetail from "./pages/SupplierDetail";
-
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -41,12 +41,12 @@ const App = () => (
               <Route path="/sign-up" element={<SignUp />} />
               
               {/* Dashboard route (no nested routes for now) */}
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               
               {/* Demand Forecasting as separate route */}
-              <Route path="/demand-forecast" element={<DemandForecast />} />
-              <Route path="/supplier-risk" element={<SupplierRisk />} />
-              <Route path="/supplier/:name" element={<SupplierDetail />} />
+              <Route path="/demand-forecast" element={<ProtectedRoute><DemandForecast /></ProtectedRoute>} />
+              <Route path="/supplier-risk" element={<ProtectedRoute><SupplierRisk /></ProtectedRoute>} />
+              <Route path="/supplier/:name" element={<ProtectedRoute><SupplierDetail /></ProtectedRoute>} />
 
 
               

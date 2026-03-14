@@ -1,16 +1,19 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { NetworkVisualization } from '@/components/NetworkVisualization';
-import { signIn, storeToken } from '@/lib/api';
+import { signIn } from '@/lib/api';
+import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -38,20 +41,18 @@ export default function SignIn() {
       };
 
       const response = await signIn(credentials);
-      storeToken(response.access_token);
+      login(response.access_token);
 
       toast({
         title: 'Welcome back!',
         description: 'Successfully signed in',
       });
 
-      // Redirect to dashboard
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1000);
+      const nextPath = (location.state as { from?: string } | null)?.from || '/dashboard';
+      navigate(nextPath, { replace: true });
 
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during sign in');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred during sign in');
     } finally {
       setIsSubmitting(false);
     }
