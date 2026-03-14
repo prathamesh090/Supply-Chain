@@ -78,7 +78,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet';
 import {
   Tooltip,
@@ -159,12 +158,19 @@ const DemandForecast = () => {
   const [recentSessions, setRecentSessions] = useState<Session[]>([]);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [demandNavTab, setDemandNavTab] = useState<'forecast' | 'history' | 'what-if'>('forecast');
   const [loadingSession, setLoadingSession] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<Session | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showAccuracy, setShowAccuracy] = useState(false);
   const [whatIfOpen, setWhatIfOpen] = useState(false);
+  const [whatIfScenario, setWhatIfScenario] = useState({
+    priceChangePct: 0,
+    discountPct: 0,
+    disruptionImpactPct: 0,
+  });
+  const [whatIfResult, setWhatIfResult] = useState<{ baseline: number; projected: number; deltaPct: number } | null>(null);
   const [dataSummary, setDataSummary] = useState<DataSummary | null>(null);
   const [showDataSummary, setShowDataSummary] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -312,8 +318,38 @@ const DemandForecast = () => {
       }
     } catch (error: any) {
       console.error('Error loading recent sessions:', error);
-      setRecentSessions([]);
+      const localSessionId = localStorage.getItem('current_session_id');
+      const localSessionData = localStorage.getItem('current_session_data');
+      if (localSessionId && localSessionData) {
+        try {
+          const sessionData = JSON.parse(localSessionData);
+          setRecentSessions([{
+            session_id: localSessionId,
+            file_name: sessionData.file_name || 'local-session.csv',
+            created_at: sessionData.created_at || new Date().toISOString(),
+            predictions: sessionData.predictions || [],
+            explanations: sessionData.explanations || [],
+            prediction_count: sessionData.predictions?.length || 0,
+            total_products: new Set((sessionData.predictions || []).map((p: any) => p.input_data?.product_id)).size,
+            avg_demand: (sessionData.predictions || []).reduce((sum: number, p: any) => sum + (p.prediction || 0), 0) / ((sessionData.predictions || []).length || 1),
+          }]);
+        } catch {
+          setRecentSessions([]);
+        }
+      } else {
+        setRecentSessions([]);
+      }
     }
+  };
+
+  const runWhatIfSimulation = () => {
+    const baseline = predictions.reduce((sum, p) => sum + (p.prediction || 0), 0);
+    const priceEffect = baseline * (-whatIfScenario.priceChangePct / 100) * 0.3;
+    const discountEffect = baseline * (whatIfScenario.discountPct / 100) * 0.4;
+    const disruptionEffect = baseline * (-whatIfScenario.disruptionImpactPct / 100) * 0.5;
+    const projected = Math.max(0, baseline + priceEffect + discountEffect + disruptionEffect);
+    const deltaPct = baseline > 0 ? ((projected - baseline) / baseline) * 100 : 0;
+    setWhatIfResult({ baseline, projected, deltaPct });
   };
 
   const deleteSession = async (sessionId: string) => {
@@ -1062,7 +1098,10 @@ const DemandForecast = () => {
           )}
           <Button 
             variant="outline" 
-            onClick={() => setShowHistory(!showHistory)}
+            onClick={() => {
+              setDemandNavTab('history');
+              setShowHistory((v) => !v);
+            }}
             className="flex items-center space-x-2"
           >
             <History className="h-4 w-4" />
@@ -1070,7 +1109,10 @@ const DemandForecast = () => {
           </Button>
           <Button 
             variant="outline" 
-            onClick={() => setWhatIfOpen(true)}
+            onClick={() => {
+              setDemandNavTab('what-if');
+              setWhatIfOpen(true);
+            }}
             className="flex items-center space-x-2"
           >
             <GitBranch className="h-4 w-4" />
@@ -1096,8 +1138,16 @@ const DemandForecast = () => {
         className="hidden"
       />
 
+      <Tabs value={demandNavTab} onValueChange={(v) => setDemandNavTab(v as 'forecast' | 'history' | 'what-if')}>
+        <TabsList className="grid w-full md:w-[480px] grid-cols-3">
+          <TabsTrigger value="forecast">Forecast</TabsTrigger>
+          <TabsTrigger value="history" onClick={() => setShowHistory(true)}>History</TabsTrigger>
+          <TabsTrigger value="what-if" onClick={() => setWhatIfOpen(true)}>What-If</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       {/* History Panel */}
-      {showHistory && (
+      {showHistory && demandNavTab === 'history' && (
         <Card className="mb-6">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center space-x-2 text-lg">
@@ -1184,36 +1234,48 @@ const DemandForecast = () => {
             <div className="space-y-4">
               <h3 className="font-medium">Price Change</h3>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" className="justify-start">-10%</Button>
-                <Button variant="outline" className="justify-start">-5%</Button>
-                <Button variant="outline" className="justify-start">+5%</Button>
-                <Button variant="outline" className="justify-start">+10%</Button>
+                {[-10, -5, 5, 10].map((val) => (
+                  <Button key={`price-${val}`} variant={whatIfScenario.priceChangePct === val ? 'default' : 'outline'} className="justify-start" onClick={() => setWhatIfScenario((prev) => ({ ...prev, priceChangePct: val }))}>{val > 0 ? `+${val}%` : `${val}%`}</Button>
+                ))}
               </div>
             </div>
             
             <div className="space-y-4">
               <h3 className="font-medium">Discount Scenario</h3>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" className="justify-start">Clearance (20%)</Button>
-                <Button variant="outline" className="justify-start">Promotional (10%)</Button>
-                <Button variant="outline" className="justify-start">Bulk order (15%)</Button>
-                <Button variant="outline" className="justify-start">Seasonal (8%)</Button>
+                {[20, 10, 15, 8].map((val) => (
+                  <Button key={`disc-${val}`} variant={whatIfScenario.discountPct === val ? 'default' : 'outline'} className="justify-start" onClick={() => setWhatIfScenario((prev) => ({ ...prev, discountPct: val }))}>{`Discount ${val}%`}</Button>
+                ))}
               </div>
             </div>
             
             <div className="space-y-4">
               <h3 className="font-medium">Supply Disruption</h3>
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" className="justify-start">Delay 3 days</Button>
-                <Button variant="outline" className="justify-start">Delay 7 days</Button>
-                <Button variant="outline" className="justify-start">Partial shipment</Button>
-                <Button variant="outline" className="justify-start">Alternate supplier</Button>
+                {[
+                  { label: 'Delay 3 days', value: 5 },
+                  { label: 'Delay 7 days', value: 12 },
+                  { label: 'Partial shipment', value: 18 },
+                  { label: 'Alternate supplier', value: 3 },
+                ].map((item) => (
+                  <Button key={item.label} variant={whatIfScenario.disruptionImpactPct === item.value ? 'default' : 'outline'} className="justify-start" onClick={() => setWhatIfScenario((prev) => ({ ...prev, disruptionImpactPct: item.value }))}>{item.label}</Button>
+                ))}
               </div>
             </div>
             
             <div className="pt-4">
-              <Button className="w-full bg-blue-600">Run Simulation</Button>
+              <Button className="w-full bg-blue-600" onClick={runWhatIfSimulation}>Run Simulation</Button>
             </div>
+
+            {whatIfResult && (
+              <Card>
+                <CardContent className="p-4 space-y-1 text-sm">
+                  <p><span className="font-medium">Baseline Demand:</span> {formatNumber(whatIfResult.baseline)}</p>
+                  <p><span className="font-medium">Projected Demand:</span> {formatNumber(whatIfResult.projected)}</p>
+                  <p><span className="font-medium">Change:</span> {whatIfResult.deltaPct.toFixed(1)}%</p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </SheetContent>
       </Sheet>
