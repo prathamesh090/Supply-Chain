@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, AlertTriangle, Shield, Clock, Star, CheckCircle2, TrendingUp, Hash, Boxes } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, Shield, Clock, Star, CheckCircle2, TrendingUp, Hash, Boxes, Info, ListTree } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +41,7 @@ export default function SupplierDetail() {
   const [supplier, setSupplier] = useState<SupplierData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [detailData, setDetailData] = useState<SupplierDetailData | null>(null);
 
   useEffect(() => {
     const fetchSupplierDetail = async () => {
@@ -63,6 +64,25 @@ export default function SupplierDetail() {
         
         if (foundSupplier) {
           setSupplier(foundSupplier);
+
+          const mappedSupplier: SupplierRiskRow = {
+            supplierId: foundSupplier.supplier_name,
+            supplierName: foundSupplier.supplier_name,
+            country: 'Global',
+            industry: 'Materials',
+            connectedMaterials: foundSupplier.plastic_types || [],
+            financialRiskScore: Math.round(foundSupplier.risk_score_ui ?? foundSupplier.risk_score ?? 0),
+            financialRiskLevel: foundSupplier.predicted_risk,
+            inherentRiskScore: Math.round((foundSupplier.trust_score ?? 50) * 0.7),
+            inherentRiskLevel: foundSupplier.predicted_risk,
+            integratedRiskScore: Math.round(foundSupplier.risk_score_ui ?? foundSupplier.risk_score ?? 0),
+            integratedRiskLevel: foundSupplier.predicted_risk,
+            recentIncident: foundSupplier.risk_summary,
+            lastUpdated: new Date().toISOString(),
+          };
+
+          const extra = await fetchSupplierDetail(mappedSupplier);
+          setDetailData(extra);
         } else {
           setError('Supplier not found');
         }
@@ -251,7 +271,8 @@ export default function SupplierDetail() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <AuthenticatedShell>
+    <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
         <div className="container mx-auto px-6 py-8">
@@ -578,6 +599,42 @@ export default function SupplierDetail() {
           </Card>
         </div>
       </div>
+
+        {/* Additional Supplier Deep-Dive (from previous right panel) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Info className="w-5 h-5" />Risk Explanation</CardTitle>
+              <CardDescription>Integrated financial + inherent risk narrative</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">{detailData?.riskExplanation || supplier.risk_summary}</p>
+              <div className="space-y-2 text-sm">
+                <p><strong>Material-level exposure:</strong> {detailData?.inherentRiskFactors.materialExposure || 'N/A'}</p>
+                <p><strong>Recyclability:</strong> {detailData?.inherentRiskFactors.recyclabilityRisk || 'N/A'}</p>
+                <p><strong>Hazardous composition:</strong> {detailData?.inherentRiskFactors.hazardousComposition || 'N/A'}</p>
+                <p><strong>Regulatory sensitivity:</strong> {detailData?.inherentRiskFactors.regulatorySensitivity || 'N/A'}</p>
+                <p><strong>Raw-material dependency:</strong> {detailData?.inherentRiskFactors.rawMaterialDependency || 'N/A'}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><ListTree className="w-5 h-5" />Incident Timeline</CardTitle>
+              <CardDescription>Recent supplier-related incidents from risk feed</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2 max-h-72 overflow-auto">
+              {detailData?.incidentTimeline?.length ? detailData.incidentTimeline.map((event, idx) => (
+                <div key={`${event.supplier_id}-${idx}`} className="border rounded-md p-2 text-sm">
+                  <p>{event.event_text}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{new Date(event.created_at).toLocaleString()} • {event.category}</p>
+                </div>
+              )) : <p className="text-sm text-muted-foreground">No incidents found for this supplier.</p>}
+            </CardContent>
+          </Card>
+        </div>
     </div>
+    </AuthenticatedShell>
   );
 }
