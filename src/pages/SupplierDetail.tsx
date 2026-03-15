@@ -16,6 +16,10 @@ import {
   Tooltip,
   Legend 
 } from 'recharts';
+import { AuthenticatedShell } from '@/components/AuthenticatedShell';
+import { fetchSupplierDetail as fetchSupplierDeepDetail } from '@/components/supplier-risk/api';
+import type { SupplierDetailData, SupplierRiskRow } from '@/components/supplier-risk/types';
+import { getSupplierRankings } from '@/lib/api';
 
 interface SupplierData {
   supplier_name: string;
@@ -44,22 +48,32 @@ export default function SupplierDetail() {
   const [detailData, setDetailData] = useState<SupplierDetailData | null>(null);
 
   useEffect(() => {
-    const fetchSupplierDetail = async () => {
-      if (!name) return;
+    const loadSupplierDetail = async () => {
+      if (!name) {
+        setError('Missing supplier name in URL');
+        setLoading(false);
+        return;
+      }
       
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:8000/api/supplier-risk/rankings");
-        if (!response.ok) {
-          throw new Error(`Failed to fetch supplier data: ${response.statusText}`);
+        let data: { rankings?: SupplierData[] } = { rankings: [] };
+        try {
+          data = await getSupplierRankings();
+        } catch {
+          const response = await fetch('http://localhost:8000/api/supplier-risk/rankings');
+          if (!response.ok) {
+            throw new Error(`Failed to fetch supplier data: ${response.statusText}`);
+          }
+          data = await response.json();
         }
-        
-        const data = await response.json();
+
         const decodedName = decodeURIComponent(name);
+        const normalizedName = decodedName.trim().toLowerCase();
         
         // Find the supplier by name in the rankings
         const foundSupplier = data.rankings?.find((s: SupplierData) => 
-          s.supplier_name === decodedName
+          s.supplier_name === decodedName || s.supplier_name?.trim().toLowerCase() === normalizedName
         );
         
         if (foundSupplier) {
@@ -81,10 +95,10 @@ export default function SupplierDetail() {
             lastUpdated: new Date().toISOString(),
           };
 
-          const extra = await fetchSupplierDetail(mappedSupplier);
+          const extra = await fetchSupplierDeepDetail(mappedSupplier);
           setDetailData(extra);
         } else {
-          setError('Supplier not found');
+          setError(`Supplier '${decodedName}' not found`);
         }
       } catch (err: any) {
         console.error('Error fetching supplier:', err);
@@ -94,7 +108,7 @@ export default function SupplierDetail() {
       }
     };
 
-    fetchSupplierDetail();
+    loadSupplierDetail();
   }, [name]);
 
   const handleBack = () => {
