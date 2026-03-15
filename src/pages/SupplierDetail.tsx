@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, AlertTriangle, Shield, Clock, Star, CheckCircle2, TrendingUp } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, Shield, Clock, Star, CheckCircle2, TrendingUp, Hash, Boxes } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -354,6 +354,36 @@ export default function SupplierDetail() {
                   <p className="text-sm text-muted-foreground">Compliance Rate</p>
                   <p className="text-2xl font-bold text-foreground">{supplier.compliance_rate.toFixed(1)}%</p>
                   <p className="text-xs text-muted-foreground">regulatory compliance</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-100 rounded-lg">
+                  <Hash className="w-5 h-5 text-indigo-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Risk Rank</p>
+                  <p className="text-2xl font-bold text-foreground">{supplier.risk_rank ? `#${supplier.risk_rank}` : 'N/A'}</p>
+                  <p className="text-xs text-muted-foreground">across monitored suppliers</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-cyan-100 rounded-lg">
+                  <Boxes className="w-5 h-5 text-cyan-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Materials Tracked</p>
+                  <p className="text-2xl font-bold text-foreground">{supplier.plastic_types?.length || 0}</p>
+                  <p className="text-xs text-muted-foreground">connected material categories</p>
                 </div>
               </div>
             </CardContent>

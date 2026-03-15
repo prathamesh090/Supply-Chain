@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,21 +9,18 @@ import { RiskSummaryCards } from '@/components/supplier-risk/RiskSummaryCards';
 import { SupplierRiskTable } from '@/components/supplier-risk/SupplierRiskTable';
 import { IncidentFeed } from '@/components/supplier-risk/IncidentFeed';
 import { GlobalRiskPanel } from '@/components/supplier-risk/GlobalRiskPanel';
-import { SupplierDetailPanel } from '@/components/supplier-risk/SupplierDetailPanel';
 import { RiskTrendCharts } from '@/components/supplier-risk/RiskTrendCharts';
-import { fetchGlobalRiskEvents, fetchRecentRiskEvents, fetchSupplierDetail, fetchSupplierMonitoringData } from '@/components/supplier-risk/api';
+import { fetchGlobalRiskEvents, fetchRecentRiskEvents, fetchSupplierMonitoringData } from '@/components/supplier-risk/api';
 import { AuthenticatedShell } from '@/components/AuthenticatedShell';
-import type { GlobalRiskEventItem, RiskEventItem, SupplierDetailData, SupplierRiskRow } from '@/components/supplier-risk/types';
+import type { GlobalRiskEventItem, RiskEventItem, SupplierRiskRow } from '@/components/supplier-risk/types';
 
 export default function SupplierRisk() {
+  const navigate = useNavigate();
   const [suppliers, setSuppliers] = useState<SupplierRiskRow[]>([]);
   const [events, setEvents] = useState<RiskEventItem[]>([]);
   const [globalEvents, setGlobalEvents] = useState<GlobalRiskEventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSupplier, setSelectedSupplier] = useState<SupplierRiskRow | null>(null);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [detail, setDetail] = useState<SupplierDetailData | null>(null);
 
   const loadMonitoringData = async () => {
     try {
@@ -75,7 +73,7 @@ export default function SupplierRisk() {
     };
   }, [suppliers, events, globalEvents]);
 
-  const trendSeed = detail?.trendSeries ?? Array.from({ length: 6 }).map((_, i) => ({
+  const trendSeed = Array.from({ length: 6 }).map((_, i) => ({
     date: `W${i + 1}`,
     financial: 40 + i * 4,
     inherent: 35 + i * 3,
@@ -84,27 +82,7 @@ export default function SupplierRisk() {
   }));
 
   const handleSelectSupplier = async (supplier: SupplierRiskRow) => {
-    setSelectedSupplier(supplier);
-    setDetailOpen(true);
-    setDetail(null);
-    try {
-      const supplierDetail = await fetchSupplierDetail(supplier);
-      setDetail(supplierDetail);
-    } catch {
-      setDetail({
-        supplier,
-        riskExplanation: 'Detailed supplier APIs are unavailable right now. Showing baseline monitoring data.',
-        incidentTimeline: [],
-        trendSeries: trendSeed,
-        inherentRiskFactors: {
-          materialExposure: 'Unavailable',
-          recyclabilityRisk: 'Unavailable',
-          hazardousComposition: 'Unavailable',
-          regulatorySensitivity: 'Unavailable',
-          rawMaterialDependency: 'Unavailable',
-        },
-      });
-    }
+    navigate(`/supplier/${encodeURIComponent(supplier.supplierName)}`);
   };
 
   return (
@@ -155,19 +133,6 @@ export default function SupplierRisk() {
         </Tabs>
       </div>
 
-      <SupplierDetailPanel open={detailOpen} onOpenChange={setDetailOpen} detail={detail ?? (selectedSupplier ? {
-        supplier: selectedSupplier,
-        riskExplanation: 'Loading explanation...',
-        incidentTimeline: [],
-        trendSeries: [],
-        inherentRiskFactors: {
-          materialExposure: 'Loading...',
-          recyclabilityRisk: 'Loading...',
-          hazardousComposition: 'Loading...',
-          regulatorySensitivity: 'Loading...',
-          rawMaterialDependency: 'Loading...',
-        },
-      } : null)} />
     </AuthenticatedShell>
   );
 }
