@@ -815,6 +815,20 @@ class PredictionService:
                     elif isinstance(obj, dict) and key in obj and obj[key] is not None:
                         return obj[key]
                 return default
+
+            def safe_float(value, default=0.0):
+                """Convert loose numeric/string values to float safely."""
+                try:
+                    if value is None:
+                        return float(default)
+                    if isinstance(value, str):
+                        cleaned = value.strip().replace("%", "")
+                        if cleaned == "":
+                            return float(default)
+                        value = cleaned
+                    return float(value)
+                except (TypeError, ValueError):
+                    return float(default)
             
             # === Calculate session statistics ===
             product_ids = set()
@@ -885,10 +899,10 @@ class PredictionService:
                     'product_id': safe_get(pred, ('input_data', 'product_id'), 'product_id', 'id', default=f'product_{i}'),
                     'product_type': safe_get(pred, ('input_data', 'product_type'), 'product_type', default='Unknown'),
                     'plastic_type': safe_get(pred, ('input_data', 'Plastic_Type'), ('input_data', 'plastic_type'), 'Plastic_Type', 'plastic_type', default='Unknown'),
-                    'sale_amount': float(safe_get(pred, ('input_data', 'sale_amount'), 'sale_amount', default=0) or 0),
-                    'discount': float(safe_get(pred, ('input_data', 'discount'), 'discount', default=0) or 0),
-                    'predicted_demand': float(safe_get(pred, 'prediction', 'predicted_demand', default=0) or 0),
-                    'confidence': float(safe_get(pred, 'confidence', default=0.5) or 0.5),
+                    'sale_amount': safe_float(safe_get(pred, ('input_data', 'sale_amount'), 'sale_amount', default=0), default=0),
+                    'discount': safe_float(safe_get(pred, ('input_data', 'discount'), 'discount', default=0), default=0),
+                    'predicted_demand': safe_float(safe_get(pred, 'prediction', 'predicted_demand', default=0), default=0),
+                    'confidence': safe_float(safe_get(pred, 'confidence', default=0.5), default=0.5),
                     'input_data': input_data
                 }
                 db_predictions.append(db_pred)
@@ -899,6 +913,7 @@ class PredictionService:
                     logger.info(f"   ✅ {len(db_predictions)} predictions saved")
                 else:
                     logger.error("   ❌ Failed to save predictions")
+                    return False
             
             # === Prepare and save explanations ===
             db_explanations = []
@@ -939,6 +954,7 @@ class PredictionService:
                     logger.info(f"   ✅ {len(db_explanations)} explanations saved")
                 else:
                     logger.error("   ❌ Failed to save explanations")
+                    return False
             
             logger.info(f"✅ Analysis fully saved to database with session ID: {session_id}")
             return True

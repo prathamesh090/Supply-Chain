@@ -2,6 +2,7 @@ import mysql.connector
 from mysql.connector import pooling, Error
 import json
 from datetime import datetime
+from decimal import Decimal
 import os
 from dotenv import load_dotenv
 import logging
@@ -571,6 +572,8 @@ class DatabaseService:
         for key, value in row.items():
             if isinstance(value, datetime):
                 serialized[key] = value.isoformat()
+            elif isinstance(value, Decimal):
+                serialized[key] = float(value)
             else:
                 serialized[key] = value
         return serialized
