@@ -1,0 +1,21 @@
+product_id,product_name,plastic_type,grade,application,category,unit_cost,status
+1001,Clear PET Resin,PET,Bottle Grade,Water Bottles,Packaging,85.50,active
+1002,PET Film Grade,PET,Film Grade,Food Packaging,Packaging,92.00,active
+1003,HDPE Blow Molding,HDPE,Blow Molding,Detergent Bottles,Consumer Goods,78.25,active
+1004,HDPE Pipe Grade,HDPE,Pipe Grade,Water Pipes,Construction,75.50,active
+1005,LDPE Film Grade,LDPE,Film Grade,Shopping Bags,Packaging,88.40,active
+1006,LLDPE Stretch Film,LLDPE,Film Grade,Stretch Wrap,Packaging,90.10,active
+1007,PP Injection Grade,PP,Injection Grade,Auto Parts,Automotive,82.30,active
+1008,PP Food Grade,PP,Food Grade,Containers,Medical,95.00,active
+1009,PVC Rigid Pipe,PVC,Pipe Grade,Conduit Pipes,Construction,70.50,active
+1010,PS Foam Grade,PS,Film Grade,Disposable Plates,Packaging,80.00,active
+1011,ABS Engineering,ABS,Injection Grade,Housing,Electronics,110.00,active
+1012,Nylon 6,Nylon,Fiber Grade,Textiles,Industrial,150.00,active
+1013,BOPP Film,BOPP,Film Grade,Labels,Packaging,98.00,active
+1014,PET Fiber Grade,PET,Fiber Grade,Clothing,Textiles,84.00,active
+1015,HDPE Injection,HDPE,Injection Grade,Crates,Logistics,79.50,active
+1016,LDPE Food Grade,LDPE,Food Grade,Bread Bags,Packaging,89.50,active
+1017,PP Random Copolymer,PP,Random Copolymer,Medical Devices,Medical,105.00,active
+1018,PVC Flexible,PVC,Film Grade,Medical Tubing,Medical,77.00,active
+1019,PS High Impact,PS,Injection Grade,Toys,Consumer Goods,83.50,active
+1020,ABS High Heat,ABS,Injection Grade,Dashboard,Automotive,115.00,active

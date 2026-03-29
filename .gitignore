@@ -47,3 +47,18 @@ Backend/plastic_inherent_risk/plastic_risk.db
 # ML model artifacts (ignore model weights but keep README)
 Backend/plastic_inherent_risk/model/*
 !Backend/plastic_inherent_risk/model/README.md
+
+# Python
+Backend/.venv/
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Env files
+.env
+
+# Python cache
+__pycache__/
+*.pyc
