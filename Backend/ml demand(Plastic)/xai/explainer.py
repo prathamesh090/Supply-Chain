@@ -38,27 +38,35 @@ class XAIExplainer:
     # -----------------------------
     # MAIN EXPLAIN FUNCTION
     # -----------------------------
-    def explain(self, row_data):
-
-        input_df = pd.DataFrame([row_data], columns=self.feature_names)
+    def explain(self, row_data, feature_names=None, raw_input=None):
+        # Support callers that pass either:
+        # - explain(row_dict)
+        # - explain(processed_df, feature_names, raw_input)
+        if isinstance(row_data, pd.DataFrame):
+            input_df = row_data.copy()
+            row_for_rules = raw_input or {}
+        else:
+            cols = feature_names or self.feature_names
+            input_df = pd.DataFrame([row_data], columns=cols)
+            row_for_rules = row_data if isinstance(row_data, dict) else {}
 
         shap_explanation = self.generate_shap_explanation(input_df)
 
-        manufacturing_insights = self._generate_manufacturing_insights(row_data)
+        manufacturing_insights = self._generate_manufacturing_insights(row_for_rules)
 
-        supply_recommendations = self._generate_supply_recommendations(row_data)
+        supply_recommendations = self._generate_supply_recommendations(row_for_rules)
 
         feature_analysis = self._analyze_feature_contribution(shap_explanation)
 
         explanations = {
             "manufacturing_insights": manufacturing_insights,
             "supply_recommendations": supply_recommendations,
-            "product_context": self._get_detailed_product_context(row_data),
-            "demand_indicators": self.get_demand_indicators(row_data),
-            "risk_assessment": self.assess_comprehensive_risk(row_data, shap_explanation),
+            "product_context": self._get_detailed_product_context(row_for_rules),
+            "demand_indicators": self.get_demand_indicators(row_for_rules),
+            "risk_assessment": self.assess_comprehensive_risk(row_for_rules, shap_explanation),
             "feature_analysis": feature_analysis,
             "prediction_quality": self.assess_prediction_quality(shap_explanation),
-            "unique_product_characteristics": self.identify_unique_factors(row_data, shap_explanation)
+            "unique_product_characteristics": self.identify_unique_factors(row_for_rules, shap_explanation)
         }
 
         return explanations

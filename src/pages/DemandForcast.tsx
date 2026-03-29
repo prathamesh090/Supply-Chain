@@ -511,14 +511,33 @@ const DemandForecast = () => {
       let processedExplanations: Explanation[] = [];
       if (sessionData.explanations && Array.isArray(sessionData.explanations)) {
         processedExplanations = sessionData.explanations.map((exp: any, index: number) => {
+          let manufacturingInsights = exp.manufacturing_insights;
+          let supplyRecommendations = exp.supply_recommendations;
+
+          if (typeof manufacturingInsights === 'string') {
+            try {
+              manufacturingInsights = JSON.parse(manufacturingInsights);
+            } catch {
+              manufacturingInsights = [];
+            }
+          }
+
+          if (typeof supplyRecommendations === 'string') {
+            try {
+              supplyRecommendations = JSON.parse(supplyRecommendations);
+            } catch {
+              supplyRecommendations = [];
+            }
+          }
+
           return {
             product_type: exp.product_type || 'Unknown Product',
             product_id: exp.product_id || `product-${exp.id || index}`,
-            manufacturing_insights: Array.isArray(exp.manufacturing_insights) 
-              ? exp.manufacturing_insights 
+            manufacturing_insights: Array.isArray(manufacturingInsights) 
+              ? manufacturingInsights 
               : [],
-            supply_recommendations: Array.isArray(exp.supply_recommendations) 
-              ? exp.supply_recommendations 
+            supply_recommendations: Array.isArray(supplyRecommendations) 
+              ? supplyRecommendations 
               : [],
             unique_id: `${exp.product_id || 'product'}-${exp.id || index}`
           };

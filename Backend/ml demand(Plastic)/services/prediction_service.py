@@ -308,8 +308,8 @@ class PredictionService:
         # Load the XGBoost model
         self.load_model(model_path)
         
-        # Initialize explainer with the model (as a dictionary)
-        self.explainer = XAIExplainer({"xgboost": self.model}, self.feature_names)
+        # Initialize explainer with the underlying model object for SHAP compatibility
+        self.explainer = XAIExplainer(self.model, self.feature_names)
         
         logger.info(f"✅ XGBoost model loaded successfully")
         logger.info(f"📊 Expected features: {len(self.feature_names)}")

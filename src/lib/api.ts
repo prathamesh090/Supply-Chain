@@ -61,7 +61,11 @@ export const mlApi = {
         },
         body: JSON.stringify(sessionData),
       });
-      return await response.json();
+      const data = await response.json();
+      if (!response.ok || data?.success === false) {
+        throw new Error(data?.error || data?.message || `Save analysis failed (HTTP ${response.status})`);
+      }
+      return data;
     } catch (error) {
       console.error('Save analysis failed:', error);
       throw error;
@@ -72,7 +76,11 @@ export const mlApi = {
   getRecentSessions: async (limit: number = 10) => {
     try {
       const response = await fetch(`${ML_API_BASE_URL}/api/ml/recent-sessions?limit=${limit}`);
-      return await response.json();
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || `Get sessions failed (HTTP ${response.status})`);
+      }
+      return data;
     } catch (error) {
       console.error('Get sessions failed:', error);
       throw error;
@@ -83,7 +91,11 @@ export const mlApi = {
   getSession: async (sessionId: string) => {
     try {
       const response = await fetch(`${ML_API_BASE_URL}/api/ml/session/${sessionId}`);
-      return await response.json();
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || `Get session failed (HTTP ${response.status})`);
+      }
+      return data;
     } catch (error) {
       console.error('Get session failed:', error);
       throw error;
@@ -96,7 +108,11 @@ export const mlApi = {
       const response = await fetch(`${ML_API_BASE_URL}/api/ml/session/${sessionId}`, {
         method: 'DELETE',
       });
-      return await response.json();
+      const data = await response.json();
+      if (!response.ok || data?.success === false) {
+        throw new Error(data?.error || data?.message || `Delete session failed (HTTP ${response.status})`);
+      }
+      return data;
     } catch (error) {
       console.error('Delete session failed:', error);
       throw error;

@@ -316,6 +316,211 @@ class DatabaseService:
             if conn:
                 conn.close()
 
+    def get_recent_sessions(self, limit=10):
+        """Fetch recent analysis sessions with summary metrics."""
+        conn = None
+        cursor = None
+        sessions = []
+
+        try:
+            conn = self.get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(
+                '''
+                SELECT
+                    session_id,
+                    file_name,
+                    total_products,
+                    total_predictions AS prediction_count,
+                    avg_demand,
+                    avg_confidence,
+                    created_at,
+                    updated_at
+                FROM analysis_sessions
+                ORDER BY created_at DESC
+                LIMIT %s
+                ''',
+                (max(1, int(limit)),)
+            )
+            sessions = cursor.fetchall() or []
+            return sessions
+        except Error as e:
+            logger.error(f"❌ Error fetching recent sessions: {e}")
+            return []
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
+    def get_session(self, session_id):
+        """Fetch a session with all associated predictions and explanations."""
+        conn = None
+        cursor = None
+
+        try:
+            conn = self.get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute(
+                '''
+                SELECT
+                    session_id,
+                    file_name,
+                    total_products,
+                    total_predictions AS prediction_count,
+                    avg_demand,
+                    avg_confidence,
+                    created_at,
+                    updated_at
+                FROM analysis_sessions
+                WHERE session_id = %s
+                ''',
+                (session_id,)
+            )
+            session_row = cursor.fetchone()
+            if not session_row:
+                return None
+
+            cursor.execute(
+                '''
+                SELECT
+                    id,
+                    product_id,
+                    product_type,
+                    plastic_type,
+                    sale_amount,
+                    discount,
+                    predicted_demand,
+                    confidence,
+                    input_data,
+                    created_at
+                FROM predictions
+                WHERE session_id = %s
+                ORDER BY id ASC
+                ''',
+                (session_id,)
+            )
+            predictions = cursor.fetchall() or []
+
+            for pred in predictions:
+                raw_input = pred.get('input_data')
+                if isinstance(raw_input, str):
+                    try:
+                        pred['input_data'] = json.loads(raw_input)
+                    except json.JSONDecodeError:
+                        pred['input_data'] = {}
+                pred['prediction'] = float(pred.get('predicted_demand') or 0)
+
+            cursor.execute(
+                '''
+                SELECT
+                    id,
+                    product_id,
+                    product_type,
+                    manufacturing_insights,
+                    supply_recommendations,
+                    demand_indicators,
+                    risk_assessment,
+                    created_at
+                FROM explanations
+                WHERE session_id = %s
+                ORDER BY id ASC
+                ''',
+                (session_id,)
+            )
+            explanations = cursor.fetchall() or []
+
+            for exp in explanations:
+                for json_col, fallback in (
+                    ('manufacturing_insights', []),
+                    ('supply_recommendations', []),
+                    ('demand_indicators', []),
+                    ('risk_assessment', {}),
+                ):
+                    raw_val = exp.get(json_col)
+                    if isinstance(raw_val, str):
+                        try:
+                            exp[json_col] = json.loads(raw_val)
+                        except json.JSONDecodeError:
+                            exp[json_col] = fallback
+
+            session_row['predictions'] = predictions
+            session_row['explanations'] = explanations
+            return session_row
+        except Error as e:
+            logger.error(f"❌ Error fetching session {session_id}: {e}")
+            return None
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
+    def delete_session(self, session_id):
+        """Delete a saved analysis session and all dependent records."""
+        conn = None
+        cursor = None
+
+        try:
+            conn = self.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(
+                "DELETE FROM analysis_sessions WHERE session_id = %s",
+                (session_id,)
+            )
+            conn.commit()
+            return True
+        except Error as e:
+            logger.error(f"❌ Error deleting session {session_id}: {e}")
+            if conn:
+                conn.rollback()
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
+    def get_latest_session_for_product(self, product_id):
+        """Fetch most recent forecast row for a product with session metadata."""
+        conn = None
+        cursor = None
+
+        try:
+            conn = self.get_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(
+                '''
+                SELECT
+                    p.product_id,
+                    p.product_type,
+                    p.plastic_type,
+                    p.predicted_demand,
+                    p.confidence,
+                    p.created_at,
+                    p.session_id,
+                    s.file_name,
+                    s.created_at AS session_created_at
+                FROM predictions p
+                INNER JOIN analysis_sessions s
+                    ON p.session_id = s.session_id
+                WHERE p.product_id = %s
+                ORDER BY p.created_at DESC, p.id DESC
+                LIMIT 1
+                ''',
+                (product_id,)
+            )
+            return cursor.fetchone()
+        except Error as e:
+            logger.error(f"❌ Error fetching latest forecast for product {product_id}: {e}")
+            return None
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
 
 db_service = DatabaseService()
 db_service.create_tables()
