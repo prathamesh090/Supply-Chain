@@ -190,7 +190,7 @@ class SupplierPortalDB:
             return []
         cursor = conn.cursor(dictionary=True)
         try:
-            where = ["u.role='supplier'", "u.is_active=TRUE"]
+            where = ["sp.company_legal_name IS NOT NULL"]
             params: List[Any] = [manufacturer_id]
             if search:
                 where.append("(sp.company_legal_name LIKE %s OR sp.company_overview LIKE %s)")
@@ -200,17 +200,18 @@ class SupplierPortalDB:
 
             query = f'''
                 SELECT
-                  u.id AS supplier_id,
+                  sp.supplier_id AS supplier_id,
                   sp.company_legal_name,
                   sp.company_overview,
                   sp.phone,
                   sp.support_email,
                   COALESCE(sc.status, 'none') AS connection_status
-                FROM users u
-                LEFT JOIN supplier_profiles sp ON sp.supplier_id=u.id
+                FROM supplier_profiles sp
+                LEFT JOIN users u ON u.id = sp.supplier_id
                 LEFT JOIN supplier_connections sc
-                  ON sc.supplier_id=u.id AND sc.manufacturer_id=%s
+                  ON sc.supplier_id=sp.supplier_id AND sc.manufacturer_id=%s
                 WHERE {' AND '.join(where)}
+                  AND (u.id IS NULL OR u.is_active=TRUE)
                 ORDER BY sp.company_legal_name
             '''
             cursor.execute(query, params)

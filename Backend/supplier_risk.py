@@ -4,6 +4,7 @@ import sys
 import os
 from typing import List, Dict, Any, Optional
 import pandas as pd
+from Supplier_Portal_Dashboard.database import SupplierPortalDB
 
 # Add the ml-supplier-risk directory to Python path
 current_dir = os.path.dirname(__file__)
@@ -171,16 +172,47 @@ async def get_supplier_rankings():
             status_code=503, 
             detail="Supplier risk predictor is not available"
         )
-    
+
     try:
         rankings = predictor.get_supplier_rankings()
+        known_names = {str(item.get("supplier_name", "")).strip().lower() for item in rankings}
+
+        # Ensure connected suppliers from DB are represented in risk list.
+        db_suppliers = SupplierPortalDB.list_suppliers(manufacturer_id=0, active_only=False)
+        for supplier in db_suppliers:
+            supplier_name = (supplier.get("company_legal_name") or "").strip()
+            if not supplier_name or supplier_name.lower() in known_names:
+                continue
+
+            predicted = predictor.predict_single_supplier({"supplier_name": supplier_name})
+            rankings.append({
+                "supplier_name": supplier_name,
+                "predicted_risk": predicted["predicted_risk"],
+                "risk_score": predicted["risk_score"],
+                "risk_score_ui": predicted["risk_score_ui"],
+                "risk_level": predicted["predicted_risk"],
+                "probabilities": predicted["probabilities"],
+                "avg_delivery_delay_days": 0,
+                "avg_defect_rate_percent": 0,
+                "avg_price_variance_percent": 0,
+                "compliance_rate": 0,
+                "trust_score": 50,
+                "plastic_types": [],
+                "risk_summary": f"{supplier_name} risk profile generated from onboarding defaults.",
+            })
+
+        rankings.sort(key=lambda x: float(x.get("risk_score", 0)), reverse=True)
+        for idx, supplier in enumerate(rankings, start=1):
+            supplier["risk_rank"] = idx
+            supplier["total_suppliers"] = len(rankings)
+
         return {
             "success": True,
             "rankings": rankings
         }
     except Exception as e:
         raise HTTPException(
-            status_code=500, 
+            status_code=500,
             detail=f"Failed to get rankings: {str(e)}"
         )
 

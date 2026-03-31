@@ -28,6 +28,7 @@ import threading
 from risk_global.event_loader import load_global_events
 from Supplier_Portal_Dashboard.router import router as supplier_portal_router
 from Supplier_Portal_Dashboard.database import SupplierPortalDB
+from supplier_registry.repository import create_supplier as create_supplier_registry_record
 
 try:
     from supplier_risk import router as supplier_router
@@ -541,6 +542,23 @@ async def connect_supplier(payload: SupplierConnectionPayload, current_user: Use
     if current_user.role not in ["manufacturer", "admin", "user"]:
         raise HTTPException(status_code=403, detail="Manufacturer access required")
     SupplierPortalDB.upsert_connection(current_user.id, payload.supplier_id, "active")
+
+    # Register connected suppliers into risk supplier registry for downstream risk monitoring.
+    connected = SupplierPortalDB.list_suppliers(current_user.id, active_only=True)
+    supplier = next((s for s in connected if s.get("supplier_id") == payload.supplier_id), None)
+    if supplier:
+        registry_id = f"SUP-{payload.supplier_id}"
+        try:
+            create_supplier_registry_record(
+                supplier_id=registry_id,
+                supplier_name=supplier.get("company_legal_name") or registry_id,
+                aliases=[str(payload.supplier_id)],
+                country="Unknown",
+                region="Unknown",
+            )
+        except Exception as exc:
+            logger.warning("Failed to upsert supplier into risk registry: %s", exc)
+
     return {"success": True}
 
 
