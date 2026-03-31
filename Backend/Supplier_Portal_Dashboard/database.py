@@ -1,288 +1,240 @@
+import logging
+from typing import Any, Dict, List, Optional
+
 import mysql.connector
 from mysql.connector import Error
-from typing import Optional, List, Dict, Any
+
 from .config import settings
-import logging
 
 logger = logging.getLogger(__name__)
 
+
 class SupplierPortalDB:
-    
     @staticmethod
     def get_connection():
         try:
-            conn = mysql.connector.connect(
+            return mysql.connector.connect(
                 host=settings.DB_HOST,
                 port=settings.DB_PORT,
                 user=settings.DB_USER,
                 password=settings.DB_PASSWORD,
-                database=settings.DB_NAME
+                database=settings.DB_NAME,
             )
-            return conn
         except Error as e:
-            logger.error(f"Database connection error: {e}")
+            logger.error("Database connection error: %s", e)
             return None
-    
-    # Auth Operations
+
     @staticmethod
-    def create_supplier_auth(supplier_id: int, email: str, password_hash: str) -> bool:
+    def init_tables() -> None:
         conn = SupplierPortalDB.get_connection()
         if not conn:
-            return False
-        
+            return
+        cursor = conn.cursor()
         try:
-            cursor = conn.cursor()
-            query = "INSERT INTO supplier_auth (supplier_id, email, password_hash) VALUES (%s, %s, %s)"
-            cursor.execute(query, (supplier_id, email, password_hash))
+            cursor.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS supplier_profiles (
+                    supplier_id INT PRIMARY KEY,
+                    company_legal_name VARCHAR(255) NOT NULL,
+                    phone VARCHAR(30),
+                    manufacturing_state VARCHAR(120),
+                    factory_address TEXT,
+                    company_overview TEXT,
+                    website_url VARCHAR(255),
+                    support_email VARCHAR(255),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (supplier_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+                '''
+            )
+            cursor.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS supplier_materials (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    supplier_id INT NOT NULL,
+                    material_name VARCHAR(255) NOT NULL,
+                    category VARCHAR(120),
+                    technical_specifications TEXT,
+                    lead_time_days INT,
+                    stock_status ENUM('in_stock','low_stock','out_of_stock') DEFAULT 'in_stock',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (supplier_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+                '''
+            )
+            cursor.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS supplier_connections (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    manufacturer_id INT NOT NULL,
+                    supplier_id INT NOT NULL,
+                    status ENUM('pending','active','rejected') DEFAULT 'active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    UNIQUE KEY uniq_connection (manufacturer_id, supplier_id),
+                    FOREIGN KEY (manufacturer_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY (supplier_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+                '''
+            )
             conn.commit()
-            cursor.close()
-            return True
-        except Error as e:
-            logger.error(f"Error creating auth: {e}")
-            return False
         finally:
+            cursor.close()
             conn.close()
-    
+
     @staticmethod
-    def get_supplier_auth(email: str) -> Optional[Dict[str, Any]]:
+    def create_supplier_profile(user_id: int, payload: Dict[str, Any]) -> None:
         conn = SupplierPortalDB.get_connection()
         if not conn:
-            return None
-        
+            raise RuntimeError("Database connection failed")
+        cursor = conn.cursor()
         try:
-            cursor = conn.cursor(dictionary=True)
-            query = "SELECT * FROM supplier_auth WHERE email = %s"
-            cursor.execute(query, (email,))
-            result = cursor.fetchone()
-            cursor.close()
-            return result
-        except Error as e:
-            logger.error(f"Error getting auth: {e}")
-            return None
-        finally:
-            conn.close()
-    
-    @staticmethod
-    def supplier_exists(email: str) -> bool:
-        conn = SupplierPortalDB.get_connection()
-        if not conn:
-            return False
-        
-        try:
-            cursor = conn.cursor()
-            query = "SELECT id FROM supplier_auth WHERE email = %s"
-            cursor.execute(query, (email,))
-            result = cursor.fetchone()
-            cursor.close()
-            return result is not None
-        except Error:
-            return False
-        finally:
-            conn.close()
-    
-    @staticmethod
-    def update_password(supplier_id: int, password_hash: str) -> bool:
-        conn = SupplierPortalDB.get_connection()
-        if not conn:
-            return False
-        
-        try:
-            cursor = conn.cursor()
-            query = "UPDATE supplier_auth SET password_hash = %s WHERE supplier_id = %s"
-            cursor.execute(query, (password_hash, supplier_id))
+            cursor.execute(
+                '''
+                INSERT INTO supplier_profiles
+                (supplier_id, company_legal_name, phone, manufacturing_state, factory_address, company_overview, support_email)
+                VALUES (%s,%s,%s,%s,%s,%s,%s)
+                ''',
+                (
+                    user_id,
+                    payload.get("company_legal_name"),
+                    payload.get("phone"),
+                    payload.get("manufacturing_state"),
+                    payload.get("factory_address"),
+                    payload.get("company_overview"),
+                    payload.get("email"),
+                ),
+            )
             conn.commit()
-            cursor.close()
-            return True
-        except Error as e:
-            logger.error(f"Error updating password: {e}")
-            return False
         finally:
-            conn.close()
-    
-    @staticmethod
-    def update_last_login(supplier_id: int) -> bool:
-        conn = SupplierPortalDB.get_connection()
-        if not conn:
-            return False
-        
-        try:
-            cursor = conn.cursor()
-            query = "UPDATE supplier_auth SET last_login = CURRENT_TIMESTAMP WHERE supplier_id = %s"
-            cursor.execute(query, (supplier_id,))
-            conn.commit()
             cursor.close()
-            return True
-        except Error as e:
-            logger.error(f"Error updating last login: {e}")
-            return False
-        finally:
             conn.close()
-    
-    # Profile Operations
+
     @staticmethod
-    def get_profile(supplier_id: int) -> Optional[Dict[str, Any]]:
+    def get_supplier_profile(supplier_id: int) -> Optional[Dict[str, Any]]:
         conn = SupplierPortalDB.get_connection()
         if not conn:
             return None
-        
+        cursor = conn.cursor(dictionary=True)
         try:
-            cursor = conn.cursor(dictionary=True)
-            query = "SELECT * FROM supplier_profiles WHERE supplier_id = %s"
-            cursor.execute(query, (supplier_id,))
-            result = cursor.fetchone()
-            cursor.close()
-            return result
-        except Error as e:
-            logger.error(f"Error getting profile: {e}")
-            return None
+            cursor.execute("SELECT * FROM supplier_profiles WHERE supplier_id=%s", (supplier_id,))
+            return cursor.fetchone()
         finally:
+            cursor.close()
             conn.close()
-    
+
     @staticmethod
-    def create_profile(supplier_id: int) -> bool:
+    def update_supplier_profile(supplier_id: int, fields: Dict[str, Any]) -> None:
+        if not fields:
+            return
         conn = SupplierPortalDB.get_connection()
         if not conn:
-            return False
-        
+            raise RuntimeError("Database connection failed")
+        cursor = conn.cursor()
         try:
-            cursor = conn.cursor()
-            query = "INSERT INTO supplier_profiles (supplier_id) VALUES (%s)"
-            cursor.execute(query, (supplier_id,))
+            sets = ", ".join([f"{k}=%s" for k in fields])
+            values = list(fields.values()) + [supplier_id]
+            cursor.execute(f"UPDATE supplier_profiles SET {sets} WHERE supplier_id=%s", values)
             conn.commit()
-            cursor.close()
-            return True
-        except Error as e:
-            logger.error(f"Error creating profile: {e}")
-            return False
         finally:
+            cursor.close()
             conn.close()
-    
+
     @staticmethod
-    def update_profile(supplier_id: int, profile_data: Dict[str, Any]) -> bool:
+    def add_material(supplier_id: int, payload: Dict[str, Any]) -> int:
         conn = SupplierPortalDB.get_connection()
         if not conn:
-            return False
-        
+            raise RuntimeError("Database connection failed")
+        cursor = conn.cursor()
         try:
-            import json
-            cursor = conn.cursor()
-            
-            # Sanitize profile_data payload from React
-            sanitized_data = {}
-            for key, v in profile_data.items():
-                if v == "":
-                    sanitized_data[key] = None
-                elif isinstance(v, (list, dict)):
-                    sanitized_data[key] = json.dumps(v)
-                else:
-                    sanitized_data[key] = v
-                    
-            fields = [f"{key} = %s" for key in sanitized_data.keys()]
-            values = list(sanitized_data.values())
-            values.append(supplier_id)
-            
-            query = f"UPDATE supplier_profiles SET {', '.join(fields)} WHERE supplier_id = %s"
-            cursor.execute(query, values)
+            cursor.execute(
+                '''
+                INSERT INTO supplier_materials
+                (supplier_id, material_name, category, technical_specifications, lead_time_days, stock_status)
+                VALUES (%s,%s,%s,%s,%s,%s)
+                ''',
+                (
+                    supplier_id,
+                    payload.get("material_name"),
+                    payload.get("category"),
+                    payload.get("technical_specifications"),
+                    payload.get("lead_time_days"),
+                    payload.get("stock_status") or "in_stock",
+                ),
+            )
             conn.commit()
-            cursor.close()
-            return True
-        except Error as e:
-            logger.error(f"Error updating profile: {e}")
-            return False
+            return int(cursor.lastrowid)
         finally:
+            cursor.close()
             conn.close()
-    
-    # Product Operations
+
     @staticmethod
-    def get_products(supplier_id: int) -> List[Dict[str, Any]]:
+    def get_supplier_materials(supplier_id: int) -> List[Dict[str, Any]]:
         conn = SupplierPortalDB.get_connection()
         if not conn:
             return []
-        
+        cursor = conn.cursor(dictionary=True)
         try:
-            cursor = conn.cursor(dictionary=True)
-            query = "SELECT * FROM supplier_pricing WHERE supplier_id = %s"
-            cursor.execute(query, (supplier_id,))
-            results = cursor.fetchall()
+            cursor.execute("SELECT * FROM supplier_materials WHERE supplier_id=%s ORDER BY material_name", (supplier_id,))
+            return cursor.fetchall()
+        finally:
             cursor.close()
-            return results
-        except Error as e:
-            logger.error(f"Error getting products: {e}")
+            conn.close()
+
+    @staticmethod
+    def list_suppliers(manufacturer_id: int, search: Optional[str] = None, active_only: bool = False) -> List[Dict[str, Any]]:
+        conn = SupplierPortalDB.get_connection()
+        if not conn:
             return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            where = ["u.role='supplier'", "u.is_active=TRUE"]
+            params: List[Any] = [manufacturer_id]
+            if search:
+                where.append("(sp.company_legal_name LIKE %s OR sp.company_overview LIKE %s)")
+                params.extend([f"%{search}%", f"%{search}%"])
+            if active_only:
+                where.append("sc.status='active'")
+
+            query = f'''
+                SELECT
+                  u.id AS supplier_id,
+                  sp.company_legal_name,
+                  sp.company_overview,
+                  sp.phone,
+                  sp.support_email,
+                  COALESCE(sc.status, 'none') AS connection_status
+                FROM users u
+                LEFT JOIN supplier_profiles sp ON sp.supplier_id=u.id
+                LEFT JOIN supplier_connections sc
+                  ON sc.supplier_id=u.id AND sc.manufacturer_id=%s
+                WHERE {' AND '.join(where)}
+                ORDER BY sp.company_legal_name
+            '''
+            cursor.execute(query, params)
+            return cursor.fetchall()
         finally:
+            cursor.close()
             conn.close()
-    
+
     @staticmethod
-    def add_product(supplier_id: int, product_data: Dict[str, Any]) -> Optional[int]:
+    def upsert_connection(manufacturer_id: int, supplier_id: int, status: str = "active") -> None:
         conn = SupplierPortalDB.get_connection()
         if not conn:
-            return None
-        
+            raise RuntimeError("Database connection failed")
+        cursor = conn.cursor()
         try:
-            cursor = conn.cursor()
-            query = """
-                INSERT INTO supplier_pricing
-                (supplier_id, plastic_type, grade, product_name, application, category, price_per_unit, bulk_discount_percent)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            cursor.execute(query, (
-                supplier_id,
-                product_data['plastic_type'],
-                product_data['grade'],
-                product_data.get('product_name'),
-                product_data.get('application'),
-                product_data.get('category'),
-                product_data['price_per_unit'],
-                product_data.get('bulk_discount_percent', 0)
-            ))
+            cursor.execute(
+                '''
+                INSERT INTO supplier_connections (manufacturer_id, supplier_id, status)
+                VALUES (%s,%s,%s)
+                ON DUPLICATE KEY UPDATE status=VALUES(status)
+                ''',
+                (manufacturer_id, supplier_id, status),
+            )
             conn.commit()
-            product_id = cursor.lastrowid
-            cursor.close()
-            return product_id
-        except Error as e:
-            logger.error(f"Error adding product: {e}")
-            return None
         finally:
-            conn.close()
-    
-    @staticmethod
-    def update_product(product_id: int, product_data: Dict[str, Any]) -> bool:
-        conn = SupplierPortalDB.get_connection()
-        if not conn:
-            return False
-        
-        try:
-            cursor = conn.cursor()
-            query = "UPDATE supplier_pricing SET price_per_unit = %s, bulk_discount_percent = %s WHERE id = %s"
-            cursor.execute(query, (
-                product_data['price_per_unit'],
-                product_data.get('bulk_discount_percent', 0),
-                product_id
-            ))
-            conn.commit()
             cursor.close()
-            return True
-        except Error as e:
-            logger.error(f"Error updating product: {e}")
-            return False
-        finally:
-            conn.close()
-    
-    @staticmethod
-    def delete_product(product_id: int) -> bool:
-        conn = SupplierPortalDB.get_connection()
-        if not conn:
-            return False
-        
-        try:
-            cursor = conn.cursor()
-            query = "DELETE FROM supplier_pricing WHERE id = %s"
-            cursor.execute(query, (product_id,))
-            conn.commit()
-            cursor.close()
-            return True
-        except Error as e:
-            logger.error(f"Error deleting product: {e}")
-            return False
-        finally:
             conn.close()

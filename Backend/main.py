@@ -26,6 +26,8 @@ from plastic_inherent_risk.event_router import router as risk_event_router
 from plastic_inherent_risk.news_simulator import start_news_simulator
 import threading
 from risk_global.event_loader import load_global_events
+from Supplier_Portal_Dashboard.router import router as supplier_portal_router
+from Supplier_Portal_Dashboard.database import SupplierPortalDB
 
 try:
     from supplier_risk import router as supplier_router
@@ -93,6 +95,10 @@ if PLASTIC_INHERENT_RISK_AVAILABLE:
 else:
     print("✗ Plastic inherent risk routes not available")
 
+app.include_router(supplier_portal_router)
+print("✓ Supplier portal routes registered")
+
+
 # Risk Event Monitoring Router
 try:
     app.include_router(risk_event_router)
@@ -146,11 +152,13 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     company_id: Optional[str] = None
+    role: str = "manufacturer"
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
     tenant: Optional[str] = None
+    role: Optional[str] = None
 
 class UserResponse(UserBase):
     id: int
@@ -214,13 +222,19 @@ def init_database():
                     password_hash VARCHAR(255) NOT NULL,
                     full_name VARCHAR(255) NOT NULL,
                     company_id VARCHAR(255),
-                    role ENUM('admin', 'user') DEFAULT 'user',
+                    role ENUM('admin', 'user', 'manufacturer', 'supplier') DEFAULT 'manufacturer',
                     is_active BOOLEAN DEFAULT TRUE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )
             ''')
             
+            # Ensure users role supports manufacturer/supplier
+            try:
+                cursor.execute("ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'user', 'manufacturer', 'supplier') DEFAULT 'manufacturer'")
+            except Exception:
+                pass
+
             # Create companies table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS companies (
@@ -384,8 +398,8 @@ async def signup(user_data: UserCreate):
         # Create new user (without company_id for now)
         hashed_password = get_password_hash(user_data.password)
         cursor.execute(
-            "INSERT INTO users (email, password_hash, full_name) VALUES (%s, %s, %s)",
-            (user_data.email, hashed_password, user_data.full_name)
+            "INSERT INTO users (email, password_hash, full_name, role) VALUES (%s, %s, %s, %s)",
+            (user_data.email, hashed_password, user_data.full_name, user_data.role)
         )
         user_id = cursor.lastrowid
         
@@ -396,7 +410,7 @@ async def signup(user_data: UserCreate):
         # Create access token
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user_data.email}, expires_delta=access_token_expires
+            data={"sub": user_data.email, "role": user.get("role")}, expires_delta=access_token_expires
         )
         
         connection.commit()
@@ -425,7 +439,12 @@ async def login(login_data: UserLogin):
         cursor = connection.cursor(dictionary=True)
         
         # Find user by email
-        cursor.execute("SELECT id, email, password_hash, full_name, role, is_active, created_at FROM users WHERE email = %s", (login_data.email,))
+        query = "SELECT id, email, password_hash, full_name, role, is_active, created_at FROM users WHERE email = %s"
+        params = [login_data.email]
+        if login_data.role:
+            query += " AND role = %s"
+            params.append(login_data.role)
+        cursor.execute(query, tuple(params))
         user = cursor.fetchone()
         
         if not user or not verify_password(login_data.password, user['password_hash']):
@@ -437,7 +456,7 @@ async def login(login_data: UserLogin):
         # Create access token
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user['email']}, expires_delta=access_token_expires
+            data={"sub": user['email'], "role": user.get('role')}, expires_delta=access_token_expires
         )
         
         return {
@@ -494,6 +513,53 @@ async def create_company(company_data: CompanyCreate, current_user: UserResponse
 async def get_current_user_info(current_user: UserResponse = Depends(get_current_user)):
     """Get current user information"""
     return current_user
+
+
+
+class SupplierConnectionPayload(BaseModel):
+    supplier_id: int
+
+
+@app.get("/api/manufacturer/suppliers")
+async def list_supplier_discovery(search: Optional[str] = None, current_user: UserResponse = Depends(get_current_user)):
+    if current_user.role not in ["manufacturer", "admin", "user"]:
+        raise HTTPException(status_code=403, detail="Manufacturer access required")
+    return SupplierPortalDB.list_suppliers(current_user.id, search=search, active_only=False)
+
+
+@app.get("/api/manufacturer/suppliers/network")
+async def list_supplier_network(search: Optional[str] = None, current_user: UserResponse = Depends(get_current_user)):
+    if current_user.role not in ["manufacturer", "admin", "user"]:
+        raise HTTPException(status_code=403, detail="Manufacturer access required")
+    return SupplierPortalDB.list_suppliers(current_user.id, search=search, active_only=True)
+
+
+@app.post("/api/manufacturer/suppliers/connect")
+async def connect_supplier(payload: SupplierConnectionPayload, current_user: UserResponse = Depends(get_current_user)):
+    if current_user.role not in ["manufacturer", "admin", "user"]:
+        raise HTTPException(status_code=403, detail="Manufacturer access required")
+    SupplierPortalDB.upsert_connection(current_user.id, payload.supplier_id, "active")
+    return {"success": True}
+
+
+@app.get("/api/manufacturer/suppliers/{supplier_id}")
+async def get_supplier_detail(supplier_id: int, current_user: UserResponse = Depends(get_current_user)):
+    if current_user.role not in ["manufacturer", "admin", "user"]:
+        raise HTTPException(status_code=403, detail="Manufacturer access required")
+    suppliers = SupplierPortalDB.list_suppliers(current_user.id, active_only=False)
+    supplier = next((s for s in suppliers if s.get("supplier_id") == supplier_id), None)
+    if not supplier:
+        raise HTTPException(status_code=404, detail="Supplier not found")
+    materials = SupplierPortalDB.get_supplier_materials(supplier_id)
+    return {
+        "supplier_id": supplier_id,
+        "company_name": supplier.get("company_legal_name"),
+        "short_bio": supplier.get("company_overview"),
+        "phone": supplier.get("phone"),
+        "support_email": supplier.get("support_email"),
+        "connection_status": supplier.get("connection_status"),
+        "materials": materials,
+    }
 
 # Existing CSV loading functions
 def _load_csv(path: Path) -> pd.DataFrame:
@@ -1021,6 +1087,7 @@ async def startup_event():
     
     # Initialize database
     init_database()
+    SupplierPortalDB.init_tables()
 
     # Initialize Plastic Inherent Risk SQLite DB
     init_db() 

@@ -14,8 +14,8 @@ export default function SupplierSignUp() {
     email: '',
     password: '',
     confirmPassword: '',
+    full_name: '',
     company_legal_name: '',
-    gstin: '',
     phone: '',
     manufacturing_state: '',
     factory_address: ''
@@ -67,9 +67,6 @@ export default function SupplierSignUp() {
     }
     
     if (!basicInfo.company_legal_name) newErrors.company_legal_name = 'Required';
-    if (!basicInfo.gstin) newErrors.gstin = 'Required';
-    else if (basicInfo.gstin.length !== 15) newErrors.gstin = 'Must be 15 digits';
-    
     if (!basicInfo.phone) newErrors.phone = 'Required';
     if (!basicInfo.manufacturing_state) newErrors.manufacturing_state = 'Required';
     if (!basicInfo.factory_address) newErrors.factory_address = 'Required';
@@ -244,18 +241,22 @@ export default function SupplierSignUp() {
     setLoading(true);
     try {
       const data = await supplierSignUp({
-        ...basicInfo,
-        products: products,
-        documents: documents,
-        profile: profile
+        email: basicInfo.email,
+        password: basicInfo.password,
+        full_name: basicInfo.full_name,
+        company_legal_name: basicInfo.company_legal_name,
+        phone: basicInfo.phone,
+        manufacturing_state: basicInfo.manufacturing_state,
+        factory_address: basicInfo.factory_address,
+        company_overview: profile.company_overview
       });
       
-      if (data.success) {
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('supplierId', data.supplier_id);
+      if (data.access_token) {
+        localStorage.setItem('auth_token', data.access_token);
+        localStorage.setItem('auth_session', JSON.stringify({ token: data.access_token, userId: data.user_id, email: data.email, role: 'supplier' }));
         navigate('/supplier-dashboard');
       } else {
-        setMessage('Signup failed: ' + data.detail);
+        setMessage('Signup failed');
       }
     } catch (error: any) {
       const errorMessage = error.response?.data?.detail || error.message || 'Authentication failed';
@@ -304,6 +305,10 @@ export default function SupplierSignUp() {
         {currentStep === 1 && (
           <div className="bg-white p-8 rounded shadow">
             <h2 className="text-2xl font-bold mb-6">Basic Information</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-2">Contact Person Name *</label>
+              <input type="text" value={basicInfo.full_name} onChange={(e) => setBasicInfo({...basicInfo, full_name: e.target.value})} className="w-full px-4 py-2 border rounded border-gray-300" />
+            </div>
             
             <div className="space-y-4">
               {/* Email */}

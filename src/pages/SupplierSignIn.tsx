@@ -6,12 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { NetworkVisualization } from '@/components/NetworkVisualization';
-import { supplierSignIn, storeToken } from '@/lib/api';
+import { supplierSignIn } from '@/lib/api';
+import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
 import { Building2, Mail, Lock, ArrowLeft } from 'lucide-react';
 
 export default function SupplierSignIn() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -36,9 +38,7 @@ export default function SupplierSignIn() {
         password: formData.password
       });
       
-      storeToken(response.access_token);
-      localStorage.setItem('supplierId', response.supplier_id.toString());
-      localStorage.setItem('supplierEmail', response.email);
+      login(response.access_token, { userId: response.user_id, email: response.email, role: 'supplier' });
 
       toast({
         title: 'Welcome back!',

@@ -241,6 +241,15 @@ export const getCurrentUser = async (token: string) => {
   return response.json();
 };
 
+export type UserRole = 'manufacturer' | 'supplier' | 'admin' | 'user';
+
+export interface AuthSession {
+  token: string;
+  role: UserRole;
+  userId: number;
+  email: string;
+}
+
 // Token management
 export const storeToken = (token: string) => {
   localStorage.setItem('auth_token', token);
@@ -250,8 +259,24 @@ export const getToken = (): string | null => {
   return localStorage.getItem('auth_token');
 };
 
+export const storeAuthSession = (session: AuthSession) => {
+  localStorage.setItem('auth_token', session.token);
+  localStorage.setItem('auth_session', JSON.stringify(session));
+};
+
+export const getAuthSession = (): AuthSession | null => {
+  const raw = localStorage.getItem('auth_session');
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as AuthSession;
+  } catch {
+    return null;
+  }
+};
+
 export const removeToken = () => {
   localStorage.removeItem('auth_token');
+  localStorage.removeItem('auth_session');
 };
 
 // Company Verification API functions
@@ -526,4 +551,122 @@ export const getSupplierRiskFeatures = async () => {
   }
   
   return response.json();
+};
+
+
+export const supplierSignUp = async (payload: {
+  email: string;
+  password: string;
+  full_name: string;
+  company_legal_name: string;
+  phone: string;
+  manufacturing_state?: string;
+  factory_address?: string;
+  company_overview?: string;
+}) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Supplier signup failed');
+  return data;
+};
+
+export const supplierSignIn = async (payload: { email: string; password: string }) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/auth/signin`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Supplier signin failed');
+  return data;
+};
+
+export const getSupplierProfile = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/profile`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load supplier profile');
+  return data;
+};
+
+export const saveSupplierProfile = async (payload: Record<string, unknown>) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/profile`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to save supplier profile');
+  return data;
+};
+
+export const getSupplierProducts = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/materials`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load materials');
+  return data;
+};
+
+export const saveSupplierPricing = async (payload: Record<string, unknown>) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/materials`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to save material');
+  return data;
+};
+
+export const getDiscoverySuppliers = async (search?: string) => {
+  const params = new URLSearchParams();
+  if (search) params.set('search', search);
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/manufacturer/suppliers?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load suppliers');
+  return data;
+};
+
+export const getNetworkSuppliers = async (search?: string) => {
+  const params = new URLSearchParams();
+  if (search) params.set('search', search);
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/manufacturer/suppliers/network?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load supplier network');
+  return data;
+};
+
+export const connectSupplier = async (supplier_id: number) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/manufacturer/suppliers/connect`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify({ supplier_id }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to connect supplier');
+  return data;
+};
+
+export const getSupplierDetailById = async (supplierId: number) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/manufacturer/suppliers/${supplierId}`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load supplier detail');
+  return data;
+};
+
+export const logout = () => {
+  removeToken();
 };

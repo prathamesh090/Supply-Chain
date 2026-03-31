@@ -55,21 +55,19 @@ export default function SupplierDashboard() {
     videoLink: '',
   });
 
-  const supplierId = parseInt(localStorage.getItem('supplierId') || '1');
-
   useEffect(() => {
     fetchSupplierInfo();
-  }, [supplierId]);
+  }, []);
 
   const fetchSupplierInfo = async () => {
     try {
       setLoading(true);
-      const data = await getSupplierProducts(supplierId);
+      const data = await getSupplierProducts();
       setSupplierInfo(data);
       
       // Load profile data from database
       try {
-        const profile = await getSupplierProfile(supplierId);
+        const profile = await getSupplierProfile();
         if (profile) {
           setProfileData({
             companyOverview: profile.company_overview || '',
@@ -114,8 +112,7 @@ export default function SupplierDashboard() {
 
   const handleLogout = () => {
     logout();
-    localStorage.removeItem('supplierId');
-    navigate('/');
+    navigate('/supplier-signin');
   };
 
   const handleProfileChange = (field: string, value: any) => {
@@ -171,7 +168,6 @@ export default function SupplierDashboard() {
     try {
       setLoading(true);
       await saveSupplierProfile({
-        supplier_id: supplierId,
         company_overview: profileData.companyOverview,
         years_in_business: parseInt(profileData.yearsInBusiness) || 0,
         company_size: profileData.companySize,
@@ -238,14 +234,11 @@ export default function SupplierDashboard() {
     try {
       setLoading(true);
       await saveSupplierPricing({
-        supplier_id: supplierId,
-        product_name: newProduct.product_name,
-        plastic_type: newProduct.plastic_type,
-        grade: newProduct.grade,
-        application: newProduct.application,
+        material_name: newProduct.product_name,
+        technical_specifications: `${newProduct.plastic_type} ${newProduct.grade} ${newProduct.application}` ,
+        lead_time_days: 7,
+        stock_status: "in_stock",
         category: newProduct.category,
-        price_per_unit: parseFloat(newProduct.price_per_unit),
-        bulk_discount_percent: parseFloat(newProduct.bulk_discount_percent) || 0,
       });
       
       toast({

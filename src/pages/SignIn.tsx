@@ -40,8 +40,8 @@ export default function SignIn() {
         tenant: formData.tenant || undefined,
       };
 
-      const response = await signIn(credentials);
-      login(response.access_token);
+      const response = await signIn({ ...credentials, role: 'manufacturer' });
+      login(response.access_token, { userId: response.user.id, email: response.user.email, role: response.user.role });
 
       toast({
         title: 'Welcome back!',
@@ -194,7 +194,8 @@ export default function SignIn() {
                 </Button>
               </div>
 
-              <div className="text-center">
+              <div className="text-center space-y-2">
+                <div><Link to="/supplier-signin" className="text-sm text-purple-600 hover:underline">Supplier portal sign in</Link></div>
                 <span className="text-sm text-muted-foreground">
                   Don't have an account?{' '}
                   <Link

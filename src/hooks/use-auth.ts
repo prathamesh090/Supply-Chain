@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getToken, removeToken, storeToken } from '@/lib/api';
+import { getAuthSession, getToken, removeToken, storeAuthSession, storeToken, type AuthSession } from '@/lib/api';
 
 const AUTH_CHANGE_EVENT = 'chainlink-auth-change';
 
@@ -8,10 +8,12 @@ export const emitAuthChange = () => {
 };
 
 export function useAuth() {
+  const [session, setSession] = useState<AuthSession | null>(() => getAuthSession());
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => Boolean(getToken()));
 
   const syncAuth = useCallback(() => {
     setIsAuthenticated(Boolean(getToken()));
+    setSession(getAuthSession());
   }, []);
 
   useEffect(() => {
@@ -28,8 +30,12 @@ export function useAuth() {
     };
   }, [syncAuth]);
 
-  const login = useCallback((token: string) => {
-    storeToken(token);
+  const login = useCallback((token: string, payload?: Omit<AuthSession, 'token'>) => {
+    if (payload) {
+      storeAuthSession({ token, ...payload });
+    } else {
+      storeToken(token);
+    }
     emitAuthChange();
   }, []);
 
@@ -38,5 +44,5 @@ export function useAuth() {
     emitAuthChange();
   }, []);
 
-  return { isAuthenticated, login, logout };
+  return { isAuthenticated, session, role: session?.role, login, logout };
 }

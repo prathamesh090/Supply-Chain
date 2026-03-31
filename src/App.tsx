@@ -19,6 +19,12 @@ import NotFound from "./pages/NotFound";
 import SupplierRisk from "./pages/SupplierRisk";
 import SupplierDetail from "./pages/SupplierDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import SupplierSignIn from "./pages/SupplierSignIn";
+import SupplierSignUp from "./pages/SupplierSignUp";
+import SupplierDashboard from "./pages/SupplierDashboard";
+import SupplierDiscovery from "./pages/SupplierDiscovery";
+import SupplierNetwork from "./pages/SupplierNetwork";
+import SupplierPortalDetail from "./pages/SupplierPortalDetail";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +45,12 @@ const App = () => (
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/verify-company" element={<CompanyVerification />} />
               <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/supplier-signin" element={<SupplierSignIn />} />
+              <Route path="/supplier-signup" element={<SupplierSignUp />} />
+              <Route path="/supplier-dashboard" element={<ProtectedRoute roles={['supplier']}><SupplierDashboard /></ProtectedRoute>} />
+              <Route path="/suppliers/discovery" element={<ProtectedRoute roles={['manufacturer','admin','user']}><SupplierDiscovery /></ProtectedRoute>} />
+              <Route path="/suppliers/network" element={<ProtectedRoute roles={['manufacturer','admin','user']}><SupplierNetwork /></ProtectedRoute>} />
+              <Route path="/suppliers/:supplierId" element={<ProtectedRoute roles={['manufacturer','admin','user']}><SupplierPortalDetail /></ProtectedRoute>} />
               
               {/* Dashboard route (no nested routes for now) */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

@@ -122,10 +122,11 @@ export default function SignUp() {
       email: formData.workEmail,
       password: formData.password,
       full_name: formData.fullName,
+      role: 'manufacturer'
     };
 
     const authResponse = await signUp(signUpData);
-    login(authResponse.access_token);
+    login(authResponse.access_token, { userId: authResponse.user.id, email: authResponse.user.email, role: authResponse.user.role });
 
     // Step 2: Create company profile (only if we have company data)
     if (formData.companyName) {
