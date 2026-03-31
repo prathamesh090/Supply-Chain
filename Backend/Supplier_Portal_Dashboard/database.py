@@ -215,7 +215,40 @@ class SupplierPortalDB:
                 ORDER BY sp.company_legal_name
             '''
             cursor.execute(query, params)
-            return cursor.fetchall()
+            rows = cursor.fetchall()
+
+            # Fallback for legacy datasets where suppliers were only inserted into supplier_auth.
+            if not rows:
+                cursor.execute("SHOW TABLES LIKE 'supplier_auth'")
+                has_supplier_auth = cursor.fetchone() is not None
+                if has_supplier_auth:
+                    legacy_where = ["sa.supplier_id IS NOT NULL"]
+                    legacy_params: List[Any] = [manufacturer_id]
+                    if search:
+                        legacy_where.append("(sa.email LIKE %s OR COALESCE(sp.company_legal_name,'') LIKE %s)")
+                        legacy_params.extend([f"%{search}%", f"%{search}%"])
+                    if active_only:
+                        legacy_where.append("sc.status='active'")
+
+                    legacy_query = f'''
+                        SELECT
+                          sa.supplier_id AS supplier_id,
+                          COALESCE(sp.company_legal_name, SUBSTRING_INDEX(sa.email, '@', 1)) AS company_legal_name,
+                          sp.company_overview,
+                          sp.phone,
+                          COALESCE(sp.support_email, sa.email) AS support_email,
+                          COALESCE(sc.status, 'none') AS connection_status
+                        FROM supplier_auth sa
+                        LEFT JOIN supplier_profiles sp ON sp.supplier_id = sa.supplier_id
+                        LEFT JOIN supplier_connections sc
+                          ON sc.supplier_id=sa.supplier_id AND sc.manufacturer_id=%s
+                        WHERE {' AND '.join(legacy_where)}
+                        ORDER BY company_legal_name
+                    '''
+                    cursor.execute(legacy_query, legacy_params)
+                    rows = cursor.fetchall()
+
+            return rows
         finally:
             cursor.close()
             conn.close()

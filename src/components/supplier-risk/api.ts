@@ -1,4 +1,4 @@
-import { getSupplierRankings, type SupplierRanking } from '@/lib/api';
+import { getDiscoverySuppliers, getSupplierRankings, type SupplierRanking } from '@/lib/api';
 import type { GlobalRiskEventItem, RiskEventItem, SupplierDetailData, SupplierRiskRow } from './types';
 
 const API_BASE = 'http://localhost:8000';
@@ -42,7 +42,32 @@ const safeFetch = async <T>(path: string): Promise<T | null> => {
 export const fetchSupplierMonitoringData = async (): Promise<SupplierRiskRow[]> => {
   try {
     const rankings = await getSupplierRankings();
-    return (rankings.rankings ?? []).map(mapSupplier);
+    const mapped = (rankings.rankings ?? []).map(mapSupplier);
+    if (mapped.length > 0) {
+      return mapped;
+    }
+  } catch {
+    // fallback below
+  }
+
+  // Fallback: if rankings API is temporarily empty/unavailable, at least show suppliers from DB discovery.
+  try {
+    const suppliers = await getDiscoverySuppliers();
+    return (suppliers ?? []).map((supplier: any) => ({
+      supplierId: String(supplier.supplier_id),
+      supplierName: supplier.company_legal_name || `Supplier ${supplier.supplier_id}`,
+      country: 'Unknown',
+      industry: 'Materials',
+      connectedMaterials: [],
+      financialRiskScore: 0,
+      financialRiskLevel: 'Unknown',
+      inherentRiskScore: 0,
+      inherentRiskLevel: 'Unknown',
+      integratedRiskScore: 0,
+      integratedRiskLevel: 'Unknown',
+      recentIncident: 'Risk data is being generated for this supplier.',
+      lastUpdated: new Date().toISOString(),
+    }));
   } catch {
     return [];
   }
