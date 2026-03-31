@@ -191,7 +191,7 @@ export default function SupplierSignIn() {
             <Button
               variant="outline"
               type="button"
-              onClick={() => navigate('/supplier-signup')}
+              onClick={() => navigate('/signup/supplier')}
               className="w-full border-2 hover:bg-blue-50 text-foreground font-bold h-11 transition-all"
             >
               Start Registration

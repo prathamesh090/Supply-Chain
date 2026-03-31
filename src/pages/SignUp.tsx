@@ -79,7 +79,7 @@ export default function SignUp() {
 
   const handleBack = () => {
     if (currentStep === 1) {
-      navigate('/verify-company');
+      navigate('/auth/select?mode=signup');
     } else {
       setCurrentStep(1);
     }

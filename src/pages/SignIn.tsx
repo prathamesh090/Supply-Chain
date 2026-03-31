@@ -92,7 +92,7 @@ export default function SignIn() {
             <p className="mt-2 text-sm text-muted-foreground">
               Or{' '}
               <Link
-                to="/verify-company"
+                to="/auth/select?mode=signup"
                 className="font-medium text-blue-600 hover:underline"
               >
                 start your free trial
@@ -195,11 +195,11 @@ export default function SignIn() {
               </div>
 
               <div className="text-center space-y-2">
-                <div><Link to="/supplier-signin" className="text-sm text-purple-600 hover:underline">Supplier portal sign in</Link></div>
+                <div><Link to="/signin/supplier" className="text-sm text-purple-600 hover:underline">Supplier portal sign in</Link></div>
                 <span className="text-sm text-muted-foreground">
                   Don't have an account?{' '}
                   <Link
-                    to="/verify-company"
+                    to="/auth/select?mode=signup"
                     className="font-medium text-blue-600 hover:underline"
                   >
                     Sign up

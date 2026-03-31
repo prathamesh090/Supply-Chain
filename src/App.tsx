@@ -25,6 +25,7 @@ import SupplierDashboard from "./pages/SupplierDashboard";
 import SupplierDiscovery from "./pages/SupplierDiscovery";
 import SupplierNetwork from "./pages/SupplierNetwork";
 import SupplierPortalDetail from "./pages/SupplierPortalDetail";
+import AuthSelect from "./pages/AuthSelect";
 
 const queryClient = new QueryClient();
 
@@ -42,9 +43,14 @@ const App = () => (
               <Route path="/industries" element={<Industries />} />
               <Route path="/directory" element={<Directory />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/sign-in" element={<SignIn />} />
+              <Route path="/auth/select" element={<AuthSelect />} />
+              <Route path="/sign-in" element={<AuthSelect />} />
+              <Route path="/signin/manufacturer" element={<SignIn />} />
+              <Route path="/signin/supplier" element={<SupplierSignIn />} />
               <Route path="/verify-company" element={<CompanyVerification />} />
-              <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/sign-up" element={<AuthSelect />} />
+              <Route path="/signup/manufacturer" element={<SignUp />} />
+              <Route path="/signup/supplier" element={<SupplierSignUp />} />
               <Route path="/supplier-signin" element={<SupplierSignIn />} />
               <Route path="/supplier-signup" element={<SupplierSignUp />} />
               <Route path="/supplier-dashboard" element={<ProtectedRoute roles={['supplier']}><SupplierDashboard /></ProtectedRoute>} />

@@ -31,7 +31,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
     location.pathname.includes('/supplier-signin') ||
     location.pathname.includes('/supplier-signup') ||
     location.pathname.includes('/supplier-dashboard') ||
-    location.pathname.includes('/suppliers/');
+    location.pathname.includes('/suppliers/') ||
+    location.pathname.includes('/auth/select') ||
+    location.pathname.includes('/signin/') ||
+    location.pathname.includes('/signup/');
 
   const handleLogout = () => {
     logout();
@@ -86,8 +89,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </>
               ) : (
                 <>
-                  <Link to="/sign-in"><Button variant="ghost">Sign In</Button></Link>
-                  <Link to="/verify-company"><Button variant="hero">Get Started</Button></Link>
+                  <Link to="/auth/select?mode=signin"><Button variant="ghost">Sign In</Button></Link>
+                  <Link to="/auth/select?mode=signup"><Button variant="hero">Get Started</Button></Link>
                 </>
               )}
             </div>
@@ -126,10 +129,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </>
               ) : (
                 <>
-                  <Link to="/sign-in" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link to="/auth/select?mode=signin" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button variant="ghost" className="justify-start w-full">Sign In</Button>
                   </Link>
-                  <Link to="/verify-company" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link to="/auth/select?mode=signup" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button variant="hero" className="justify-start w-full">Get Started</Button>
                   </Link>
                 </>

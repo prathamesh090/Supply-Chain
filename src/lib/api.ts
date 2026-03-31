@@ -183,6 +183,7 @@ export const signIn = async (credentials: {
   email: string;
   password: string;
   tenant?: string;
+  role?: 'manufacturer' | 'supplier' | 'admin' | 'user';
 }) => {
   const response = await fetch(`${COMPANY_API_BASE_URL}/auth/login`, {
     method: 'POST',

@@ -441,7 +441,9 @@ async def login(login_data: UserLogin):
         # Find user by email
         query = "SELECT id, email, password_hash, full_name, role, is_active, created_at FROM users WHERE email = %s"
         params = [login_data.email]
-        if login_data.role:
+        if login_data.role == "manufacturer":
+            query += " AND role IN ('manufacturer','user','admin')"
+        elif login_data.role:
             query += " AND role = %s"
             params.append(login_data.role)
         cursor.execute(query, tuple(params))
