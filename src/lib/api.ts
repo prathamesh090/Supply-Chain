@@ -249,6 +249,7 @@ export interface AuthSession {
   role: UserRole;
   userId: number;
   email: string;
+  full_name?: string;
 }
 
 export interface SupplierProfilePayload {
@@ -737,4 +738,153 @@ export const updateSupplierRiskDetails = async (payload: Record<string, unknown>
 
 export const logout = () => {
   removeToken();
+};
+
+export interface RoAllocation {
+  order_id?: string;
+  product_id: string;
+  warehouse_id: string;
+  allocated_quantity: number;
+  distance_km: number;
+  transport_cost: number;
+  decision_reason: string;
+  fulfillment_status?: string;
+  shortage_quantity?: number;
+  created_at?: string;
+}
+
+export interface RoPlanResponse {
+  order_id: string;
+  status: 'FULLY_FULFILLED' | 'PARTIALLY_FULFILLED' | 'INFEASIBLE' | 'ERROR';
+  allocations: RoAllocation[];
+  shortage?: number;
+  decision_summary?: string[];
+  requested_quantity?: number;
+  allocated_quantity?: number;
+}
+
+export const runRouteOptimization = async (orderId: string): Promise<RoPlanResponse> => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/run/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to run route optimization');
+  return data;
+};
+
+export const getRoutePlan = async (orderId: string): Promise<RoPlanResponse> => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/plan/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch fulfillment plan');
+  return data;
+};
+
+export const getRouteKpis = async (orderId: string) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/kpis/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO KPIs');
+  return data;
+};
+
+export const getRouteHistory = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/history`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO history');
+  return data;
+};
+
+export const getRouteExplain = async (orderId: string) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/explain/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO explainability');
+  return data;
+};
+
+export const getRouteChartData = async (orderId: string) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/chart-data/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO chart data');
+  return data;
+};
+
+export const getRouteDashboardSummary = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/dashboard-summary`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO summary');
+  return data;
+};
+
+
+export interface Warehouse {
+  warehouse_id: number;
+  name: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+  demand_weight: number;
+  total_capacity: number;
+}
+
+export interface InventoryProduct {
+  product_id: string;
+  current_stock: number;
+  global_forecasted_demand: number;
+  warehouse_demand: number;
+  supplier_name: string;
+  supplier_risk: string;
+  risk_multiplier: number;
+  daily_demand: number;
+  safety_stock: number;
+  ROP: number;
+  status: string;
+  suggested_action: string;
+}
+
+export interface InventoryDashboard {
+  warehouse_id: number;
+  warehouse_name: string;
+  city: string;
+  demand_weight: string;
+  total_capacity: number;
+  current_utilization: number;
+  utilization_pct: string;
+  total_products: number;
+  summary: { Healthy: number; "Reorder Soon": number; "Stockout Risk": number };
+  products: InventoryProduct[];
+}
+
+export const getWarehouses = async (): Promise<Warehouse[]> => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/inventory/warehouses`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || "Failed to load warehouses");
+  return data;
+};
+
+export const getInventoryDashboard = async (warehouseId: number): Promise<InventoryDashboard> => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/inventory/${warehouseId}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || "Failed to load inventory dashboard");
+  return data;
+};
+
+export const addInventoryItem = async (payload: {
+  product_id: string;
+  warehouse_id: number;
+  current_stock: number;
+  lead_time: number;
+  supplier_name?: string;
+}) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/inventory/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || "Failed to add inventory");
+  return data;
+};
+
+export const checkAvailability = async (productId: string, warehouseId: number, qty: number) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/inventory/check/${encodeURIComponent(productId)}/${warehouseId}/${qty}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || "Failed to check availability");
+  return data;
 };

@@ -41,7 +41,7 @@ export default function SignIn() {
       };
 
       const response = await signIn({ ...credentials, role: 'manufacturer' });
-      login(response.access_token, { userId: response.user.id, email: response.user.email, role: response.user.role });
+      login(response.access_token, { userId: response.user.id, email: response.user.email, role: response.user.role, full_name: response.user.full_name });
 
       toast({
         title: 'Welcome back!',

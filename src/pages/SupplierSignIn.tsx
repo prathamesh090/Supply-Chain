@@ -38,7 +38,7 @@ export default function SupplierSignIn() {
         password: formData.password
       });
       
-      login(response.access_token, { userId: response.user_id, email: response.email, role: 'supplier' });
+      login(response.access_token, { userId: response.user_id, email: response.email, role: 'supplier', full_name: response.full_name || response.supplier_name || response.email });
 
       toast({
         title: 'Welcome back!',

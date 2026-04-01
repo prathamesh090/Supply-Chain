@@ -1,119 +1,106 @@
-# route_optimization/allocation_engine.py
-
 from route_optimization.cost_engine import cost_engine
 
 
 class AllocationEngine:
-
-    def generate_fulfillment_plan(
-        self,
-        order: dict,
-        order_items: list,
-        warehouses: list
-    ):
+    def generate_fulfillment_plan(self, order: dict, order_items: list, warehouses_by_product: dict):
         allocations = []
         decision_summary = []
+        total_shortage = 0
 
-        customer_lat = order["customer_lat"]
-        customer_lon = order["customer_lon"]
+        customer_lat = float(order["customer_lat"])
+        customer_lon = float(order["customer_lon"])
 
-        overall_status = "FULLY_FULFILLED"
+        total_requested = sum(int(item["quantity"]) for item in order_items)
+        total_allocated = 0
 
         for item in order_items:
             product_id = item["product_id"]
-            required_quantity = item["quantity"]
+            required_quantity = int(item["quantity"])
+            remaining_quantity = required_quantity
+            product_warehouses = warehouses_by_product.get(product_id, [])
 
-            # STEP 1 — Feasibility Check
-            total_available = sum(
-                warehouse["available_quantity"]
-                for warehouse in warehouses
-            )
+            total_available = sum(int(warehouse["available_quantity"]) for warehouse in product_warehouses)
+            if total_available <= 0:
+                total_shortage += required_quantity
+                decision_summary.append(f"Product {product_id}: no warehouse inventory available.")
+                continue
 
-            if total_available == 0:
-                return {
-                    "status": "INFEASIBLE",
-                    "allocations": [],
-                    "decision_summary": [
-                        "No warehouse inventory available"
-                    ],
-                    "shortage": required_quantity
-                }
-
-            # STEP 2 — Compute distance + cost
             warehouse_costs = []
-
-            for warehouse in warehouses:
+            for warehouse in product_warehouses:
                 distance = cost_engine.haversine_distance(
-                    warehouse["latitude"],
-                    warehouse["longitude"],
+                    float(warehouse["latitude"]),
+                    float(warehouse["longitude"]),
                     customer_lat,
-                    customer_lon
+                    customer_lon,
+                )
+                transport_cost = cost_engine.transport_cost(distance)
+                warehouse_costs.append(
+                    {
+                        "warehouse_id": warehouse["warehouse_id"],
+                        "available_quantity": int(warehouse["available_quantity"]),
+                        "distance_km": distance,
+                        "transport_cost": transport_cost,
+                    }
                 )
 
-                transport_cost = cost_engine.transport_cost(distance)
-
-                warehouse_costs.append({
-                    "warehouse_id": warehouse["warehouse_id"],
-                    "available_quantity": warehouse["available_quantity"],
-                    "distance_km": distance,
-                    "transport_cost": transport_cost
-                })
-
-            # STEP 3 — Sort by lowest transport cost
-            warehouse_costs.sort(
-                key=lambda x: x["transport_cost"]
-            )
-
-            # STEP 4 — Greedy Allocation
-            remaining_quantity = required_quantity
+            warehouse_costs.sort(key=lambda x: x["transport_cost"])
 
             for warehouse in warehouse_costs:
                 if remaining_quantity <= 0:
                     break
-
                 available = warehouse["available_quantity"]
-
                 if available <= 0:
                     continue
 
-                allocated_quantity = min(
-                    remaining_quantity,
-                    available
+                allocated_quantity = min(remaining_quantity, available)
+                total_allocated += allocated_quantity
+
+                allocations.append(
+                    {
+                        "product_id": product_id,
+                        "warehouse_id": warehouse["warehouse_id"],
+                        "allocated_quantity": allocated_quantity,
+                        "distance_km": warehouse["distance_km"],
+                        "transport_cost": warehouse["transport_cost"],
+                        "decision_reason": (
+                            f"Selected for product {product_id} because it had stock and lower transport cost. "
+                            f"Distance {warehouse['distance_km']} km, cost {warehouse['transport_cost']}."
+                        ),
+                        "shortage_quantity": 0,
+                    }
                 )
-
-                allocations.append({
-                    "product_id": product_id,
-                    "warehouse_id": warehouse["warehouse_id"],
-                    "allocated_quantity": allocated_quantity,
-                    "distance_km": warehouse["distance_km"],
-                    "transport_cost": warehouse["transport_cost"],
-                    "decision_reason": (
-                        "Selected based on lowest transport cost "
-                        "and feasible inventory"
-                    )
-                })
-
-                decision_summary.append(
-                    f"{warehouse['warehouse_id']} allocated "
-                    f"{allocated_quantity} units"
-                )
-
                 remaining_quantity -= allocated_quantity
 
-            # STEP 5 — Final status
-            if remaining_quantity > 0:
-                overall_status = "PARTIALLY_FULFILLED"
-
                 decision_summary.append(
-                    f"Shortage of {remaining_quantity} units"
+                    f"Product {product_id}: warehouse {warehouse['warehouse_id']} allocated {allocated_quantity} units."
                 )
 
-            return {
-                "status": overall_status,
-                "allocations": allocations,
-                "decision_summary": decision_summary,
-                "shortage": max(0, remaining_quantity)
-            }
+            if remaining_quantity > 0:
+                total_shortage += remaining_quantity
+                decision_summary.append(f"Product {product_id}: shortage of {remaining_quantity} units after using all feasible warehouses.")
+
+        if total_allocated == 0:
+            overall_status = "INFEASIBLE"
+        elif total_shortage > 0:
+            overall_status = "PARTIALLY_FULFILLED"
+        else:
+            overall_status = "FULLY_FULFILLED"
+
+        if not decision_summary:
+            decision_summary.append("No allocation created.")
+
+        for allocation in allocations:
+            if total_shortage > 0:
+                allocation["shortage_quantity"] = total_shortage
+
+        return {
+            "status": overall_status,
+            "allocations": allocations,
+            "decision_summary": decision_summary,
+            "shortage": total_shortage,
+            "requested_quantity": total_requested,
+            "allocated_quantity": total_allocated,
+        }
 
 
 allocation_engine = AllocationEngine()
