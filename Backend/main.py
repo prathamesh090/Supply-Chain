@@ -30,6 +30,7 @@ from Supplier_Portal_Dashboard.router import router as supplier_portal_router
 from Supplier_Portal_Dashboard.database import SupplierPortalDB
 from supplier_registry.repository import create_supplier as create_supplier_registry_record
 from route_optimization.router import router as ro_router
+from inventory.router import router as inventory_router
 
 try:
     from supplier_risk import router as supplier_router
@@ -99,6 +100,13 @@ else:
 
 app.include_router(supplier_portal_router)
 print("✓ Supplier portal routes registered")
+
+# Inventory
+try:
+    app.include_router(inventory_router)
+    print("✓ Inventory routes registered")
+except Exception as e:
+    print(f"✗ Inventory routes not available: {e}")
 
 # Route Optimization
 try:

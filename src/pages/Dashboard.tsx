@@ -11,12 +11,11 @@ import {
   TrendingUp,
   Truck,
   Users,
-  Route,
+  Package,
 } from 'lucide-react';
 import { getCurrentUser, getRiskDistribution, getSupplierRankings, getToken } from '@/lib/api';
 import { fetchGlobalRiskEvents, fetchRecentRiskEvents } from '@/components/supplier-risk/api';
 import { mlApi } from '@/lib/api';
-import { useAuth } from '@/hooks/use-auth';
 import { AuthenticatedShell } from '@/components/AuthenticatedShell';
 
 interface User {
@@ -30,7 +29,6 @@ interface User {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [authWarning, setAuthWarning] = useState<string | null>(null);
@@ -110,10 +108,6 @@ export default function Dashboard() {
     { title: 'Avg Forecast Demand', value: forecastDemandAvg !== null ? `${forecastDemandAvg}` : 'N/A', icon: TrendingUp, helper: 'From recent ML sessions' },
   ], [totalSuppliers, activeAlerts, highRiskSuppliers, globalDisruptions, recentSessionsCount, forecastDemandAvg]);
 
-  const handleSignOut = () => {
-    logout();
-    navigate('/sign-in');
-  };
 
   if (loading) {
     return (
@@ -138,7 +132,6 @@ export default function Dashboard() {
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={async () => await loadDashboardData()}>Refresh</Button>
-                <Button onClick={handleSignOut} variant="outline" size="sm">Sign Out</Button>
               </div>
             </div>
 
@@ -188,10 +181,10 @@ export default function Dashboard() {
 
                 <Card className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6 text-center">
-                    <Route className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                    <h4 className="font-semibold text-lg mb-2">Route Optimization</h4>
-                    <p className="text-gray-600 text-sm mb-4">Warehouse-to-customer fulfillment planning and explainable allocation.</p>
-                    <Button variant="secondary" onClick={() => navigate('/route-optimization')}>Open RO Module</Button>
+                    <Package className="h-12 w-12 text-cyan-600 mx-auto mb-4" />
+                    <h4 className="font-semibold text-lg mb-2">Inventory Management</h4>
+                    <p className="text-gray-600 text-sm mb-4">Warehouse stock health, ROP, safety stock, and availability checks.</p>
+                    <Button variant="secondary" onClick={() => navigate('/inventory-management')}>Open Inventory</Button>
                   </CardContent>
                 </Card>
               </div>

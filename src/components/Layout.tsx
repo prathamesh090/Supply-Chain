@@ -26,6 +26,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     location.pathname.includes('/verify-company') ||
     location.pathname.includes('/dashboard') ||
     location.pathname.includes('/demand-forecast') ||
+    location.pathname.includes('/inventory-management') ||
     location.pathname.includes('/supplier-risk') ||
     location.pathname.includes('/route-optimization') ||
     location.pathname.includes('/supplier/') ||
