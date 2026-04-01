@@ -28,7 +28,7 @@ export default function AuthSelect() {
             <p className="text-sm text-slate-600 mb-6">Use supplier discovery, network management, and risk intelligence for your production chain.</p>
             <div className="flex gap-3">
               <Link className="flex-1" to="/signin/manufacturer"><Button className="w-full">Sign In</Button></Link>
-              <Link className="flex-1" to="/signup/manufacturer"><Button variant="outline" className="w-full">Get Started</Button></Link>
+              <Link className="flex-1" to="/verify-company"><Button variant="outline" className="w-full">Get Started</Button></Link>
             </div>
           </Card>
 

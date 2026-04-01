@@ -69,7 +69,10 @@ export default function SignUp() {
   const country = location.state?.country;
 
   useEffect(() => {
-    if (!verifiedCompany) return;
+    if (!verifiedCompany) {
+      navigate('/verify-company', { replace: true });
+      return;
+    }
 
     setFormData((prev) => ({
       ...prev,
@@ -78,7 +81,7 @@ export default function SignUp() {
         .filter(Boolean)
         .join(', ') || prev.companyLocation,
     }));
-  }, [verifiedCompany]);
+  }, [verifiedCompany, navigate]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
