@@ -215,12 +215,8 @@ export default function SupplierSignUp() {
   };
 
   const handleStep3Next = () => {
-    const requiredTypes = ['ISO 9001', 'BIS', 'EPR', 'Pollution Board'];
-    const uploadedTypes = documents.map(d => d.docType);
-    const missing = requiredTypes.filter(t => !uploadedTypes.includes(t));
-    
-    if (missing.length > 0) {
-      setErrors({ documents: `Missing required verified documents: ${missing.join(', ')}` });
+    if (documents.length === 0) {
+      setErrors({ documents: 'Upload at least one verified certificate to continue.' });
       return;
     }
     setCurrentStep(4);
@@ -640,6 +636,9 @@ export default function SupplierSignUp() {
                   {uploadForm.files?.length > 0 && (
                     <p className="text-sm text-green-600 mt-1">✓ {uploadForm.files.length} file(s) selected</p>
                   )}
+                  <p className="text-xs text-gray-500 mt-1">
+                    Verification checks file type, non-empty content, and selected certificate category.
+                  </p>
                 </div>
 
                 {/* Description */}
