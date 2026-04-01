@@ -48,7 +48,7 @@ export default function SignIn() {
         description: 'Successfully signed in',
       });
 
-      const defaultPath = response.user.role === 'supplier' ? '/supplier-dashboard' : '/dashboard';
+      const defaultPath = '/dashboard';
       const nextPath = (location.state as { from?: string } | null)?.from || defaultPath;
       navigate(nextPath, { replace: true });
 

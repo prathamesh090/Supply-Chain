@@ -6,9 +6,9 @@ from typing import List, Dict, Any, Optional
 import pandas as pd
 from Supplier_Portal_Dashboard.database import SupplierPortalDB
 
-# Add the ml-supplier-risk directory to Python path
+# Add the ml_supplier_risk directory to Python path
 current_dir = os.path.dirname(__file__)
-ml_supplier_path = os.path.join(current_dir, "ml-supplier-risk")
+ml_supplier_path = os.path.join(current_dir, "ml_supplier_risk")
 sys.path.insert(0, ml_supplier_path)
 
 # Try to import supplier risk predictor
@@ -42,6 +42,20 @@ class SupplierRiskData(BaseModel):
 
 class BatchPredictionRequest(BaseModel):
     suppliers: List[SupplierRiskData]
+
+class SupplierRiskInputUpdate(BaseModel):
+    supplier_id: int
+    delivery_delay_days: Optional[float] = 0
+    defect_rate_pct: Optional[float] = 0
+    price_variance_pct: Optional[float] = 0
+    compliance_flag: Optional[int] = 0
+    trust_score: Optional[float] = 50
+    plastic_type: Optional[str] = "Unknown"
+    defective_units: Optional[int] = 0
+    quantity: Optional[int] = 1
+    unit_price: Optional[float] = 0
+    negotiated_price: Optional[float] = 0
+    compliance: Optional[str] = "No"
 
 @router.get("/health")
 async def health_check():
@@ -177,14 +191,33 @@ async def get_supplier_rankings():
         rankings = predictor.get_supplier_rankings()
         known_names = {str(item.get("supplier_name", "")).strip().lower() for item in rankings}
 
-        # Ensure connected suppliers from DB are represented in risk list.
-        db_suppliers = SupplierPortalDB.list_suppliers(manufacturer_id=0, active_only=False)
+        # Keep original model suppliers; only append newly connected suppliers.
+        db_suppliers = SupplierPortalDB.list_connected_suppliers_for_risk()
         for supplier in db_suppliers:
             supplier_name = (supplier.get("company_legal_name") or "").strip()
             if not supplier_name or supplier_name.lower() in known_names:
                 continue
 
-            predicted = predictor.predict_single_supplier({"supplier_name": supplier_name})
+            risk_input = SupplierPortalDB.get_supplier_risk_input(int(supplier["supplier_id"])) or {}
+            plastic_type = risk_input.get("plastic_type") or supplier.get("categories") or "Unknown"
+            payload = {
+                "supplier_name": supplier_name,
+                "delivery_delay_days": risk_input.get("delivery_delay_days", 0),
+                "defect_rate_pct": risk_input.get("defect_rate_pct", 0),
+                "price_variance_pct": risk_input.get("price_variance_pct", 0),
+                "compliance_flag": risk_input.get("compliance_flag", 0),
+                "trust_score": risk_input.get("trust_score", 50),
+                "Plastic_Type": plastic_type,
+                "defective_units": risk_input.get("defective_units", 0),
+                "quantity": risk_input.get("quantity", 1),
+                "unit_price": risk_input.get("unit_price", 0),
+                "negotiated_price": risk_input.get("negotiated_price", 0),
+                "compliance": risk_input.get("compliance", "No"),
+            }
+            try:
+                predicted = predictor.predict_single_supplier(payload)
+            except Exception:
+                continue
             rankings.append({
                 "supplier_name": supplier_name,
                 "predicted_risk": predicted["predicted_risk"],
@@ -192,13 +225,13 @@ async def get_supplier_rankings():
                 "risk_score_ui": predicted["risk_score_ui"],
                 "risk_level": predicted["predicted_risk"],
                 "probabilities": predicted["probabilities"],
-                "avg_delivery_delay_days": 0,
-                "avg_defect_rate_percent": 0,
-                "avg_price_variance_percent": 0,
-                "compliance_rate": 0,
-                "trust_score": 50,
-                "plastic_types": [],
-                "risk_summary": f"{supplier_name} risk profile generated from onboarding defaults.",
+                "avg_delivery_delay_days": payload["delivery_delay_days"],
+                "avg_defect_rate_percent": payload["defect_rate_pct"],
+                "avg_price_variance_percent": payload["price_variance_pct"],
+                "compliance_rate": 100 if payload["compliance"] == "Yes" else 0,
+                "trust_score": payload["trust_score"],
+                "plastic_types": [str(plastic_type)],
+                "risk_summary": f"{supplier_name} risk profile generated from connected supplier details.",
             })
 
         rankings.sort(key=lambda x: float(x.get("risk_score", 0)), reverse=True)
@@ -215,6 +248,14 @@ async def get_supplier_rankings():
             status_code=500,
             detail=f"Failed to get rankings: {str(e)}"
         )
+
+@router.put("/supplier-details")
+async def update_supplier_risk_details(payload: SupplierRiskInputUpdate):
+    try:
+        SupplierPortalDB.upsert_supplier_risk_input(payload.supplier_id, payload.dict())
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update supplier risk details: {str(e)}")
 
 @router.get("/distribution")
 async def get_risk_distribution():

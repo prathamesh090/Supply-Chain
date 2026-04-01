@@ -578,6 +578,18 @@ async def connect_supplier(payload: SupplierConnectionPayload, current_user: Use
             )
         except Exception as exc:
             logger.warning("Failed to upsert supplier into risk registry: %s", exc)
+        try:
+            categories = (supplier.get("categories") or "Unknown").split(",")[0].strip()
+            SupplierPortalDB.upsert_supplier_risk_input(
+                payload.supplier_id,
+                {
+                    "plastic_type": categories or "Unknown",
+                    "trust_score": 50,
+                    "compliance": "No",
+                },
+            )
+        except Exception as exc:
+            logger.warning("Failed to seed supplier risk input: %s", exc)
 
     return {"success": True}
 

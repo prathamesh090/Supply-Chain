@@ -1,11 +1,15 @@
 import logging
 from datetime import timedelta
+from datetime import datetime
+import re
 
 from fastapi import APIRouter, Depends, Header, HTTPException, UploadFile, File, Form
 from io import BytesIO
 
 from .auth_service import SupplierAuthService
+from .config import ensure_groq_configured
 from .database import SupplierPortalDB
+from .groq_service import analyze_certificate_with_groq
 from .models import (
     SupplierMaterialRequest,
     SupplierProfileUpdateRequest,
@@ -49,6 +53,23 @@ def extract_text_from_file(file_bytes: bytes, content_type: str) -> str:
 
     return extracted.lower()
 
+def extract_expiry_date(text: str) -> datetime | None:
+    patterns = [
+        r"(?:valid\\s*(?:until|till)|expiry\\s*date|expires?\\s*on)\\s*[:\\-]?\\s*(\\d{1,2}[\\/\\-]\\d{1,2}[\\/\\-]\\d{2,4})",
+        r"(\\d{4}[\\-\\/]\\d{1,2}[\\-\\/]\\d{1,2})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, flags=re.IGNORECASE)
+        if not match:
+            continue
+        candidate = match.group(1).strip()
+        for fmt in ("%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y", "%Y-%m-%d", "%Y/%m/%d"):
+            try:
+                return datetime.strptime(candidate, fmt)
+            except ValueError:
+                continue
+    return None
+
 
 def validate_document_content(doc_type: str, filename: str, content_type: str, file_bytes: bytes) -> dict:
     keywords = DOC_KEYWORDS.get(doc_type, [])
@@ -62,7 +83,38 @@ def validate_document_content(doc_type: str, filename: str, content_type: str, f
         if verified
         else f"{doc_type} content validation failed. Expected one of: {', '.join(keywords)}"
     )
-    return {"verified": verified, "reason": reason, "matched_keywords": matched_keywords}
+    expiry = extract_expiry_date(text)
+    expiry_valid = bool(expiry and expiry.date() >= datetime.utcnow().date())
+
+    try:
+        groq = analyze_certificate_with_groq(doc_type, text)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception:
+        groq = {
+            "template_match": False,
+            "document_type_valid": False,
+            "summary": "AI validation unavailable",
+            "signals": [],
+        }
+
+    template_match = bool(groq.get("template_match"))
+    document_type_valid = bool(groq.get("document_type_valid")) or verified
+    overall_verified = bool(document_type_valid and template_match and expiry_valid)
+    reason = (
+        f"{doc_type} validated. Expiry {'valid' if expiry_valid else 'missing/expired'}; template "
+        f"{'consistent' if template_match else 'inconsistent'}."
+    )
+    return {
+        "verified": overall_verified,
+        "reason": reason,
+        "matched_keywords": matched_keywords,
+        "expiry_date": expiry.date().isoformat() if expiry else None,
+        "expiry_valid": expiry_valid,
+        "template_match": template_match,
+        "document_type_valid": document_type_valid,
+        "groq_summary": groq.get("summary"),
+    }
 
 
 def get_current_supplier(authorization: str = Header(...)) -> int:
@@ -172,6 +224,7 @@ def create_material(payload: SupplierMaterialRequest, supplier_id: int = Depends
 
 @router.post("/documents/verify")
 async def verify_document(file: UploadFile = File(...), doc_type: str = Form(...)):
+    ensure_groq_configured()
     allowed_types = {"application/pdf", "image/jpeg", "image/png"}
     if file.content_type not in allowed_types:
         return {"verified": False, "reason": f"Unsupported file type: {file.content_type}"}
@@ -181,10 +234,31 @@ async def verify_document(file: UploadFile = File(...), doc_type: str = Form(...
         return {"verified": False, "reason": "Uploaded file is empty"}
 
     content_result = validate_document_content(doc_type, file.filename or "", file.content_type, content)
+    verification_id = SupplierPortalDB.save_certificate_verification(
+        {
+            "supplier_id": None,
+            "doc_type": doc_type,
+            "file_name": file.filename,
+            "file_type": file.content_type,
+            "expiry_date": content_result["expiry_date"],
+            "expiry_valid": content_result["expiry_valid"],
+            "template_match": content_result["template_match"],
+            "document_type_valid": content_result["document_type_valid"],
+            "verified": content_result["verified"],
+            "reason": content_result["reason"],
+            "matched_keywords": content_result["matched_keywords"],
+        }
+    )
     return {
+        "verification_id": verification_id,
         "verified": content_result["verified"],
         "reason": content_result["reason"],
         "matched_keywords": content_result["matched_keywords"],
+        "expiry_date": content_result["expiry_date"],
+        "expiry_valid": content_result["expiry_valid"],
+        "template_match": content_result["template_match"],
+        "document_type_valid": content_result["document_type_valid"],
+        "groq_summary": content_result["groq_summary"],
         "doc_type": doc_type,
         "file_name": file.filename,
     }
@@ -195,6 +269,7 @@ async def verify_documents_batch(
     files: list[UploadFile] = File(...),
     doc_type: str = Form(...),
 ):
+    ensure_groq_configured()
     results = []
     for file in files:
         allowed_types = {"application/pdf", "image/jpeg", "image/png"}
@@ -206,12 +281,33 @@ async def verify_documents_batch(
             results.append({"file_name": file.filename, "verified": False, "reason": "Uploaded file is empty"})
             continue
         content_result = validate_document_content(doc_type, file.filename or "", file.content_type, content)
+        verification_id = SupplierPortalDB.save_certificate_verification(
+            {
+                "supplier_id": None,
+                "doc_type": doc_type,
+                "file_name": file.filename,
+                "file_type": file.content_type,
+                "expiry_date": content_result["expiry_date"],
+                "expiry_valid": content_result["expiry_valid"],
+                "template_match": content_result["template_match"],
+                "document_type_valid": content_result["document_type_valid"],
+                "verified": content_result["verified"],
+                "reason": content_result["reason"],
+                "matched_keywords": content_result["matched_keywords"],
+            }
+        )
         results.append(
             {
+                "verification_id": verification_id,
                 "file_name": file.filename,
                 "verified": content_result["verified"],
                 "reason": content_result["reason"],
                 "matched_keywords": content_result["matched_keywords"],
+                "expiry_date": content_result["expiry_date"],
+                "expiry_valid": content_result["expiry_valid"],
+                "template_match": content_result["template_match"],
+                "document_type_valid": content_result["document_type_valid"],
+                "groq_summary": content_result["groq_summary"],
             }
         )
 

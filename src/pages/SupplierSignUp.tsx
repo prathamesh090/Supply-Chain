@@ -189,6 +189,11 @@ export default function SupplierSignUp() {
         body: formData,
       });
       const result = await response.json();
+      if (!response.ok) {
+        const reason = result?.detail || result?.reason || 'Document verification failed';
+        setErrors({ upload: reason });
+        return;
+      }
       
       const successfulDocs = (result.results || []).filter((r: any) => r.verified);
       if (successfulDocs.length > 0) {
@@ -209,7 +214,7 @@ export default function SupplierSignUp() {
         setErrors({ upload: `AI Verification Failed: ${reason}` });
       }
     } catch (err: any) {
-      setErrors({ upload: 'AI Verification Server Error' });
+      setErrors({ upload: err?.message || 'AI Verification Server Error' });
     } finally {
       setUploadingDoc(false);
     }
