@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -67,6 +67,18 @@ export default function SignUp() {
   // Get verified company data from navigation state
   const verifiedCompany = location.state?.verifiedCompany;
   const country = location.state?.country;
+
+  useEffect(() => {
+    if (!verifiedCompany) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      companyName: verifiedCompany.company_name || prev.companyName,
+      companyLocation: [verifiedCompany.city, verifiedCompany.state, verifiedCompany.country]
+        .filter(Boolean)
+        .join(', ') || prev.companyLocation,
+    }));
+  }, [verifiedCompany]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));

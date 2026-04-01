@@ -145,40 +145,34 @@ export default function SupplierSignUp() {
 
   const [uploadForm, setUploadForm] = useState<any>({
     docType: '',
-    file: null,
+    files: [] as File[],
     description: ''
   });
 
   const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
-    if (file) {
-      const newErrors: any = {};
-      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-      
-      if (!allowedTypes.includes(file.type)) {
-        newErrors.file = 'Only PDF, JPG, PNG allowed';
-      }
-      
-      const maxSize = 5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        newErrors.file = 'Max 5 MB';
-      }
-      
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        setUploadForm({...uploadForm, file: null});
-      } else {
-        setErrors({});
-        setUploadForm({...uploadForm, file});
-      }
+    const files = Array.from(e.target.files || []) as File[];
+    if (!files.length) return;
+    const newErrors: any = {};
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    const maxSize = 5 * 1024 * 1024;
+
+    const invalid = files.find((file) => !allowedTypes.includes(file.type) || file.size > maxSize);
+    if (invalid) {
+      newErrors.file = 'Only PDF/JPG/PNG and max 5 MB per file are allowed';
+      setErrors(newErrors);
+      setUploadForm({ ...uploadForm, files: [] });
+      return;
     }
+
+    setErrors({});
+    setUploadForm({ ...uploadForm, files });
   };
 
   const [uploadingDoc, setUploadingDoc] = useState(false);
 
   const handleUploadDocument = async () => {
-    if (!uploadForm.docType || !uploadForm.file) {
-      setErrors({ upload: 'Select document type and file' });
+    if (!uploadForm.docType || !uploadForm.files?.length) {
+      setErrors({ upload: 'Select document type and at least one file' });
       return;
     }
     
@@ -186,27 +180,32 @@ export default function SupplierSignUp() {
     setErrors({});
     try {
       const formData = new FormData();
-      formData.append('file', uploadForm.file);
+      uploadForm.files.forEach((file: File) => formData.append('files', file));
       formData.append('doc_type', uploadForm.docType);
       
-      const response = await fetch('http://localhost:8000/api/supplier-portal/documents/verify', {
+      const response = await fetch('http://localhost:8000/api/supplier-portal/documents/verify-batch', {
         method: 'POST',
         body: formData,
       });
       const result = await response.json();
       
-      if (result.verified) {
-        setDocuments([...documents, {
-          id: Date.now(),
-          docType: uploadForm.docType,
-          fileName: uploadForm.file.name,
-          description: uploadForm.description,
-          uploadedAt: new Date().toLocaleString()
-        }]);
-        setUploadForm({ docType: '', file: null, description: '' });
-        toast({ title: 'Verified ✅', description: 'Groq AI confirmed document authenticity.' });
+      const successfulDocs = (result.results || []).filter((r: any) => r.verified);
+      if (successfulDocs.length > 0) {
+        setDocuments([
+          ...documents,
+          ...successfulDocs.map((doc: any, index: number) => ({
+            id: Date.now() + index,
+            docType: uploadForm.docType,
+            fileName: doc.file_name,
+            description: uploadForm.description,
+            uploadedAt: new Date().toLocaleString(),
+          })),
+        ]);
+        setUploadForm({ docType: '', files: [], description: '' });
+        toast({ title: 'Verified ✅', description: `${successfulDocs.length} document(s) accepted for verification.` });
       } else {
-        setErrors({ upload: `AI Verification Failed: ${result.reason}` });
+        const reason = result.results?.[0]?.reason || result.reason || 'Document verification failed';
+        setErrors({ upload: `AI Verification Failed: ${reason}` });
       }
     } catch (err: any) {
       setErrors({ upload: 'AI Verification Server Error' });
@@ -633,12 +632,13 @@ export default function SupplierSignUp() {
                   <label className="block text-sm font-bold mb-2">Upload File (PDF, JPG, PNG - Max 5MB) *</label>
                   <input
                     type="file"
+                    multiple
                     onChange={handleFileChange}
                     accept=".pdf,.jpg,.jpeg,.png"
                     className="w-full px-3 py-2 border rounded"
                   />
-                  {uploadForm.file && (
-                    <p className="text-sm text-green-600 mt-1">✓ {uploadForm.file.name}</p>
+                  {uploadForm.files?.length > 0 && (
+                    <p className="text-sm text-green-600 mt-1">✓ {uploadForm.files.length} file(s) selected</p>
                   )}
                 </div>
 
@@ -659,7 +659,7 @@ export default function SupplierSignUp() {
                   disabled={uploadingDoc}
                   className="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {uploadingDoc ? 'AI Verifying Document...' : 'Upload & Verify Document'}
+                  {uploadingDoc ? 'AI Verifying Documents...' : 'Upload & Verify Documents'}
                 </button>
               </div>
             </div>

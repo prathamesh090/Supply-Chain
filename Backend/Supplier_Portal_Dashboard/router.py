@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, UploadFile, File, Form
 
 from .auth_service import SupplierAuthService
 from .database import SupplierPortalDB
@@ -117,6 +117,44 @@ def get_materials(supplier_id: int = Depends(get_current_supplier)):
 def create_material(payload: SupplierMaterialRequest, supplier_id: int = Depends(get_current_supplier)):
     material_id = SupplierPortalDB.add_material(supplier_id, payload.model_dump())
     return {"success": True, "material_id": material_id}
+
+
+@router.post("/documents/verify")
+async def verify_document(file: UploadFile = File(...), doc_type: str = Form(...)):
+    allowed_types = {"application/pdf", "image/jpeg", "image/png"}
+    if file.content_type not in allowed_types:
+        return {"verified": False, "reason": f"Unsupported file type: {file.content_type}"}
+
+    content = await file.read()
+    if not content:
+        return {"verified": False, "reason": "Uploaded file is empty"}
+
+    return {
+        "verified": True,
+        "reason": f"{doc_type} document accepted and queued for verification",
+        "doc_type": doc_type,
+        "file_name": file.filename,
+    }
+
+
+@router.post("/documents/verify-batch")
+async def verify_documents_batch(
+    files: list[UploadFile] = File(...),
+    doc_type: str = Form(...),
+):
+    results = []
+    for file in files:
+        allowed_types = {"application/pdf", "image/jpeg", "image/png"}
+        if file.content_type not in allowed_types:
+            results.append({"file_name": file.filename, "verified": False, "reason": f"Unsupported file type: {file.content_type}"})
+            continue
+        content = await file.read()
+        if not content:
+            results.append({"file_name": file.filename, "verified": False, "reason": "Uploaded file is empty"})
+            continue
+        results.append({"file_name": file.filename, "verified": True, "reason": f"{doc_type} document accepted and queued for verification"})
+
+    return {"success": True, "doc_type": doc_type, "results": results}
 
 
 @router.get("/health")

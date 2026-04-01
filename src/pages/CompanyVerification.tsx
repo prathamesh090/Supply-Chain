@@ -127,7 +127,7 @@ export default function CompanyVerification() {
     if (companyResult) {
       setApiSuccess('Redirecting to sign-up...');
       setTimeout(() => {
-        navigate('/sign-up', { 
+        navigate('/signup/manufacturer', { 
           state: { 
             verifiedCompany: companyResult,
             country: selectedCountry 
