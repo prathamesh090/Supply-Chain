@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, Header, HTTPException, UploadFile, File, Form
+from io import BytesIO
 
 from .auth_service import SupplierAuthService
 from .database import SupplierPortalDB
@@ -15,6 +16,53 @@ from .models import (
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/supplier-portal", tags=["Supplier Portal"])
+
+DOC_KEYWORDS = {
+    "ISO 9001": ["iso", "9001", "quality management"],
+    "BIS": ["bureau of indian standards", "bis", "isi"],
+    "EPR": ["epr", "extended producer responsibility"],
+    "Pollution Board": ["pollution control board", "pollution", "consent"],
+}
+
+
+def extract_text_from_file(file_bytes: bytes, content_type: str) -> str:
+    extracted = ""
+    if content_type == "application/pdf":
+        try:
+            import PyPDF2  # type: ignore
+
+            pdf_reader = PyPDF2.PdfReader(BytesIO(file_bytes))
+            for page in pdf_reader.pages[:5]:
+                page_text = page.extract_text() or ""
+                extracted += f" {page_text}"
+        except Exception:
+            extracted = ""
+    elif content_type in {"image/jpeg", "image/png"}:
+        try:
+            import pytesseract  # type: ignore
+            from PIL import Image  # type: ignore
+
+            image = Image.open(BytesIO(file_bytes))
+            extracted = pytesseract.image_to_string(image)
+        except Exception:
+            extracted = ""
+
+    return extracted.lower()
+
+
+def validate_document_content(doc_type: str, filename: str, content_type: str, file_bytes: bytes) -> dict:
+    keywords = DOC_KEYWORDS.get(doc_type, [])
+    text = extract_text_from_file(file_bytes, content_type)
+    filename_lower = (filename or "").lower()
+
+    matched_keywords = [kw for kw in keywords if kw in text or kw in filename_lower]
+    verified = len(matched_keywords) > 0
+    reason = (
+        f"{doc_type} validation passed (matched: {', '.join(matched_keywords)})"
+        if verified
+        else f"{doc_type} content validation failed. Expected one of: {', '.join(keywords)}"
+    )
+    return {"verified": verified, "reason": reason, "matched_keywords": matched_keywords}
 
 
 def get_current_supplier(authorization: str = Header(...)) -> int:
@@ -129,9 +177,11 @@ async def verify_document(file: UploadFile = File(...), doc_type: str = Form(...
     if not content:
         return {"verified": False, "reason": "Uploaded file is empty"}
 
+    content_result = validate_document_content(doc_type, file.filename or "", file.content_type, content)
     return {
-        "verified": True,
-        "reason": f"{doc_type} document accepted and queued for verification",
+        "verified": content_result["verified"],
+        "reason": content_result["reason"],
+        "matched_keywords": content_result["matched_keywords"],
         "doc_type": doc_type,
         "file_name": file.filename,
     }
@@ -152,7 +202,15 @@ async def verify_documents_batch(
         if not content:
             results.append({"file_name": file.filename, "verified": False, "reason": "Uploaded file is empty"})
             continue
-        results.append({"file_name": file.filename, "verified": True, "reason": f"{doc_type} document accepted and queued for verification"})
+        content_result = validate_document_content(doc_type, file.filename or "", file.content_type, content)
+        results.append(
+            {
+                "file_name": file.filename,
+                "verified": content_result["verified"],
+                "reason": content_result["reason"],
+                "matched_keywords": content_result["matched_keywords"],
+            }
+        )
 
     return {"success": True, "doc_type": doc_type, "results": results}
 
