@@ -8,7 +8,8 @@ export function ProtectedRoute({ children, roles }: { children: React.ReactEleme
   const session = getAuthSession();
 
   if (!token) {
-    return <Navigate to="/sign-in" replace state={{ from: location.pathname }} />;
+    const supplierPath = location.pathname.startsWith('/supplier');
+    return <Navigate to={supplierPath ? '/signin/supplier' : '/signin/manufacturer'} replace state={{ from: location.pathname }} />;
   }
   if (!session) {
     return <Navigate to="/auth/select?mode=signin" replace />;

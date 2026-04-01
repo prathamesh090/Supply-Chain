@@ -280,6 +280,7 @@ export const getToken = (): string | null => {
 export const storeAuthSession = (session: AuthSession) => {
   localStorage.setItem('auth_token', session.token);
   localStorage.setItem('auth_session', JSON.stringify(session));
+  localStorage.setItem(`auth_session_${session.role}`, JSON.stringify(session));
 };
 
 export const getAuthSession = (): AuthSession | null => {
@@ -295,6 +296,10 @@ export const getAuthSession = (): AuthSession | null => {
 export const removeToken = () => {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_session');
+  localStorage.removeItem('auth_session_supplier');
+  localStorage.removeItem('auth_session_manufacturer');
+  localStorage.removeItem('auth_session_admin');
+  localStorage.removeItem('auth_session_user');
 };
 
 // Company Verification API functions
@@ -649,6 +654,20 @@ export const getSupplierProducts = async () => {
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail || 'Failed to load materials');
+  return data;
+};
+
+export const verifySupplierDocuments = async (docType: string, files: File[]) => {
+  const formData = new FormData();
+  formData.append('doc_type', docType);
+  files.forEach((file) => formData.append('files', file));
+
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/documents/verify-batch`, {
+    method: 'POST',
+    body: formData,
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Supplier document verification failed');
   return data;
 };
 

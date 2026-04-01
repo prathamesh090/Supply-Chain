@@ -105,6 +105,26 @@ class SupplierPortalDB:
             )
             cursor.execute(
                 '''
+                CREATE TABLE IF NOT EXISTS supplier_certificate_verifications (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    supplier_id INT NULL,
+                    doc_type VARCHAR(120) NOT NULL,
+                    file_name VARCHAR(255) NOT NULL,
+                    file_type VARCHAR(120) NOT NULL,
+                    expiry_date DATE NULL,
+                    expiry_valid BOOLEAN DEFAULT FALSE,
+                    template_match BOOLEAN DEFAULT FALSE,
+                    document_type_valid BOOLEAN DEFAULT FALSE,
+                    verified BOOLEAN DEFAULT FALSE,
+                    reason TEXT,
+                    matched_keywords JSON,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (supplier_id) REFERENCES users(id) ON DELETE SET NULL
+                )
+                '''
+            )
+            cursor.execute(
+                '''
                 CREATE TABLE IF NOT EXISTS manufacturer_profiles (
                     manufacturer_id INT PRIMARY KEY,
                     company_name VARCHAR(255),
@@ -410,6 +430,39 @@ class SupplierPortalDB:
                 (manufacturer_id, supplier_id, status),
             )
             conn.commit()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def save_certificate_verification(payload: Dict[str, Any]) -> int:
+        conn = SupplierPortalDB.get_connection()
+        if not conn:
+            raise RuntimeError("Database connection failed")
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                '''
+                INSERT INTO supplier_certificate_verifications
+                (supplier_id, doc_type, file_name, file_type, expiry_date, expiry_valid, template_match, document_type_valid, verified, reason, matched_keywords)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                ''',
+                (
+                    payload.get("supplier_id"),
+                    payload.get("doc_type"),
+                    payload.get("file_name"),
+                    payload.get("file_type"),
+                    payload.get("expiry_date"),
+                    bool(payload.get("expiry_valid")),
+                    bool(payload.get("template_match")),
+                    bool(payload.get("document_type_valid")),
+                    bool(payload.get("verified")),
+                    payload.get("reason"),
+                    payload.get("matched_keywords") and str(payload.get("matched_keywords")),
+                ),
+            )
+            conn.commit()
+            return int(cursor.lastrowid)
         finally:
             cursor.close()
             conn.close()

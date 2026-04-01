@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +11,9 @@ import {
 } from '@/components/ui/sidebar';
 import { AlertTriangle, LayoutDashboard, TrendingUp, Factory, Network, Settings } from 'lucide-react';
 import { getAuthSession } from '@/lib/api';
+import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 function AppSidebar() {
   const location = useLocation();
@@ -81,11 +84,24 @@ function AppSidebar() {
 }
 
 export function AuthenticatedShell({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
+  const { logout, role } = useAuth();
+  const handleLogout = () => {
+    logout();
+    navigate('/auth/select?mode=signin', { replace: true });
+  };
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        <main className="flex-1 overflow-hidden"><div className="p-6 overflow-auto h-screen">{children}</div></main>
+        <main className="flex-1 overflow-hidden">
+          <div className="h-16 border-b bg-card px-6 flex items-center justify-between">
+            <div className="text-sm text-muted-foreground">Signed in as <span className="font-medium text-foreground capitalize">{role || 'user'}</span></div>
+            <Button variant="outline" size="sm" onClick={handleLogout}><LogOut className="h-4 w-4 mr-2" />Logout</Button>
+          </div>
+          <div className="p-6 overflow-auto h-[calc(100vh-4rem)]">{children}</div>
+        </main>
       </div>
     </SidebarProvider>
   );
