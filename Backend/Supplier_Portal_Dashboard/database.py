@@ -125,6 +125,26 @@ class SupplierPortalDB:
             )
             cursor.execute(
                 '''
+                CREATE TABLE IF NOT EXISTS supplier_risk_inputs (
+                    supplier_id INT PRIMARY KEY,
+                    delivery_delay_days FLOAT DEFAULT 0,
+                    defect_rate_pct FLOAT DEFAULT 0,
+                    price_variance_pct FLOAT DEFAULT 0,
+                    compliance_flag TINYINT DEFAULT 0,
+                    trust_score FLOAT DEFAULT 50,
+                    plastic_type VARCHAR(120) DEFAULT 'Unknown',
+                    defective_units INT DEFAULT 0,
+                    quantity INT DEFAULT 1,
+                    unit_price FLOAT DEFAULT 0,
+                    negotiated_price FLOAT DEFAULT 0,
+                    compliance VARCHAR(10) DEFAULT 'No',
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (supplier_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+                '''
+            )
+            cursor.execute(
+                '''
                 CREATE TABLE IF NOT EXISTS manufacturer_profiles (
                     manufacturer_id INT PRIMARY KEY,
                     company_name VARCHAR(255),
@@ -463,6 +483,100 @@ class SupplierPortalDB:
             )
             conn.commit()
             return int(cursor.lastrowid)
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def list_connected_suppliers_for_risk() -> List[Dict[str, Any]]:
+        conn = SupplierPortalDB.get_connection()
+        if not conn:
+            return []
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute(
+                '''
+                SELECT DISTINCT
+                    sp.supplier_id,
+                    sp.company_legal_name,
+                    sp.categories
+                FROM supplier_connections sc
+                JOIN supplier_profiles sp ON sp.supplier_id = sc.supplier_id
+                WHERE sc.status = 'active'
+                '''
+            )
+            return cursor.fetchall()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def upsert_supplier_risk_input(supplier_id: int, fields: Dict[str, Any]) -> None:
+        conn = SupplierPortalDB.get_connection()
+        if not conn:
+            raise RuntimeError("Database connection failed")
+        cursor = conn.cursor()
+        try:
+            payload = {
+                "delivery_delay_days": fields.get("delivery_delay_days", 0),
+                "defect_rate_pct": fields.get("defect_rate_pct", 0),
+                "price_variance_pct": fields.get("price_variance_pct", 0),
+                "compliance_flag": fields.get("compliance_flag", 0),
+                "trust_score": fields.get("trust_score", 50),
+                "plastic_type": fields.get("plastic_type", "Unknown"),
+                "defective_units": fields.get("defective_units", 0),
+                "quantity": fields.get("quantity", 1),
+                "unit_price": fields.get("unit_price", 0),
+                "negotiated_price": fields.get("negotiated_price", 0),
+                "compliance": fields.get("compliance", "No"),
+            }
+            cursor.execute(
+                '''
+                INSERT INTO supplier_risk_inputs
+                (supplier_id, delivery_delay_days, defect_rate_pct, price_variance_pct, compliance_flag, trust_score, plastic_type, defective_units, quantity, unit_price, negotiated_price, compliance)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                ON DUPLICATE KEY UPDATE
+                    delivery_delay_days=VALUES(delivery_delay_days),
+                    defect_rate_pct=VALUES(defect_rate_pct),
+                    price_variance_pct=VALUES(price_variance_pct),
+                    compliance_flag=VALUES(compliance_flag),
+                    trust_score=VALUES(trust_score),
+                    plastic_type=VALUES(plastic_type),
+                    defective_units=VALUES(defective_units),
+                    quantity=VALUES(quantity),
+                    unit_price=VALUES(unit_price),
+                    negotiated_price=VALUES(negotiated_price),
+                    compliance=VALUES(compliance)
+                ''',
+                (
+                    supplier_id,
+                    payload["delivery_delay_days"],
+                    payload["defect_rate_pct"],
+                    payload["price_variance_pct"],
+                    payload["compliance_flag"],
+                    payload["trust_score"],
+                    payload["plastic_type"],
+                    payload["defective_units"],
+                    payload["quantity"],
+                    payload["unit_price"],
+                    payload["negotiated_price"],
+                    payload["compliance"],
+                ),
+            )
+            conn.commit()
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def get_supplier_risk_input(supplier_id: int) -> Optional[Dict[str, Any]]:
+        conn = SupplierPortalDB.get_connection()
+        if not conn:
+            return None
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM supplier_risk_inputs WHERE supplier_id=%s", (supplier_id,))
+            return cursor.fetchone()
         finally:
             cursor.close()
             conn.close()

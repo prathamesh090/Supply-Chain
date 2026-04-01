@@ -724,6 +724,17 @@ export const getSupplierDetailById = async (supplierId: number) => {
   return data;
 };
 
+export const updateSupplierRiskDetails = async (payload: Record<string, unknown>) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-risk/supplier-details`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to update supplier risk details');
+  return data;
+};
+
 export const logout = () => {
   removeToken();
 };
