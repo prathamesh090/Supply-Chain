@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from '@/components/ui/sidebar';
-import { AlertTriangle, LayoutDashboard, TrendingUp, Factory, Network, Settings } from 'lucide-react';
+import { AlertTriangle, LayoutDashboard, TrendingUp, Factory, Network, Settings, Route } from 'lucide-react';
 import { getAuthSession } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
@@ -23,6 +23,7 @@ function AppSidebar() {
     { title: 'Dashboard Overview', url: '/dashboard', icon: LayoutDashboard },
     { title: 'Demand Forecasting', url: '/demand-forecast', icon: TrendingUp },
     { title: 'Supplier Risk', url: '/supplier-risk', icon: AlertTriangle },
+    { title: 'Route Optimization', url: '/route-optimization', icon: Route },
     { title: 'Settings', url: '/manufacturer/settings', icon: Settings },
   ];
 

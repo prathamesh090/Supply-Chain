@@ -31,13 +31,6 @@ from Supplier_Portal_Dashboard.database import SupplierPortalDB
 from supplier_registry.repository import create_supplier as create_supplier_registry_record
 from route_optimization.router import router as ro_router
 
-# Route Optimization
-try:
-    app.include_router(ro_router)
-    print("✓ Route Optimization routes registered")
-except Exception as e:
-    print(f"✗ Route Optimization routes not available: {e}")
-
 try:
     from supplier_risk import router as supplier_router
     SUPPLIER_RISK_AVAILABLE = True
@@ -106,6 +99,13 @@ else:
 
 app.include_router(supplier_portal_router)
 print("✓ Supplier portal routes registered")
+
+# Route Optimization
+try:
+    app.include_router(ro_router)
+    print("✓ Route Optimization routes registered")
+except Exception as e:
+    print(f"✗ Route Optimization routes not available: {e}")
 
 
 # Risk Event Monitoring Router

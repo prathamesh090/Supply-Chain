@@ -29,6 +29,10 @@ import AuthSelect from "./pages/AuthSelect";
 import SupplierSettings from "./pages/SupplierSettings";
 import SupplierProfileSetup from "./pages/SupplierProfileSetup";
 import ManufacturerSettings from "./pages/ManufacturerSettings";
+import RouteOptimizationDashboard from "./pages/route-optimization/RouteOptimizationDashboard";
+import RouteOptimizationRunPage from "./pages/route-optimization/RouteOptimizationRunPage";
+import FulfillmentPlanDetail from "./pages/route-optimization/FulfillmentPlanDetail";
+import RouteOptimizationHistory from "./pages/route-optimization/RouteOptimizationHistory";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +75,10 @@ const App = () => (
               <Route path="/demand-forecast" element={<ProtectedRoute><DemandForecast /></ProtectedRoute>} />
               <Route path="/supplier-risk" element={<ProtectedRoute><SupplierRisk /></ProtectedRoute>} />
               <Route path="/supplier/:name" element={<ProtectedRoute><SupplierDetail /></ProtectedRoute>} />
+              <Route path="/route-optimization" element={<ProtectedRoute><RouteOptimizationDashboard /></ProtectedRoute>} />
+              <Route path="/route-optimization/run" element={<ProtectedRoute><RouteOptimizationRunPage /></ProtectedRoute>} />
+              <Route path="/route-optimization/plan/:orderId" element={<ProtectedRoute><FulfillmentPlanDetail /></ProtectedRoute>} />
+              <Route path="/route-optimization/history" element={<ProtectedRoute><RouteOptimizationHistory /></ProtectedRoute>} />
 
 
               

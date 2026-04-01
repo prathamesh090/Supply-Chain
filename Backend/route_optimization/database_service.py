@@ -1,8 +1,7 @@
-# route_optimization/database_service.py
+import os
 
 import mysql.connector
 from dotenv import load_dotenv
-import os
 
 load_dotenv("Backend/.env")
 
@@ -21,14 +20,15 @@ class RouteOptimizationDB:
             user=self.user,
             password=self.password,
             database=self.database,
-            port=self.port
+            port=self.port,
         )
 
     def create_tables(self):
         conn = self.get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS customer_orders (
                 order_id VARCHAR(50) PRIMARY KEY,
                 customer_region VARCHAR(100) NOT NULL,
@@ -37,32 +37,48 @@ class RouteOptimizationDB:
                 order_status VARCHAR(50) DEFAULT 'PENDING',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+            """
+        )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS customer_order_items (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 order_id VARCHAR(50),
                 product_id VARCHAR(50),
                 quantity INT NOT NULL,
                 FOREIGN KEY (order_id) REFERENCES customer_orders(order_id)
-                    ON DELETE CASCADE
+                ON DELETE CASCADE
             )
-        """)
+            """
+        )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS route_fulfillment_plan (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 order_id VARCHAR(50),
+                product_id VARCHAR(50),
                 warehouse_id VARCHAR(50),
                 allocated_quantity INT,
                 distance_km DOUBLE,
                 transport_cost DOUBLE,
                 decision_reason TEXT,
                 fulfillment_status VARCHAR(50),
+                shortage_quantity DOUBLE DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+            """
+        )
+
+        for ddl in [
+            "ALTER TABLE route_fulfillment_plan ADD COLUMN product_id VARCHAR(50)",
+            "ALTER TABLE route_fulfillment_plan ADD COLUMN shortage_quantity DOUBLE DEFAULT 0",
+        ]:
+            try:
+                cursor.execute(ddl)
+            except Exception:
+                pass
 
         conn.commit()
         conn.close()

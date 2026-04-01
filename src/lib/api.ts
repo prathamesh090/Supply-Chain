@@ -738,3 +738,75 @@ export const updateSupplierRiskDetails = async (payload: Record<string, unknown>
 export const logout = () => {
   removeToken();
 };
+
+export interface RoAllocation {
+  order_id?: string;
+  product_id: string;
+  warehouse_id: string;
+  allocated_quantity: number;
+  distance_km: number;
+  transport_cost: number;
+  decision_reason: string;
+  fulfillment_status?: string;
+  shortage_quantity?: number;
+  created_at?: string;
+}
+
+export interface RoPlanResponse {
+  order_id: string;
+  status: 'FULLY_FULFILLED' | 'PARTIALLY_FULFILLED' | 'INFEASIBLE' | 'ERROR';
+  allocations: RoAllocation[];
+  shortage?: number;
+  decision_summary?: string[];
+  requested_quantity?: number;
+  allocated_quantity?: number;
+}
+
+export const runRouteOptimization = async (orderId: string): Promise<RoPlanResponse> => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/run/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to run route optimization');
+  return data;
+};
+
+export const getRoutePlan = async (orderId: string): Promise<RoPlanResponse> => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/plan/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch fulfillment plan');
+  return data;
+};
+
+export const getRouteKpis = async (orderId: string) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/kpis/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO KPIs');
+  return data;
+};
+
+export const getRouteHistory = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/history`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO history');
+  return data;
+};
+
+export const getRouteExplain = async (orderId: string) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/explain/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO explainability');
+  return data;
+};
+
+export const getRouteChartData = async (orderId: string) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/chart-data/${encodeURIComponent(orderId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO chart data');
+  return data;
+};
+
+export const getRouteDashboardSummary = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/ro/dashboard-summary`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || data.message || 'Failed to fetch RO summary');
+  return data;
+};

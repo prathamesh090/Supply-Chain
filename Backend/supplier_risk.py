@@ -191,8 +191,12 @@ async def get_supplier_rankings():
         rankings = predictor.get_supplier_rankings()
         known_names = {str(item.get("supplier_name", "")).strip().lower() for item in rankings}
 
-        # Keep original model suppliers; only append newly connected suppliers.
-        db_suppliers = SupplierPortalDB.list_connected_suppliers_for_risk()
+        # Keep original model suppliers (the seeded 20) and only append connected suppliers.
+        try:
+            db_suppliers = SupplierPortalDB.list_connected_suppliers_for_risk()
+        except Exception:
+            db_suppliers = []
+
         for supplier in db_suppliers:
             supplier_name = (supplier.get("company_legal_name") or "").strip()
             if not supplier_name or supplier_name.lower() in known_names:
@@ -214,6 +218,7 @@ async def get_supplier_rankings():
                 "negotiated_price": risk_input.get("negotiated_price", 0),
                 "compliance": risk_input.get("compliance", "No"),
             }
+            requires_details = int(supplier["supplier_id"]) and not SupplierPortalDB.get_supplier_risk_input(int(supplier["supplier_id"]))
             try:
                 predicted = predictor.predict_single_supplier(payload)
             except Exception:
@@ -231,7 +236,12 @@ async def get_supplier_rankings():
                 "compliance_rate": 100 if payload["compliance"] == "Yes" else 0,
                 "trust_score": payload["trust_score"],
                 "plastic_types": [str(plastic_type)],
-                "risk_summary": f"{supplier_name} risk profile generated from connected supplier details.",
+                "requires_details": bool(requires_details),
+                "supplier_id": supplier.get("supplier_id"),
+                "risk_summary": (
+                    f"{supplier_name} added from active manufacturer connection. "
+                    + ("Please add supplier risk details for a more accurate score." if requires_details else "Scored using saved supplier detail inputs.")
+                ),
             })
 
         rankings.sort(key=lambda x: float(x.get("risk_score", 0)), reverse=True)

@@ -11,6 +11,7 @@ import {
   TrendingUp,
   Truck,
   Users,
+  Route,
 } from 'lucide-react';
 import { getCurrentUser, getRiskDistribution, getSupplierRankings, getToken } from '@/lib/api';
 import { fetchGlobalRiskEvents, fetchRecentRiskEvents } from '@/components/supplier-risk/api';
@@ -185,11 +186,12 @@ export default function Dashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="hover:shadow-lg transition-shadow opacity-90">
-                  <CardHeader><CardTitle className="text-base">Inventory Management</CardTitle></CardHeader>
-                  <CardContent className="text-center space-y-3">
-                    <p className="text-sm text-muted-foreground">Manage your organization profile and contact details.</p>
-                    <Button variant="secondary" onClick={() => navigate('/manufacturer/settings')}>Open Settings</Button>
+                <Card className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6 text-center">
+                    <Route className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                    <h4 className="font-semibold text-lg mb-2">Route Optimization</h4>
+                    <p className="text-gray-600 text-sm mb-4">Warehouse-to-customer fulfillment planning and explainable allocation.</p>
+                    <Button variant="secondary" onClick={() => navigate('/route-optimization')}>Open RO Module</Button>
                   </CardContent>
                 </Card>
               </div>
