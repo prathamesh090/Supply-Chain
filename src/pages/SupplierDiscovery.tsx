@@ -11,6 +11,10 @@ type SupplierRow = {
   supplier_id: number;
   company_legal_name: string;
   company_overview?: string;
+  city?: string;
+  manufacturing_state?: string;
+  country?: string;
+  categories?: string;
   connection_status: 'active' | 'pending' | 'none';
 };
 
@@ -65,6 +69,8 @@ export default function SupplierDiscovery() {
               <Card key={s.supplier_id} className="p-4 space-y-3">
                 <Link className="font-semibold text-lg hover:underline" to={`/suppliers/${s.supplier_id}`}>{s.company_legal_name || `Supplier ${s.supplier_id}`}</Link>
                 <p className="text-sm text-muted-foreground line-clamp-2">{s.company_overview || 'No description yet.'}</p>
+                <p className="text-xs text-muted-foreground">{[s.city, s.manufacturing_state, s.country].filter(Boolean).join(', ') || 'Location not set'}</p>
+                <p className="text-xs">{s.categories || 'Categories not set'}</p>
                 <div className="flex items-center justify-between">
                   <Badge variant={s.connection_status === 'active' ? 'default' : 'outline'}>{s.connection_status === 'active' ? 'Connected' : 'Not Connected'}</Badge>
                   <Button disabled={s.connection_status === 'active'} onClick={async () => { await connectSupplier(s.supplier_id); await load(); }}>

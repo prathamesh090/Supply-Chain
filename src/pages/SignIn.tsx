@@ -48,7 +48,8 @@ export default function SignIn() {
         description: 'Successfully signed in',
       });
 
-      const nextPath = (location.state as { from?: string } | null)?.from || '/dashboard';
+      const defaultPath = response.user.role === 'supplier' ? '/supplier-dashboard' : '/dashboard';
+      const nextPath = (location.state as { from?: string } | null)?.from || defaultPath;
       navigate(nextPath, { replace: true });
 
     } catch (err: unknown) {

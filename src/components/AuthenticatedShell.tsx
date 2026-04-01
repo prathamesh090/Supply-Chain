@@ -9,7 +9,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from '@/components/ui/sidebar';
-import { AlertTriangle, LayoutDashboard, TrendingUp, Factory, Network } from 'lucide-react';
+import { AlertTriangle, LayoutDashboard, TrendingUp, Factory, Network, Settings } from 'lucide-react';
 import { getAuthSession } from '@/lib/api';
 
 function AppSidebar() {
@@ -20,9 +20,13 @@ function AppSidebar() {
     { title: 'Dashboard Overview', url: '/dashboard', icon: LayoutDashboard },
     { title: 'Demand Forecasting', url: '/demand-forecast', icon: TrendingUp },
     { title: 'Supplier Risk', url: '/supplier-risk', icon: AlertTriangle },
+    { title: 'Settings', url: '/manufacturer/settings', icon: Settings },
   ];
 
-  const supplierItems = [{ title: 'Supplier Portal', url: '/supplier-dashboard', icon: Factory }];
+  const supplierItems = [
+    { title: 'Supplier Portal', url: '/supplier-dashboard', icon: Factory },
+    { title: 'Settings', url: '/supplier/settings', icon: Settings },
+  ];
   const items = role === 'supplier' ? supplierItems : manufacturerItems;
 
   return (

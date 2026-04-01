@@ -100,6 +100,7 @@ def supplier_signup(payload: SupplierSignupRequest):
             user_id,
             {
                 "company_legal_name": payload.company_legal_name,
+                "contact_person": payload.full_name,
                 "phone": payload.phone,
                 "manufacturing_state": payload.manufacturing_state,
                 "factory_address": payload.factory_address,
@@ -147,13 +148,15 @@ def get_profile(supplier_id: int = Depends(get_current_supplier)):
     profile = SupplierPortalDB.get_supplier_profile(supplier_id)
     if not profile:
         raise HTTPException(status_code=404, detail="Supplier profile not found")
+    profile["profile_completed"] = SupplierPortalDB.is_supplier_profile_complete(profile)
     return profile
 
 
 @router.put("/profile")
 def update_profile(payload: SupplierProfileUpdateRequest, supplier_id: int = Depends(get_current_supplier)):
     SupplierPortalDB.update_supplier_profile(supplier_id, payload.model_dump(exclude_none=True))
-    return {"success": True}
+    profile = SupplierPortalDB.get_supplier_profile(supplier_id)
+    return {"success": True, "profile_completed": SupplierPortalDB.is_supplier_profile_complete(profile)}
 
 
 @router.get("/materials")

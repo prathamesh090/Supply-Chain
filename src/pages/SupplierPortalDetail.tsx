@@ -10,10 +10,12 @@ const colorMap: Record<string, string> = { in_stock: 'bg-green-100 text-green-70
 export default function SupplierPortalDetail() {
   const { supplierId } = useParams();
   const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('material_name');
 
   useEffect(() => {
-    if (supplierId) getSupplierDetailById(Number(supplierId)).then(setData);
+    if (!supplierId) return;
+    getSupplierDetailById(Number(supplierId)).then(setData).catch((e) => setError(e instanceof Error ? e.message : 'Failed to load supplier'));
   }, [supplierId]);
 
   const materials = useMemo(() => {
@@ -22,6 +24,7 @@ export default function SupplierPortalDetail() {
     return list;
   }, [data, sortBy]);
 
+  if (error) return <AuthenticatedShell><p className="text-red-600">{error}</p></AuthenticatedShell>;
   if (!data) return <AuthenticatedShell><p>Loading...</p></AuthenticatedShell>;
 
   return (
@@ -29,8 +32,10 @@ export default function SupplierPortalDetail() {
       <div className="space-y-4">
         <Card className="p-5">
           <h1 className="text-2xl font-bold">{data.company_name}</h1>
-          <p className="text-muted-foreground">{data.short_bio}</p>
-          <p>{data.phone} · {data.support_email}</p>
+          <p className="text-muted-foreground">{data.short_bio || 'No company overview provided.'}</p>
+          <p>{data.phone || 'Phone unavailable'} · {data.support_email || 'Email unavailable'}</p>
+          <p className="text-sm text-muted-foreground">{[data.city, data.state, data.country].filter(Boolean).join(', ') || 'Location unavailable'}</p>
+          <p className="text-sm">{data.categories || 'Categories not provided'}</p>
         </Card>
         <Card className="p-5">
           <div className="flex justify-between items-center mb-3"><h2 className="text-xl font-semibold">Raw Materials Catalog</h2>

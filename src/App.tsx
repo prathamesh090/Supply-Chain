@@ -26,6 +26,9 @@ import SupplierDiscovery from "./pages/SupplierDiscovery";
 import SupplierNetwork from "./pages/SupplierNetwork";
 import SupplierPortalDetail from "./pages/SupplierPortalDetail";
 import AuthSelect from "./pages/AuthSelect";
+import SupplierSettings from "./pages/SupplierSettings";
+import SupplierProfileSetup from "./pages/SupplierProfileSetup";
+import ManufacturerSettings from "./pages/ManufacturerSettings";
 
 const queryClient = new QueryClient();
 
@@ -54,12 +57,15 @@ const App = () => (
               <Route path="/supplier-signin" element={<SupplierSignIn />} />
               <Route path="/supplier-signup" element={<SupplierSignUp />} />
               <Route path="/supplier-dashboard" element={<ProtectedRoute roles={['supplier']}><SupplierDashboard /></ProtectedRoute>} />
+              <Route path="/supplier/settings" element={<ProtectedRoute roles={['supplier']}><SupplierSettings /></ProtectedRoute>} />
+              <Route path="/supplier/profile-setup" element={<ProtectedRoute roles={['supplier']}><SupplierProfileSetup /></ProtectedRoute>} />
               <Route path="/suppliers/discovery" element={<ProtectedRoute roles={['manufacturer','admin','user']}><SupplierDiscovery /></ProtectedRoute>} />
               <Route path="/suppliers/network" element={<ProtectedRoute roles={['manufacturer','admin','user']}><SupplierNetwork /></ProtectedRoute>} />
               <Route path="/suppliers/:supplierId" element={<ProtectedRoute roles={['manufacturer','admin','user']}><SupplierPortalDetail /></ProtectedRoute>} />
+              <Route path="/manufacturer/settings" element={<ProtectedRoute roles={['manufacturer','admin','user']}><ManufacturerSettings /></ProtectedRoute>} />
               
               {/* Dashboard route (no nested routes for now) */}
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute roles={['manufacturer','admin','user']}><Dashboard /></ProtectedRoute>} />
               
               {/* Demand Forecasting as separate route */}
               <Route path="/demand-forecast" element={<ProtectedRoute><DemandForecast /></ProtectedRoute>} />

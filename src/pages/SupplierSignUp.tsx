@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supplierSignUp } from '@/lib/api';
+import { getSupplierProfile, supplierSignUp } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
+import { emitAuthChange } from '@/hooks/use-auth';
 
 export default function SupplierSignUp() {
   const navigate = useNavigate();
@@ -249,7 +250,15 @@ export default function SupplierSignUp() {
       if (data.access_token) {
         localStorage.setItem('auth_token', data.access_token);
         localStorage.setItem('auth_session', JSON.stringify({ token: data.access_token, userId: data.user_id, email: data.email, role: 'supplier' }));
-        navigate('/supplier-dashboard');
+        emitAuthChange();
+        let nextRoute = '/supplier-dashboard';
+        try {
+          const profile = await getSupplierProfile();
+          if (!profile?.profile_completed) nextRoute = '/supplier/profile-setup';
+        } catch {
+          nextRoute = '/supplier/profile-setup';
+        }
+        navigate(nextRoute);
       } else {
         setMessage('Signup failed');
       }

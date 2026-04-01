@@ -188,8 +188,8 @@ export default function Dashboard() {
                 <Card className="hover:shadow-lg transition-shadow opacity-90">
                   <CardHeader><CardTitle className="text-base">Inventory Management</CardTitle></CardHeader>
                   <CardContent className="text-center space-y-3">
-                    <p className="text-sm text-muted-foreground">Inventory and supply-chain modules are coming soon in this environment.</p>
-                    <Button variant="secondary" disabled>Coming Soon</Button>
+                    <p className="text-sm text-muted-foreground">Manage your organization profile and contact details.</p>
+                    <Button variant="secondary" onClick={() => navigate('/manufacturer/settings')}>Open Settings</Button>
                   </CardContent>
                 </Card>
               </div>

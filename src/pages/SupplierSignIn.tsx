@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { NetworkVisualization } from '@/components/NetworkVisualization';
-import { supplierSignIn } from '@/lib/api';
+import { getSupplierProfile, supplierSignIn } from '@/lib/api';
 import { useAuth } from '@/hooks/use-auth';
 import { toast } from '@/hooks/use-toast';
 import { Building2, Mail, Lock, ArrowLeft } from 'lucide-react';
@@ -45,10 +45,14 @@ export default function SupplierSignIn() {
         description: 'Supplier portal access granted.',
       });
 
-      // Redirect to supplier dashboard
-      setTimeout(() => {
-        navigate('/supplier-dashboard');
-      }, 1000);
+      let nextRoute = '/supplier-dashboard';
+      try {
+        const profile = await getSupplierProfile();
+        if (!profile?.profile_completed) nextRoute = '/supplier/profile-setup';
+      } catch {
+        nextRoute = '/supplier/profile-setup';
+      }
+      navigate(nextRoute, { replace: true });
 
     } catch (err: any) {
       const errorMessage = err.response?.data?.detail || err.message || 'Authentication failed';

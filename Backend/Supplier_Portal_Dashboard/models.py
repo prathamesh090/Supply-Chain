@@ -19,10 +19,18 @@ class SupplierSigninRequest(BaseModel):
 
 class SupplierProfileUpdateRequest(BaseModel):
     company_legal_name: Optional[str] = None
+    contact_person: Optional[str] = None
     phone: Optional[str] = None
     manufacturing_state: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
     factory_address: Optional[str] = None
     company_overview: Optional[str] = None
+    categories: Optional[str] = None
+    technical_capabilities: Optional[str] = None
+    lead_time_defaults: Optional[str] = None
+    stock_service_notes: Optional[str] = None
+    website: Optional[str] = None
     website_url: Optional[str] = None
     support_email: Optional[EmailStr] = None
 

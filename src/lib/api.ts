@@ -251,6 +251,23 @@ export interface AuthSession {
   email: string;
 }
 
+export interface SupplierProfilePayload {
+  company_legal_name?: string;
+  contact_person?: string;
+  company_overview?: string;
+  phone?: string;
+  factory_address?: string;
+  city?: string;
+  manufacturing_state?: string;
+  country?: string;
+  support_email?: string;
+  website?: string;
+  categories?: string;
+  technical_capabilities?: string;
+  lead_time_defaults?: string;
+  stock_service_notes?: string;
+}
+
 // Token management
 export const storeToken = (token: string) => {
   localStorage.setItem('auth_token', token);
@@ -603,6 +620,26 @@ export const saveSupplierProfile = async (payload: Record<string, unknown>) => {
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail || 'Failed to save supplier profile');
+  return data;
+};
+
+export const getManufacturerProfile = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/manufacturer/profile`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load manufacturer profile');
+  return data;
+};
+
+export const saveManufacturerProfile = async (payload: Record<string, unknown>) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/manufacturer/profile`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to save manufacturer profile');
   return data;
 };
 

@@ -10,8 +10,11 @@ export function ProtectedRoute({ children, roles }: { children: React.ReactEleme
   if (!token) {
     return <Navigate to="/sign-in" replace state={{ from: location.pathname }} />;
   }
+  if (!session) {
+    return <Navigate to="/auth/select?mode=signin" replace />;
+  }
 
-  if (roles && session && !roles.includes(session.role)) {
+  if (roles && !roles.includes(session.role)) {
     return <Navigate to={session.role === 'supplier' ? '/supplier-dashboard' : '/dashboard'} replace />;
   }
 

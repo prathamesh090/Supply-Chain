@@ -522,6 +522,18 @@ async def get_current_user_info(current_user: UserResponse = Depends(get_current
 class SupplierConnectionPayload(BaseModel):
     supplier_id: int
 
+class ManufacturerProfileUpdate(BaseModel):
+    company_name: Optional[str] = None
+    contact_person: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    business_description: Optional[str] = None
+    website: Optional[str] = None
+
 
 @app.get("/api/manufacturer/suppliers")
 async def list_supplier_discovery(search: Optional[str] = None, current_user: UserResponse = Depends(get_current_user)):
@@ -577,9 +589,32 @@ async def get_supplier_detail(supplier_id: int, current_user: UserResponse = Dep
         "short_bio": supplier.get("company_overview"),
         "phone": supplier.get("phone"),
         "support_email": supplier.get("support_email"),
+        "city": supplier.get("city"),
+        "state": supplier.get("manufacturing_state"),
+        "country": supplier.get("country"),
+        "categories": supplier.get("categories"),
         "connection_status": supplier.get("connection_status"),
         "materials": materials,
     }
+
+
+@app.get("/api/manufacturer/profile")
+async def get_manufacturer_profile(current_user: UserResponse = Depends(get_current_user)):
+    if current_user.role not in ["manufacturer", "admin", "user"]:
+        raise HTTPException(status_code=403, detail="Manufacturer access required")
+    profile = SupplierPortalDB.get_manufacturer_profile(current_user.id) or {}
+    profile.setdefault("manufacturer_id", current_user.id)
+    profile.setdefault("contact_person", current_user.full_name)
+    profile.setdefault("email", current_user.email)
+    return profile
+
+
+@app.put("/api/manufacturer/profile")
+async def update_manufacturer_profile(payload: ManufacturerProfileUpdate, current_user: UserResponse = Depends(get_current_user)):
+    if current_user.role not in ["manufacturer", "admin", "user"]:
+        raise HTTPException(status_code=403, detail="Manufacturer access required")
+    SupplierPortalDB.update_manufacturer_profile(current_user.id, payload.model_dump(exclude_none=True))
+    return {"success": True}
 
 # Existing CSV loading functions
 def _load_csv(path: Path) -> pd.DataFrame:
