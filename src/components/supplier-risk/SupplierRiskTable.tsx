@@ -62,7 +62,7 @@ export function SupplierRiskTable({ suppliers, onRowClick }: Props) {
             <option value="inherentRiskScore">Inherent Risk</option>
             <option value="financialRiskScore">Financial Risk</option>
             <option value="supplierName">Supplier Name</option>
-            <option value="country">Country</option>
+            <option value="country">Global</option>
             <option value="lastUpdated">Last Updated</option>
           </select>
           <Button variant="outline" onClick={() => setDescending((v) => !v)}>
@@ -75,7 +75,7 @@ export function SupplierRiskTable({ suppliers, onRowClick }: Props) {
           <thead>
             <tr className="border-b text-left">
               <th className="py-2 pr-4">Supplier Name</th>
-              <th className="py-2 pr-4">Country</th>
+              <th className="py-2 pr-4">Global</th>
               <th className="py-2 pr-4">Financial Risk</th>
               <th className="py-2 pr-4">Inherent Risk</th>
               <th className="py-2 pr-4">Integrated Risk</th>
