@@ -38,7 +38,10 @@ import {
   Cpu,
   Shield,
   BarChart3,
+  GitBranch,
 } from 'lucide-react';
+import { MiniScenarioSimulator, SimResult } from '@/components/scenario/MiniScenarioSimulator';
+import { SimulationImpactCard } from '@/components/scenario/SimulationImpactCard';
 import {
   getWarehouses,
   getInventoryDashboard,
@@ -112,6 +115,7 @@ export default function InventoryManagement() {
   const [searchTerm, setSearchTerm]           = useState('');
   const [statusFilter, setStatusFilter]       = useState('All');
   const [expandedRow, setExpandedRow]         = useState<string | null>(null);
+  const [integratedSimResult, setIntegratedSimResult] = useState<SimResult | null>(null);
 
   // ── Add Inventory Form State ────────────────────────────────────────
   const [formData, setFormData] = useState({
@@ -525,7 +529,7 @@ export default function InventoryManagement() {
 
             {/* ── Tabs ── */}
             <Tabs defaultValue="dashboard" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="dashboard">
                   📦 Inventory Dashboard
                 </TabsTrigger>
@@ -534,6 +538,9 @@ export default function InventoryManagement() {
                 </TabsTrigger>
                 <TabsTrigger value="check">
                   🔍 Check Stock
+                </TabsTrigger>
+                <TabsTrigger value="stress" className="gap-2">
+                  🚀 Stress Test
                 </TabsTrigger>
               </TabsList>
 
@@ -974,6 +981,82 @@ export default function InventoryManagement() {
                       </div>
                     )}
 
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="stress" className="mt-4">
+                <Card className="border-2 border-primary/10 shadow-lg">
+                  <CardHeader className="pb-6">
+                    <CardTitle className="flex items-center gap-2">
+                       <GitBranch className="w-5 h-5 text-primary" />
+                       Stress Simulation
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                        <div className="space-y-6">
+                           <div className="bg-muted/30 p-6 rounded-2xl border-2 border-dashed border-muted flex flex-col gap-6">
+                              <div className="space-y-2">
+                                <h3 className="font-bold text-lg flex items-center gap-2">
+                                  <Cpu className="w-5 h-5 text-primary" />
+                                  Simulation Parameters
+                                </h3>
+                                <p className="text-xs text-muted-foreground">
+                                  Adjust parameters to see how disruptions cascade through your inventory pipeline.
+                                </p>
+                              </div>
+                              <MiniScenarioSimulator feature="inventory" onResult={setIntegratedSimResult} />
+                           </div>
+                        </div>
+
+                        <div className="space-y-6">
+                           {integratedSimResult ? (
+                              <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-6">
+                                 <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/10 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                      <Brain className="w-16 h-16" />
+                                    </div>
+                                    <h4 className="text-sm font-black text-primary uppercase tracking-wider mb-3 flex items-center gap-2">
+                                       <Brain className="w-4 h-4" />
+                                       AI Impact Summary
+                                    </h4>
+                                    <p className="text-base text-foreground font-medium leading-relaxed relative z-10">
+                                       "{integratedSimResult.summary}"
+                                    </p>
+                                 </div>
+
+                                 <div className="space-y-4">
+                                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">Detailed Metrics</h4>
+                                    <SimulationImpactCard stage="inventory" data={integratedSimResult.stages.inventory} severity={integratedSimResult.severity_score} />
+                                 </div>
+
+                                 {integratedSimResult.stages.inventory.safety_stock_increase_avg_pct > 0 && (
+                                    <div className="p-5 rounded-2xl bg-orange-50 border border-orange-100 flex items-start gap-4 shadow-sm">
+                                       <div className="p-2.5 rounded-xl bg-orange-100 text-orange-600">
+                                          <TrendingUp className="w-6 h-6" />
+                                       </div>
+                                       <div>
+                                          <p className="text-sm font-black text-orange-800">Capacity Alert</p>
+                                          <p className="text-sm text-orange-700/80 leading-relaxed mt-1">
+                                             This scenario would require increasing your safety stock buffer by <span className="font-bold text-orange-800">{integratedSimResult.stages.inventory.safety_stock_increase_avg_pct}%</span> to maintain current service levels.
+                                          </p>
+                                       </div>
+                                    </div>
+                                 )}
+                              </div>
+                           ) : (
+                              <div className="h-full flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-3xl border-muted bg-muted/5 group">
+                                 <div className="p-4 rounded-full bg-muted/20 mb-4 group-hover:scale-110 transition-transform duration-500">
+                                    <GitBranch className="w-12 h-12 text-muted-foreground opacity-40" />
+                                 </div>
+                                 <p className="font-bold text-muted-foreground text-lg">Predictive Playground</p>
+                                 <p className="text-sm text-muted-foreground/60 max-w-[280px] mt-2">
+                                    Configure a scenario on the left to visualize supply chain pressure points.
+                                 </p>
+                              </div>
+                           )}
+                        </div>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>

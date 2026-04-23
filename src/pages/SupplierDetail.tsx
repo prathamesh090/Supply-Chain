@@ -19,7 +19,13 @@ import {
 import { AuthenticatedShell } from '@/components/AuthenticatedShell';
 import { fetchSupplierDetail as fetchSupplierDeepDetail } from '@/components/supplier-risk/api';
 import type { SupplierDetailData, SupplierRiskRow } from '@/components/supplier-risk/types';
-import { getSupplierRankings } from '@/lib/api';
+import { getSupplierRankings, connectSupplier, sendInquiry } from '@/lib/api';
+import { toast } from '@/hooks/use-toast';
+import { Mail, MessageSquare } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface SupplierData {
   supplier_name: string;
@@ -37,6 +43,7 @@ interface SupplierData {
   risk_summary: string;
   risk_rank?: number;
   total_suppliers?: number;
+  supplier_id?: number;
 }
 
 export default function SupplierDetail() {
@@ -46,6 +53,10 @@ export default function SupplierDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [detailData, setDetailData] = useState<SupplierDetailData | null>(null);
+  const [connecting, setConnecting] = useState(false);
+  const [inquiryModalOpen, setInquiryModalOpen] = useState(false);
+  const [inquiryForm, setInquiryForm] = useState({ subject: '', message: '' });
+  const [sendingInquiry, setSendingInquiry] = useState(false);
 
   useEffect(() => {
     const loadSupplierDetail = async () => {
@@ -82,8 +93,8 @@ export default function SupplierDetail() {
           const mappedSupplier: SupplierRiskRow = {
             supplierId: foundSupplier.supplier_name,
             supplierName: foundSupplier.supplier_name,
-            country: 'Global',
             industry: 'Materials',
+            location: 'Global',
             connectedMaterials: foundSupplier.plastic_types || [],
             financialRiskScore: Math.round(foundSupplier.risk_score_ui ?? foundSupplier.risk_score ?? 0),
             financialRiskLevel: foundSupplier.predicted_risk,
@@ -113,6 +124,46 @@ export default function SupplierDetail() {
 
   const handleBack = () => {
     navigate('/supplier-risk');
+  };
+
+  const handleConnect = async () => {
+    if (!supplier?.supplier_id) {
+      toast({ title: "Internal Supplier", description: "This is a system-seeded supplier for risk analysis. Real-time connection is only available for registered portal users.", variant: "destructive" });
+      return;
+    }
+    setConnecting(true);
+    try {
+      await connectSupplier(supplier.supplier_id);
+      toast({ title: "Request Sent", description: "A connection request has been sent to the supplier." });
+      setSupplier({ ...supplier, connection_status: 'pending' } as any);
+    } catch (err: any) {
+      toast({ title: "Failed", description: err.message, variant: "destructive" });
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  const handleSendInquiry = async () => {
+    if (!supplier?.supplier_id) return;
+    if (!inquiryForm.subject || !inquiryForm.message) {
+      toast({ title: "Missing Fields", description: "Subject and message are required.", variant: "destructive" });
+      return;
+    }
+    setSendingInquiry(true);
+    try {
+      await sendInquiry({
+        supplier_id: supplier.supplier_id,
+        subject: inquiryForm.subject,
+        message: inquiryForm.message
+      });
+      toast({ title: "Inquiry Sent", description: "Your message has been delivered to the supplier's dashboard." });
+      setInquiryModalOpen(false);
+      setInquiryForm({ subject: '', message: '' });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setSendingInquiry(false);
+    }
   };
 
   // Custom tooltip components
@@ -320,8 +371,61 @@ export default function SupplierDetail() {
                   </div>
                 </div>
                 
-                <div className="flex-shrink-0">
+                <div className="flex flex-col items-end gap-4">
                   <CircularProgress value={supplier.risk_score} riskLevel={supplier.predicted_risk} />
+                  <div className="flex gap-2">
+                    <Dialog open={inquiryModalOpen} onOpenChange={setInquiryModalOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="secondary" className="bg-white/10 text-white hover:bg-white/20 border-white/20" disabled={!supplier.supplier_id}>
+                          <Mail className="w-4 h-4 mr-2" /> Send Inquiry
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Contact {supplier.supplier_name}</DialogTitle>
+                          <DialogDescription>
+                            Send a direct inquiry or RFQ to this supplier.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid gap-2">
+                            <Label htmlFor="subject">Subject</Label>
+                            <Input
+                              id="subject"
+                              placeholder="e.g. RFQ for PET Bottle Grade"
+                              value={inquiryForm.subject}
+                              onChange={(e) => setInquiryForm({ ...inquiryForm, subject: e.target.value })}
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <Label htmlFor="message">Message</Label>
+                            <Textarea
+                              id="message"
+                              placeholder="Describe your requirements, quantity needed, and timeline..."
+                              rows={5}
+                              value={inquiryForm.message}
+                              onChange={(e) => setInquiryForm({ ...inquiryForm, message: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setInquiryModalOpen(false)}>Cancel</Button>
+                          <Button onClick={handleSendInquiry} disabled={sendingInquiry}>
+                            {sendingInquiry ? 'Sending...' : 'Send Inquiry'}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Button
+                      onClick={handleConnect}
+                      disabled={connecting || (supplier as any).connection_status === 'pending' || (supplier as any).connection_status === 'active' || !supplier.supplier_id}
+                      className={ (supplier as any).connection_status === 'active' ? "bg-green-500 hover:bg-green-600" : "bg-white text-blue-700 hover:bg-blue-50"}
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      {(supplier as any).connection_status === 'active' ? 'Connected' : (supplier as any).connection_status === 'pending' ? 'Pending' : 'Request Connection'}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

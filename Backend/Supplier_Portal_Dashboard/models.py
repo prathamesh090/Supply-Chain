@@ -12,6 +12,7 @@ class SupplierSignupRequest(BaseModel):
     manufacturing_state: Optional[str] = None
     factory_address: Optional[str] = None
     company_overview: Optional[str] = None
+    gstin: Optional[str] = None
 
 class SupplierSigninRequest(BaseModel):
     email: EmailStr
@@ -33,6 +34,7 @@ class SupplierProfileUpdateRequest(BaseModel):
     website: Optional[str] = None
     website_url: Optional[str] = None
     support_email: Optional[EmailStr] = None
+    new_password: Optional[str] = Field(None, min_length=8)
 
 class SupplierMaterialRequest(BaseModel):
     material_name: str
@@ -43,6 +45,15 @@ class SupplierMaterialRequest(BaseModel):
 
 class SupplierConnectionRequest(BaseModel):
     supplier_id: int
+
+class ConnectionResponseRequest(BaseModel):
+    id: int  # Connection ID
+    action: Literal["active", "rejected"]
+
+class SupplierInquiryRequest(BaseModel):
+    supplier_id: int
+    subject: str
+    message: str
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -68,3 +79,31 @@ class SupplierDetailResponse(BaseModel):
     manufacturing_state: Optional[str] = None
     factory_address: Optional[str] = None
     materials: List[dict]
+
+class RFQCreateRequest(BaseModel):
+    supplier_id: int
+    product_name: str
+    quantity: int
+    budget_unit_price: Optional[float] = None
+    target_delivery_date: Optional[str] = None
+    specifications: Optional[str] = None
+
+class RFQQuoteRequest(BaseModel):
+    unit_price: float
+    lead_time_days: int
+    valid_until: Optional[str] = None
+    terms: Optional[str] = None
+
+class RFQMessageRequest(BaseModel):
+    message: str
+
+class RFQDecisionRequest(BaseModel):
+    action: Literal["accepted", "rejected", "closed"]
+
+class NotificationResponse(BaseModel):
+    id: int
+    title: str
+    message: str
+    link: Optional[str] = None
+    is_read: bool
+    created_at: str

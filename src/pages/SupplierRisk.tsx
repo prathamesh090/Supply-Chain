@@ -12,6 +12,10 @@ import { GlobalRiskPanel } from '@/components/supplier-risk/GlobalRiskPanel';
 import { RiskTrendCharts } from '@/components/supplier-risk/RiskTrendCharts';
 import { fetchGlobalRiskEvents, fetchRecentRiskEvents, fetchSupplierMonitoringData } from '@/components/supplier-risk/api';
 import { AuthenticatedShell } from '@/components/AuthenticatedShell';
+import { MiniScenarioSimulator, SimResult } from '@/components/scenario/MiniScenarioSimulator';
+import { SimulationImpactCard } from '@/components/scenario/SimulationImpactCard';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { GitBranch, Brain, Info } from 'lucide-react';
 import type { GlobalRiskEventItem, RiskEventItem, SupplierRiskRow } from '@/components/supplier-risk/types';
 
 export default function SupplierRisk() {
@@ -21,6 +25,7 @@ export default function SupplierRisk() {
   const [globalEvents, setGlobalEvents] = useState<GlobalRiskEventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [integratedSimResult, setIntegratedSimResult] = useState<SimResult | null>(null);
 
   const loadMonitoringData = async () => {
     try {
@@ -115,6 +120,7 @@ export default function SupplierRisk() {
           <TabsList>
             <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
             <TabsTrigger value="analytics">Risk Analytics</TabsTrigger>
+            <TabsTrigger value="simulation">Disruption Simulation</TabsTrigger>
           </TabsList>
 
           <TabsContent value="monitoring" className="space-y-4">
@@ -129,6 +135,49 @@ export default function SupplierRisk() {
 
           <TabsContent value="analytics">
             <RiskTrendCharts trendSeries={trendSeed} suppliers={suppliers} />
+          </TabsContent>
+
+          <TabsContent value="simulation">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-1">
+                <MiniScenarioSimulator 
+                  feature="risk" 
+                  onResult={(res) => setIntegratedSimResult(res)} 
+                />
+              </div>
+              <div className="lg:col-span-2 space-y-6">
+                {integratedSimResult ? (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-6">
+                    <Card className="border-primary/10 shadow-md">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="flex items-center gap-2 text-primary">
+                          <Brain className="w-5 h-5" />
+                          Risk Disruption Analysis
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 text-sm italic">
+                          "{integratedSimResult.summary}"
+                        </div>
+                        <SimulationImpactCard 
+                          stage="risk" 
+                          data={integratedSimResult.stages.risk} 
+                          severity={integratedSimResult.severity_score}
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-2xl border-muted opacity-50">
+                    <GitBranch className="w-12 h-12 mb-4 text-muted-foreground" />
+                    <p className="font-semibold text-muted-foreground">Select a scenario to start disruption analysis</p>
+                    <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+                      Model how global events impact your integrated risk scores and supplier reliability in real-time.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

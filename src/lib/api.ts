@@ -267,6 +267,7 @@ export interface SupplierProfilePayload {
   technical_capabilities?: string;
   lead_time_defaults?: string;
   stock_service_notes?: string;
+  new_password?: string;
 }
 
 // Token management
@@ -587,6 +588,7 @@ export const supplierSignUp = async (payload: {
   manufacturing_state?: string;
   factory_address?: string;
   company_overview?: string;
+  gstin?: string;
 }) => {
   const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/auth/signup`, {
     method: 'POST',
@@ -618,15 +620,25 @@ export const getSupplierProfile = async () => {
   return data;
 };
 
-export const saveSupplierProfile = async (payload: Record<string, unknown>) => {
+export const getSupplierVerifications = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/documents/verify`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  if (!response.ok) throw new Error('Failed to fetch verification status');
+  return response.json();
+};
+
+export const saveSupplierProfile = async (payload: SupplierProfilePayload) => {
   const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/profile`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Failed to save supplier profile');
-  return data;
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.detail || 'Failed to update profile');
+  }
+  return response.json();
 };
 
 export const getManufacturerProfile = async () => {
@@ -663,8 +675,13 @@ export const verifySupplierDocuments = async (docType: string, files: File[]) =>
   formData.append('doc_type', docType);
   files.forEach((file) => formData.append('files', file));
 
+  const token = getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
   const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/documents/verify-batch`, {
     method: 'POST',
+    headers,
     body: formData,
   });
   const data = await response.json();
@@ -689,8 +706,10 @@ export const getDiscoverySuppliers = async (search?: string) => {
   const response = await fetch(`${COMPANY_API_BASE_URL}/api/manufacturer/suppliers?${params.toString()}`, {
     headers: { Authorization: `Bearer ${getToken()}` },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Failed to load suppliers');
+  const text = await response.text();
+  let data: unknown;
+  try { data = JSON.parse(text); } catch { data = { detail: text }; }
+  if (!response.ok) throw new Error((data as { detail?: string }).detail || 'Failed to load suppliers');
   return data;
 };
 
@@ -700,8 +719,10 @@ export const getNetworkSuppliers = async (search?: string) => {
   const response = await fetch(`${COMPANY_API_BASE_URL}/api/manufacturer/suppliers/network?${params.toString()}`, {
     headers: { Authorization: `Bearer ${getToken()}` },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Failed to load supplier network');
+  const text = await response.text();
+  let data: unknown;
+  try { data = JSON.parse(text); } catch { data = { detail: text }; }
+  if (!response.ok) throw new Error((data as { detail?: string }).detail || 'Failed to load supplier network');
   return data;
 };
 
@@ -713,6 +734,46 @@ export const connectSupplier = async (supplier_id: number) => {
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail || 'Failed to connect supplier');
+  return data;
+};
+
+export const getSupplierConnections = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/connections`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to fetch connections');
+  return data;
+};
+
+export const respondToConnection = async (id: number, action: 'active' | 'rejected') => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/connections/respond`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify({ id, action }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to respond to connection');
+  return data;
+};
+
+export const getSupplierInquiries = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/inquiries`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to fetch inquiries');
+  return data;
+};
+
+export const sendInquiry = async (payload: { supplier_id: number; subject: string; message: string }) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/supplier-portal/inquire`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to send inquiry');
   return data;
 };
 
@@ -738,6 +799,120 @@ export const updateSupplierRiskDetails = async (payload: Record<string, unknown>
 
 export const logout = () => {
   removeToken();
+};
+
+// --- Procurement & RFQ API ---
+
+export const createRFQ = async (payload: {
+  supplier_id: number;
+  product_name: string;
+  quantity: number;
+  budget_unit_price?: number;
+  target_delivery_date?: string;
+  specifications?: string;
+}) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/rfqs`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to create RFQ');
+  return data;
+};
+
+export const getRFQs = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/rfqs`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load RFQs');
+  return data;
+};
+
+export const getRFQDetails = async (rfqId: number) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/rfqs/${rfqId}`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load RFQ details');
+  return data;
+};
+
+export const submitRFQQuote = async (rfqId: number, payload: {
+  unit_price: number;
+  lead_time_days: number;
+  valid_until?: string;
+  terms?: string;
+}) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/rfqs/${rfqId}/quote`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to submit quote');
+  return data;
+};
+
+export const sendRFQMessage = async (rfqId: number, message: string) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/rfqs/${rfqId}/message`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify({ message }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to send message');
+  return data;
+};
+
+export const respondToRFQ = async (rfqId: number, action: 'accepted' | 'rejected' | 'closed') => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/rfqs/${rfqId}/decision`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    body: JSON.stringify({ action }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to make decision');
+  return data;
+};
+
+export const getNotifications = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/notifications`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load notifications');
+  return data;
+};
+
+export const markNotificationAsRead = async (notificationId: number) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/notifications/${notificationId}/read`, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to mark notification as read');
+  return data;
+};
+
+export const markAllNotificationsAsRead = async () => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/notifications/read-all`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to clear notifications');
+  return data;
+};
+
+export const getComparisonData = async (productName: string) => {
+  const response = await fetch(`${COMPANY_API_BASE_URL}/api/procurement/comparison?product_name=${encodeURIComponent(productName)}`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Failed to load comparison data');
+  return data;
 };
 
 export interface RoAllocation {

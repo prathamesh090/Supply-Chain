@@ -238,6 +238,7 @@ async def get_supplier_rankings():
                 "plastic_types": [str(plastic_type)],
                 "requires_details": bool(requires_details),
                 "supplier_id": supplier.get("supplier_id"),
+                "connection_status": supplier.get("status"),
                 "risk_summary": (
                     f"{supplier_name} added from active manufacturer connection. "
                     + ("Please add supplier risk details for a more accurate score." if requires_details else "Scored using saved supplier detail inputs.")

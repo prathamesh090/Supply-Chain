@@ -1,340 +1,283 @@
-# 🚀 AI-Driven Supply Chain Management & Logistics Planning System
+<div align="center">
 
-An **AI-powered supply chain planning platform** that helps manufacturers optimize demand forecasting, supplier risk monitoring, inventory planning, and distribution allocation.
+# 🔗 AI-Driven Supply Chain Management Platform
 
-The system acts as a **planning-level supply chain decision-support engine**, enabling companies to make data-driven supply chain decisions before execution begins.
+### *End-to-End Planning Intelligence — From Source to Deliver*
 
-The platform is currently demonstrated for the **plastic manufacturing industry**, with a modular architecture that supports future expansion to industries such as:
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-ML_Engine-FF6600?style=for-the-badge)](https://xgboost.readthedocs.io/)
+[![SHAP](https://img.shields.io/badge/SHAP-Explainable_AI-FF4B4B?style=for-the-badge)](https://shap.readthedocs.io/)
 
-- Food & Beverages  
-- Chemicals  
-- Paper & Packaging  
-- Consumer Goods  
+> **A production-grade, AI-augmented supply chain planning platform** that synchronizes demand forecasting, supplier risk assessment, inventory planning, and distribution optimization into a single unified decision-support pipeline — designed for plastic manufacturers, architected for any industry.
 
----
-
-# 📌 Project Vision
-
-Modern supply chains are highly complex and vulnerable to disruptions such as:
-
-- demand uncertainty  
-- supplier failures  
-- inventory imbalance  
-- inefficient distribution planning  
-
-Traditional systems rely heavily on manual planning and fragmented tools.
-
-This project introduces an **AI-assisted supply chain planning platform** that integrates forecasting, risk intelligence, inventory planning, and distribution optimization into a single decision-support system.
+</div>
 
 ---
 
-# 🏗 System Architecture
-Demand Forecasting
-        ↓
-Supplier Risk Assessment
-        ↓
-Inventory Management
-        ↓
-Route Optimization
-        ↓
-Distribution Planning Output
+## 📌 What Makes This Different
 
+Most supply chain tools address **one problem** in isolation. This platform connects **four interdependent planning stages** so that the output of each module becomes the input of the next:
 
-Each module contributes critical insights to the next stage, forming a **complete supply chain planning pipeline**.
+```
+┌─────────────────────┐
+│  Demand Forecasting │  ← XGBoost · 92 features · SHAP explainability
+└────────┬────────────┘
+         │ demand signals per product/region
+         ▼
+┌─────────────────────┐
+│  Supplier Risk SRA  │  ← Weighted composite risk scoring model
+└────────┬────────────┘
+         │ risk-adjusted supplier ratings
+         ▼
+┌─────────────────────┐
+│  Inventory Planning │  ← Dynamic safety stock · Risk-aware ROP
+└────────┬────────────┘
+         │ warehouse inventory levels + constraints
+         ▼
+┌─────────────────────┐
+│ Distribution Plan   │  ← Cost-risk optimized allocation per region
+└─────────────────────┘
+```
 
----
-
-# 📊 Feature 1 — AI-Powered Demand Forecasting
-
-## Problem
-
-Manufacturers struggle with demand uncertainty which leads to:
-
-- Overstocking (high inventory holding costs)
-- Stockouts causing lost revenue
-- Poor production planning
-
-Traditional forecasting techniques fail to capture complex patterns like:
-
-- seasonality
-- pricing effects
-- promotions
-- market fluctuations
+**This is not four dashboards. It is one synchronized planning pipeline.**
 
 ---
 
-## Solution
+## 🚀 Core Features
 
-The system uses an **XGBoost machine learning model** trained on historical sales data with advanced feature engineering.
+### 📊 Feature 1 — AI-Powered Demand Forecasting
 
-It analyzes multiple demand drivers and produces accurate demand predictions along with explainable insights.
+| Detail | Value |
+|---|---|
+| Model | XGBoost (Gradient Boosted Trees) |
+| Engineered Features | 92 (lag variables, rolling stats, seasonality, price effects) |
+| Prediction Accuracy | **98.57%** |
+| Explainability | SHAP (per-prediction feature attribution) |
+| Batch Capacity | Up to 1,000 products |
+| Output | Demand forecast + visual explanation per driver |
 
----
+```python
+# SHAP-powered explainability example
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(X_test)
+# → "This forecast is 40% driven by price drop, 35% by seasonal trend"
+```
 
-## Technology Stack
-
-- Python  
-- XGBoost  
-- Flask REST API  
-- SHAP Explainability  
-- MySQL  
-- Pandas  
-- NumPy  
-
----
-
-## Key Features
-
-- 98.57% prediction accuracy  
-- 92 engineered demand features  
-- Batch prediction for up to 1000 products  
-- SHAP-based model explainability  
-- REST API integration  
-- Prediction storage in database
+Traditional forecasting treats demand as a black box. This system tells planners **exactly why** each forecast was generated — enabling confident, defensible planning decisions.
 
 ---
 
-## Business Impact
+### ⚠️ Feature 2 — Supplier Risk Assessment (SRA)
 
-- Reduced forecasting errors  
-- Improved production planning  
-- Better procurement decisions  
-- Early identification of demand spikes  
+Suppliers are evaluated across **5 weighted risk dimensions**:
 
----
+```
+Risk Score = 0.30 × Delivery Risk
+           + 0.25 × Defect Risk
+           + 0.20 × Compliance Risk
+           + 0.15 × Price Volatility Risk
+           + 0.10 × Trust Risk
+```
 
-# ⚠️ Feature 2 — Supplier Risk Assessment (SRA)
+| Risk Level | Score Range | Action |
+|---|---|---|
+| 🟢 Low | < 0.35 | Standard procurement |
+| 🟡 Medium | 0.35 – 0.65 | Enhanced monitoring |
+| 🔴 High | > 0.65 | Contingency sourcing |
 
-## Problem
-
-Supply chains are exposed to supplier disruptions including:
-
-- delivery delays  
-- quality defects  
-- regulatory violations  
-- operational instability  
-
-Traditional supplier evaluation relies only on historical performance and often fails to detect emerging risks early.
+**Business Value:** Identifies unreliable suppliers *before* disruption occurs — not after delivery failures.
 
 ---
 
-## Solution
+### 📦 Feature 3 — Risk-Aware Inventory Planning
 
-The Supplier Risk Assessment system evaluates suppliers using operational performance metrics and a machine learning–assisted risk scoring model.
+Integrates demand forecasts **and** supplier risk to compute dynamic safety stock:
 
-The system analyzes supplier data including:
+```
+ROP = (Average Daily Demand × Lead Time) + Safety Stock
 
-- delivery performance  
-- defect rates  
-- compliance records  
-- pricing variance  
-- trust scores  
+Safety Stock = Z × σ_demand × √Lead Time × Risk Multiplier
+```
 
-These metrics are combined into a unified supplier risk score.
---
-## Risk Scoring Model
-Risk Score =
-0.30 × Delivery Risk
-0.25 × Defect Risk
-0.20 × Compliance Risk
-0.15 × Price Risk
-0.10 × Trust Risk
+| Supplier Risk | Safety Stock Multiplier |
+|---|---|
+| 🟢 Low | 1.0× (baseline) |
+| 🟡 Medium | 1.3× (+30% buffer) |
+| 🔴 High | 1.6× (+60% buffer) |
+
+**Result:** Inventory decisions that reflect real supply uncertainty — not static assumptions.
 
 ---
 
-## Risk Categories
-- Low Risk  
-- Medium Risk  
-- High Risk  
----
-## Technology
+### 🚚 Feature 4 — Distribution Optimization
 
-- Python  
-- XGBoost  
-- FastAPI / Flask  
-- SQLite / MySQL  
----
-## Business Value
+For each product × region pair, the algorithm:
 
-- Early identification of unreliable suppliers  
-- Data-driven supplier evaluation  
-- Risk-aware supply chain planning  
-- Improved procurement strategies  
+1. Filters warehouses with sufficient inventory above safety stock
+2. Calculates base transportation cost by distance
+3. Applies risk penalty for high-risk supply sources
+4. Selects warehouse with **minimum total cost (transport + risk)**
+5. Allocates demand and updates warehouse inventory
+
+**Output:** A complete distribution allocation plan — optimized for cost and risk simultaneously.
 
 ---
 
-# 📦 Feature 3 — Inventory Management (Risk-Aware Inventory Planning)
+## 🏗 System Architecture
 
-## Problem
+```
+Frontend (React + TypeScript + Tailwind)
+    │
+    ├── Manufacturer Portal
+    │     ├── Demand Forecasting Dashboard (Recharts + SHAP charts)
+    │     ├── Supplier Risk Monitor (Leaflet maps + risk heatmaps)
+    │     ├── Inventory Management (dynamic ROP table)
+    │     └── Distribution Plan View
+    │
+    └── Supplier Portal
+          ├── Profile & Compliance Setup
+          ├── Risk Score Dashboard
+          └── Order & Delivery Tracking
 
-Manufacturers must balance two critical risks:
+Backend (Python FastAPI)
+    │
+    ├── /ml-demand      → XGBoost forecasting engine
+    ├── /supplier-risk  → Risk scoring service
+    ├── /inventory      → ROP / safety stock calculator
+    ├── /route-optimize → Distribution allocation engine
+    ├── /auth           → JWT authentication (dual-role)
+    └── /ad-generator   → AI-powered marketing content
 
-- Overstocking → higher storage costs  
-- Stockouts → production disruption and lost sales  
-
-Traditional inventory systems rarely integrate demand forecasts and supplier risk simultaneously.
----
-## Solution
-The system integrates **demand forecasts and supplier risk scores** to calculate dynamic safety stock and reorder points.
-The inventory planning model follows a research-aligned approach.
-
-Reorder Point (ROP) =
-Demand During Lead Time + Safety Stock
-
-
-Safety stock is adjusted using supplier risk levels to represent uncertainty.
-
----
-
-## Risk-Based Safety Stock Adjustment
-
-| Risk Level | Multiplier |
-|-------------|-------------|
-| Low | 1.0 |
-| Medium | 1.3 |
-| High | 1.6 |
+Database: MySQL + SQLite
+ML: XGBoost · Scikit-learn · SHAP · Pandas · NumPy
+```
 
 ---
 
-## Inventory Status Classification
+## 🛠 Tech Stack
 
-The system categorizes inventory into:
-
-- Healthy Inventory  
-- Reorder Soon  
-- Stockout Risk  
-
----
-
-## Example Dashboard Table
-
-| Product | Current Stock | Safety Stock | ROP | Status |
-|--------|---------------|--------------|-----|-------|
-| P101 | 120 | 60 | 150 | Reorder Soon |
-| P102 | 400 | 80 | 200 | Healthy |
-| P103 | 40 | 50 | 120 | Stockout Risk |
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 18 · TypeScript · Vite · TailwindCSS · Recharts · Leaflet |
+| **Backend** | Python · FastAPI · Flask |
+| **Machine Learning** | XGBoost · Scikit-learn · SHAP |
+| **Database** | MySQL · SQLite |
+| **Data Processing** | Pandas · NumPy |
+| **Auth** | JWT · bcrypt |
+| **AI Features** | Groq API (chatbot) · Freepik Mystic (ad generation) |
+| **Maps** | Leaflet.js · React-Leaflet |
 
 ---
 
-## Business Value
+## 💼 Business Impact
 
-- Reduced stockout incidents  
-- Smarter replenishment planning  
-- Risk-aware inventory decisions  
-- Better working capital management  
-
----
-
-# 🚚 Feature 4 — Route Planning & Distribution Optimization
-
-## Problem
-
-Manufacturers must decide:
-
-**Which warehouse should supply which customer region at minimum cost while respecting inventory and risk constraints.**
-
-Manual planning often results in:
-
-- inefficient transportation costs  
-- longer delivery distances  
-- high reliance on risky supply sources  
+| Problem | Solution | Impact |
+|---|---|---|
+| Demand uncertainty | ML forecast with 98.57% accuracy | Reduced over/understocking |
+| Supplier disruptions | Proactive risk scoring | Early warning before failures |
+| Static safety stock | Risk-multiplied dynamic stock | Better working capital use |
+| Manual distribution | Automated cost-risk allocation | Lower logistics cost |
+| Opaque AI decisions | SHAP explainability | Planner-defensible recommendations |
 
 ---
 
-## Solution
+## 🏭 Industry Focus & Expansion Path
 
-The system implements a **planning-level distribution allocation algorithm** inspired by supply chain routing research.
+**Currently demonstrated for:** Plastic Manufacturing (PET, HDPE, LDPE, LLDPE, PP, PVC)
 
-The algorithm determines:
-
-- best warehouse for each region  
-- optimal product allocation  
-- cost vs risk trade-offs  
-
-This module generates **distribution plans**, not vehicle routes.
-
----
-
-## Inputs
-
-### From Demand Forecasting
-
-- forecast demand per region and product  
-
-### From Inventory Management
-
-- warehouse inventory levels  
-- safety stock constraints  
-
-### From Supplier Risk Assessment
-
-- warehouse risk scores  
+**Modular expansion ready for:**
+- 🧪 Chemicals & Specialty Materials
+- 🍫 Food & Beverages (FMCG)
+- 💊 Pharmaceuticals
+- 📦 Paper & Packaging
+- 🛒 Consumer Goods
 
 ---
 
-## Decision Logic
+## 🔮 Roadmap
 
-For each product and region:
-
-1. Filter warehouses with sufficient inventory  
-2. Calculate transportation cost  
-3. Apply risk penalty  
-4. Select warehouse with lowest total cost  
-5. Allocate demand and update inventory  
-
----
-
-## Example Distribution Plan
-
-| Product | Region | Warehouse | Quantity |
-|--------|-------|-----------|---------|
-| PET | R2 | W1 | 10,000 kg |
-| HDPE | R1 | W1 | 5,000 kg |
+- [ ] **Scenario Simulation** — "What-if" analysis for demand shocks and supplier failures
+- [ ] **Rolling Horizon Planning** — 12–36 month forecasting with confidence intervals
+- [ ] **ERP Integration Layer** — SAP / Oracle live data connectors
+- [ ] **Constraint-Based Optimization** — Linear programming for network-wide optimization
+- [ ] **Collaborative Planning Workflows** — Multi-user sign-off and approval chains
+- [ ] **Real-Time Supplier Monitoring** — Live risk feed integration
 
 ---
 
-## Business Impact
+## 🚦 Getting Started
 
-- Reduced logistics cost  
-- Improved demand fulfillment  
-- Lower supply chain risk  
-- Balanced warehouse utilization  
+### Prerequisites
+
+```bash
+Node.js >= 18 · Python >= 3.11 · MySQL
+```
+
+### Frontend Setup
+
+```bash
+cd Supply-Chain
+npm install
+npm run dev
+# → Runs on http://localhost:8080
+```
+
+### Backend Setup
+
+```bash
+cd Backend
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+# → API at http://localhost:8000
+# → Docs at http://localhost:8000/docs
+```
+
+### Environment Variables
+
+```env
+# Backend/.env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=supply_chain_db
+SECRET_KEY=your_secret_key
+GROQ_API_KEY=your_groq_key
+```
 
 ---
 
-# 🛠 Tech Stack
+## 📁 Project Structure
 
-### Frontend
-- React.js  
-- Tailwind CSS  
-
-### Backend
-- Python  
-- FastAPI / Flask  
-
-### Machine Learning
-- XGBoost  
-- Scikit-learn  
-- SHAP  
-
-### Database
-- MySQL  
-- SQLite  
-
-### Data Processing
-- Pandas  
-- NumPy  
+```
+Supply-Chain/
+├── src/
+│   ├── pages/
+│   │   ├── DemandForcast.tsx          # Forecasting dashboard
+│   │   ├── SupplierRisk.tsx           # Supplier risk monitor
+│   │   ├── InventoryManagement.tsx    # Inventory planning
+│   │   ├── SupplierDashboard.tsx      # Supplier portal
+│   │   └── AdGenerator.tsx            # AI ad generator
+│   └── components/                    # Reusable UI components
+│
+└── Backend/
+    ├── main.py                        # FastAPI main application
+    ├── ml demand(Plastic)/            # XGBoost forecasting engine
+    ├── ml_supplier_risk/              # Risk scoring model
+    ├── inventory/                     # Inventory planning logic
+    ├── route_optimization/            # Distribution optimizer
+    ├── supplier_registry/             # Supplier management
+    └── risk_integration/              # Risk data aggregation
+```
 
 ---
 
-# 🔮 Future Enhancements
+<div align="center">
 
-- Multi-period supply chain planning  
-- Scenario simulation for demand changes  
-- Real-time supplier monitoring  
-- ERP / logistics system integration  
-- Industry expansion beyond plastics  
+**Built with a deep conviction that supply chain planning should be unified, intelligent, and explainable.**
 
-AI-Driven Supply Chain Management & Logistics Planning Project
+*From source to deliver — synchronized.*
 
-
+</div>

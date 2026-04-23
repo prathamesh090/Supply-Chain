@@ -9,10 +9,16 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from '@/components/ui/sidebar';
-import { AlertTriangle, LayoutDashboard, TrendingUp, Factory, Network, Settings, Route, Package, LogOut, Megaphone } from 'lucide-react';
+import { 
+  AlertTriangle, LayoutDashboard, TrendingUp, Factory, 
+  Network, Settings, Route, Package, LogOut, Megaphone,
+  Bell, MessageSquare, ShieldCheck, Mail
+} from 'lucide-react';
 import { getAuthSession } from '@/lib/api';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import NotificationTray from '@/components/NotificationTray';
 
 function AppSidebar() {
   const location = useLocation();
@@ -25,11 +31,13 @@ function AppSidebar() {
     { title: 'Supplier Risk', url: '/supplier-risk', icon: AlertTriangle },
     { title: 'Route Optimization', url: '/route-optimization', icon: Route },
     { title: 'Ad Generator', url: '/ad-generator', icon: Megaphone },
+    { title: 'Communication Hub', url: '/communication-hub', icon: MessageSquare },
     { title: 'Settings', url: '/manufacturer/settings', icon: Settings },
   ];
 
   const supplierItems = [
-    { title: 'Supplier Portal', url: '/supplier-dashboard', icon: Factory },
+    { title: 'Supplier Dashboard', url: '/supplier-dashboard', icon: Factory },
+    { title: 'Negotiations', url: '/communication-hub', icon: MessageSquare },
     { title: 'Settings', url: '/supplier/settings', icon: Settings },
   ];
   const items = role === 'supplier' ? supplierItems : manufacturerItems;
@@ -99,8 +107,15 @@ export function AuthenticatedShell({ children }: { children: React.ReactNode }) 
         <AppSidebar />
         <main className="flex-1 overflow-hidden">
           <div className="h-16 border-b bg-card px-6 flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">Signed in as <span className="font-medium text-foreground">{session?.full_name || session?.email || (role || 'user')}</span></div>
-            <Button variant="outline" size="sm" onClick={handleLogout}><LogOut className="h-4 w-4 mr-2" />Logout</Button>
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">Signed in as <span className="font-medium text-foreground">{session?.full_name || session?.email || (role || 'user')}</span></div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <NotificationTray />
+              <Separator orientation="vertical" className="h-6" />
+              <Button variant="outline" size="sm" onClick={handleLogout}><LogOut className="h-4 w-4 mr-2" />Logout</Button>
+            </div>
           </div>
           <div className="p-6 overflow-auto h-[calc(100vh-4rem)]">{children}</div>
         </main>

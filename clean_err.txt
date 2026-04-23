@@ -1,0 +1,26 @@
+remote: error: GH013: Repository rule violations found for refs/heads/Pranali.        
+remote: 
+remote: - GITHUB PUSH PROTECTION        
+remote:   â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”        
+remote:     Resolve the following violations before pushing again        
+remote: 
+remote:     - Push cannot contain secrets        
+remote: 
+remote:             
+remote:      (?) Learn how to resolve a blocked push        
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push        
+remote:             
+remote:             
+remote:       â€”â€” Groq API Key â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”        
+remote:        locations:        
+remote:          - commit: b2ceda787d51f32108f80130a398eb23f62ffa2c        
+remote:            path: Backend/.env:8        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/PranaliChitre/Major_project/security/secret-scanning/unblock-secret/3C0zXrCK5WYsGfJwj4xxRWtPgfv        
+remote:             
+remote: 
+remote: 
+To https://github.com/PranaliChitre/Major_project
+ ! [remote rejected] Pranali -> Pranali (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/PranaliChitre/Major_project'

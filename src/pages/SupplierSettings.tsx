@@ -29,11 +29,23 @@ export default function SupplierSettings({ forceComplete = false }: { forceCompl
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    
+    // Password match validation
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const confirmPassword = (e.currentTarget as any).elements[16]?.value; // Rough index for confirm field
+    // Better way: use a separate state or named inputs
+    
+    if (form.new_password && (e.currentTarget as any).password_confirm?.value !== form.new_password) {
+      toast({ title: 'Validation error', description: 'Passwords do not match', variant: 'destructive' });
+      return;
+    }
+
     setSaving(true);
     try {
       const result = await saveSupplierProfile(form);
       setProfileCompleted(Boolean(result?.profile_completed));
-      toast({ title: 'Profile saved', description: 'Supplier profile updated successfully.' });
+      setForm((prev) => ({ ...prev, new_password: '' })); // Clear password after save
+      toast({ title: 'Profile saved', description: 'Settings and profile updated successfully.' });
       if (forceComplete) navigate('/supplier-dashboard', { replace: true });
     } catch (error) {
       toast({ title: 'Save failed', description: error instanceof Error ? error.message : 'Unable to save profile', variant: 'destructive' });
@@ -69,12 +81,48 @@ export default function SupplierSettings({ forceComplete = false }: { forceCompl
           ].map(([key, label]) => (
             <div key={key} className={key === 'company_overview' || key === 'technical_capabilities' || key === 'stock_service_notes' ? 'md:col-span-2' : ''}>
               <Label>{label}</Label>
-              <Input value={(form as any)[key] || ''} onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value }))} />
+              <Input
+                value={(form as any)[key] || ''}
+                onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value }))}
+                type={key === 'support_email' ? 'email' : 'text'}
+              />
             </div>
           ))}
+
+          <div className="md:col-span-2 pt-6 border-t mt-4">
+            <h3 className="text-lg font-semibold mb-2">Security Settings</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label>New Password</Label>
+                <Input
+                  type="password"
+                  placeholder="Leave blank to keep current"
+                  onChange={(e) => setForm((prev) => ({ ...prev, new_password: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label>Confirm New Password</Label>
+                <Input
+                  name="password_confirm"
+                  type="password"
+                  placeholder="Verify new password"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val && val !== form.new_password) {
+                      // Just a simple check, validation happens on submit
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              ✅ <strong>Optional.</strong> Your registration password already works — only fill this in if you want to <em>change</em> it.
+            </p>
+          </div>
+
           <div className="md:col-span-2 flex gap-2 justify-end">
             {forceComplete && <Button type="button" variant="outline" onClick={() => navigate('/supplier-dashboard')}>Skip for now</Button>}
-            <Button type="submit" disabled={saving || loading}>{saving ? 'Saving...' : 'Save Profile'}</Button>
+            <Button type="submit" disabled={saving || loading}>{saving ? 'Saving...' : 'Save Profile & Settings'}</Button>
           </div>
         </form>
       </Card>

@@ -22,7 +22,12 @@ import {
   TrendingUp,
   Route,
   ExternalLink,
+  GitBranch,
+  AlertTriangle,
+  Info,
 } from 'lucide-react';
+import { MiniScenarioSimulator, SimResult } from '@/components/scenario/MiniScenarioSimulator';
+import { SimulationImpactCard } from '@/components/scenario/SimulationImpactCard';
 
 // Manufacturing Units
 const UNITS = {
@@ -84,6 +89,7 @@ export default function RouteOptimizationDashboard() {
   const [destination, setDestination] = useState<{ lat: number; lng: number; label: string } | null>(null);
   const [geocoding, setGeocoding] = useState(false);
   const [geoError, setGeoError] = useState('');
+  const [integratedSimResult, setIntegratedSimResult] = useState<SimResult | null>(null);
 
   useEffect(() => {
     getRouteDashboardSummary().then(setSummary).catch(() => setSummary(null));
@@ -381,6 +387,70 @@ export default function RouteOptimizationDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Integrated Route Disruption Simulator */}
+        <Card className="border-primary/10 shadow-lg bg-slate-50/30">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-primary">
+              <GitBranch className="w-5 h-5" />
+              Route Disruption Simulator
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Simulate logistical shocks like road closures, fuel spikes, or port delays to see impact on your routes.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <MiniScenarioSimulator 
+                  feature="route" 
+                  onResult={(res) => setIntegratedSimResult(res)} 
+                />
+              </div>
+
+              <div className="space-y-6">
+                {integratedSimResult ? (
+                  <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-4">
+                    <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
+                      <p className="text-xs font-bold text-primary uppercase mb-2 flex items-center gap-2">
+                        <Info className="w-4 h-4" />
+                        Logistics Impact Analysis
+                      </p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {integratedSimResult.summary}
+                      </p>
+                    </div>
+
+                    <SimulationImpactCard 
+                      stage="distribution" 
+                      data={integratedSimResult.stages.distribution} 
+                      severity={integratedSimResult.severity_score}
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 rounded-xl border bg-white shadow-sm">
+                        <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Delayed Routes</p>
+                        <p className="text-2xl font-black text-red-600">{integratedSimResult.stages.distribution.unserviceable_routes}</p>
+                      </div>
+                      <div className="p-4 rounded-xl border bg-white shadow-sm">
+                        <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Cost Impact</p>
+                        <p className="text-2xl font-black text-orange-600">+{integratedSimResult.stages.distribution.cost_increase_pct}%</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-2xl border-muted opacity-50 bg-white">
+                    <Truck className="w-12 h-12 mb-4 text-muted-foreground" />
+                    <p className="font-semibold text-muted-foreground">Select a scenario to begin logistics simulation</p>
+                    <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+                      Understand how global disruptions ripple through your last-mile delivery and primary distribution.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* History */}
         <Card>

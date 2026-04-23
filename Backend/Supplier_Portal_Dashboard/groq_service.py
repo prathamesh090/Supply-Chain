@@ -16,10 +16,11 @@ def analyze_certificate_with_groq(doc_type: str, extracted_text: str) -> Dict[st
 
     prompt = (
         "You validate supplier compliance certificates. Return strict JSON with keys: "
-        "template_match(boolean), document_type_valid(boolean), summary(string), signals(array of strings). "
+        "template_match(boolean), document_type_valid(boolean), morphed(boolean), summary(string), signals(array of strings). "
         f"Expected document type: {doc_type}. "
         "Do not evaluate or mention supplier/company name. "
         "Only evaluate template/format consistency and whether doc type appears valid from text. "
+        "Check for text inconsistencies or strange formatting signals that might suggest a morphed (fake/edited) document. "
         f"Document text: {extracted_text[:6000]}"
     )
 
@@ -51,6 +52,7 @@ def analyze_certificate_with_groq(doc_type: str, extracted_text: str) -> Dict[st
         return {
             "template_match": "template" in lowered and "not" not in lowered,
             "document_type_valid": doc_type.lower() in lowered or "valid" in lowered,
+            "morphed": "morphed" in lowered or "fake" in lowered or "edit" in lowered,
             "summary": content[:300],
             "signals": [],
         }

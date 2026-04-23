@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSupplierProfile, supplierSignUp } from '@/lib/api';
+import { getSupplierProfile, supplierSignUp, verifySupplierDocuments, saveSupplierPricing } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
 import { emitAuthChange } from '@/hooks/use-auth';
 
@@ -180,22 +180,18 @@ export default function SupplierSignUp() {
     setUploadingDoc(true);
     setErrors({});
     try {
-      const formData = new FormData();
-      uploadForm.files.forEach((file: File) => formData.append('files', file));
-      formData.append('doc_type', uploadForm.docType);
+      const result = await verifySupplierDocuments(uploadForm.docType, uploadForm.files);
       
-      const response = await fetch('http://localhost:8000/api/supplier-portal/documents/verify-batch', {
-        method: 'POST',
-        body: formData,
-      });
-      const result = await response.json();
-      if (!response.ok) {
-        const reason = result?.detail || result?.reason || 'Document verification failed';
-        setErrors({ upload: reason });
+      const results = result.results || [];
+      const morphedDocs = results.filter((r: any) => r.morphed);
+      
+      if (morphedDocs.length > 0) {
+        setErrors({ upload: `AI Security Alert: Possible document morphing/tampering detected in "${morphedDocs[0].file_name}". Please upload original documents.` });
+        setUploadingDoc(false);
         return;
       }
-      
-      const successfulDocs = (result.results || []).filter((r: any) => r.verified);
+
+      const successfulDocs = results.filter((r: any) => r.verified);
       if (successfulDocs.length > 0) {
         setDocuments([
           ...documents,
@@ -210,7 +206,7 @@ export default function SupplierSignUp() {
         setUploadForm({ docType: '', files: [], description: '' });
         toast({ title: 'Verified ✅', description: `${successfulDocs.length} document(s) accepted for verification.` });
       } else {
-        const reason = result.results?.[0]?.reason || result.reason || 'Document verification failed';
+        const reason = results[0]?.reason || result.reason || 'Document verification failed';
         setErrors({ upload: `AI Verification Failed: ${reason}` });
       }
     } catch (err: any) {
@@ -249,17 +245,35 @@ export default function SupplierSignUp() {
         phone: basicInfo.phone,
         manufacturing_state: basicInfo.manufacturing_state,
         factory_address: basicInfo.factory_address,
-        company_overview: profile.company_overview
+        company_overview: profile.company_overview,
+        gstin: basicInfo.gstin
       });
       
       if (data.access_token) {
         localStorage.setItem('auth_token', data.access_token);
         localStorage.setItem('auth_session', JSON.stringify({ token: data.access_token, userId: data.user_id, email: data.email, role: 'supplier' }));
         emitAuthChange();
+
+        // ── Save Step 2 products now that we have a token ─────────────
+        if (products.length > 0) {
+          await Promise.allSettled(
+            products.map((p) =>
+              saveSupplierPricing({
+                material_name: `${p.plastic_type} — ${p.grade}`,
+                category: p.plastic_type,
+                technical_specifications: `Grade: ${p.grade} | Price: ₹${p.price_per_unit}/kg | Bulk discount: ${p.bulk_discount_percent}%`,
+                lead_time_days: 7,
+                stock_status: 'in_stock',
+              })
+            )
+          );
+        }
+        // ─────────────────────────────────────────────────────────────
+
         let nextRoute = '/supplier-dashboard';
         try {
-          const profile = await getSupplierProfile();
-          if (!profile?.profile_completed) nextRoute = '/supplier/profile-setup';
+          const profileData = await getSupplierProfile();
+          if (!profileData?.profile_completed) nextRoute = '/supplier/profile-setup';
         } catch {
           nextRoute = '/supplier/profile-setup';
         }

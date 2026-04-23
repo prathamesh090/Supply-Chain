@@ -40,6 +40,8 @@ from supplier_registry.repository import create_supplier as create_supplier_regi
 from route_optimization.router import router as ro_router
 from inventory.router import router as inventory_router
 from ad_generator import router as ad_router
+from scenario_simulator.router import router as scenario_router
+from Supplier_Portal_Dashboard.rfq_router import router as procurement_router
 
 try:
     from supplier_risk import router as supplier_router
@@ -110,6 +112,9 @@ else:
 app.include_router(supplier_portal_router)
 print("[OK] Supplier portal routes registered")
 
+app.include_router(procurement_router)
+print("[OK] Procurement & RFQ routes registered")
+
 # Inventory
 try:
     app.include_router(inventory_router)
@@ -130,6 +135,13 @@ try:
     print("[OK] Advertisement generator routes registered")
 except Exception as e:
     print(f"[FAIL] Advertisement generator routes not available: {e}")
+
+# Scenario Simulator
+try:
+    app.include_router(scenario_router)
+    print("[OK] Scenario simulator routes registered")
+except Exception as e:
+    print(f"[FAIL] Scenario simulator routes not available: {e}")
 
 
 # Risk Event Monitoring Router
@@ -328,17 +340,17 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     payload = data.copy()
     payload.update({"exp": expire.timestamp()})
     
-    # Simple JWT implementation
+    # Standard JWT implementation (unpadded Base64URL)
     header = {"alg": "HS256", "typ": "JWT"}
-    encoded_header = base64.urlsafe_b64encode(json.dumps(header).encode()).decode()
-    encoded_payload = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode()
+    encoded_header = base64.urlsafe_b64encode(json.dumps(header).encode()).decode().rstrip('=')
+    encoded_payload = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip('=')
     
     signature = hmac.new(
         SECRET_KEY.encode(),
         f"{encoded_header}.{encoded_payload}".encode(),
         hashlib.sha256
     ).digest()
-    encoded_signature = base64.urlsafe_b64encode(signature).decode()
+    encoded_signature = base64.urlsafe_b64encode(signature).decode().rstrip('=')
     
     return f"{encoded_header}.{encoded_payload}.{encoded_signature}"
 
@@ -349,7 +361,10 @@ def verify_token(token: str):
         if len(parts) != 3:
             return None
             
-        encoded_header, encoded_payload, encoded_signature = parts
+        # Standardize: Strip any incoming padding for comparison
+        encoded_header = parts[0].rstrip('=')
+        encoded_payload = parts[1].rstrip('=')
+        encoded_signature = parts[2].rstrip('=')
         
         # Verify signature
         expected_signature = hmac.new(
@@ -357,22 +372,26 @@ def verify_token(token: str):
             f"{encoded_header}.{encoded_payload}".encode(),
             hashlib.sha256
         ).digest()
-        expected_encoded_signature = base64.urlsafe_b64encode(expected_signature).decode()
+        expected_encoded_signature = base64.urlsafe_b64encode(expected_signature).decode().rstrip('=')
         
         if not hmac.compare_digest(encoded_signature, expected_encoded_signature):
+            print(f"DEBUG: Signature mismatch. Expected (last 5): {expected_encoded_signature[-5:]} Got: {encoded_signature[-5:]}")
             return None
             
-        # Decode payload
-        payload_json = base64.urlsafe_b64decode(encoded_payload + '==').decode()
+        # Decode payload (restore padding)
+        padding = '=' * (-len(encoded_payload) % 4)
+        payload_json = base64.urlsafe_b64decode((encoded_payload + padding).encode()).decode()
         payload = json.loads(payload_json)
         
         # Check expiration
         if datetime.utcnow().timestamp() > payload.get("exp", 0):
+            print("DEBUG: Token expired")
             return None
             
         return payload
     except Exception as e:
-        logger.error(f"Token verification error: {e}")
+        logger.error(f"Token verification unexpected error: {e}")
+        print(f"DEBUG: Token verification unexpected error: {e}")
         return None
 
 # Authentication Dependency
@@ -567,18 +586,42 @@ class ManufacturerProfileUpdate(BaseModel):
     website: Optional[str] = None
 
 
+def _serialize_rows(rows: list) -> list:
+    """Convert datetime/date objects in DB rows to ISO strings for JSON serialization."""
+    result = []
+    for row in rows:
+        clean = {}
+        for k, v in row.items():
+            if isinstance(v, (datetime,)):
+                clean[k] = v.isoformat()
+            else:
+                clean[k] = v
+        result.append(clean)
+    return result
+
+
 @app.get("/api/manufacturer/suppliers")
 async def list_supplier_discovery(search: Optional[str] = None, current_user: UserResponse = Depends(get_current_user)):
     if current_user.role not in ["manufacturer", "admin", "user"]:
         raise HTTPException(status_code=403, detail="Manufacturer access required")
-    return SupplierPortalDB.list_suppliers(current_user.id, search=search, active_only=False)
+    try:
+        rows = SupplierPortalDB.list_suppliers(current_user.id, search=search, active_only=False)
+        return _serialize_rows(rows)
+    except Exception as e:
+        logger.error("Error listing suppliers: %s", e)
+        raise HTTPException(status_code=500, detail=f"Failed to load suppliers: {str(e)}")
 
 
 @app.get("/api/manufacturer/suppliers/network")
 async def list_supplier_network(search: Optional[str] = None, current_user: UserResponse = Depends(get_current_user)):
     if current_user.role not in ["manufacturer", "admin", "user"]:
         raise HTTPException(status_code=403, detail="Manufacturer access required")
-    return SupplierPortalDB.list_suppliers(current_user.id, search=search, active_only=True)
+    try:
+        rows = SupplierPortalDB.list_suppliers(current_user.id, search=search, active_only=True)
+        return _serialize_rows(rows)
+    except Exception as e:
+        logger.error("Error listing supplier network: %s", e)
+        raise HTTPException(status_code=500, detail=f"Failed to load supplier network: {str(e)}")
 
 
 @app.post("/api/manufacturer/suppliers/connect")

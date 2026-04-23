@@ -42,7 +42,7 @@ class Database:
                         password_hash VARCHAR(255) NOT NULL,
                         full_name VARCHAR(255) NOT NULL,
                         company_id VARCHAR(255),
-                        role ENUM('admin', 'user') DEFAULT 'user',
+                        role ENUM('admin', 'user', 'manufacturer', 'supplier') DEFAULT 'user',
                         is_active BOOLEAN DEFAULT TRUE,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -79,6 +79,12 @@ class Database:
                         PRIMARY KEY (user_id, company_id)
                     )
                 ''')
+                
+                # Ensure role enum is updated for existing table
+                try:
+                    cursor.execute("ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'user', 'manufacturer', 'supplier') DEFAULT 'user'")
+                except Exception:
+                    pass
                 
                 connection.commit()
                 print("Database tables created successfully")

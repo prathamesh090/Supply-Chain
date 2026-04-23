@@ -88,6 +88,8 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { AuthenticatedShell } from '@/components/AuthenticatedShell';
+import { MiniScenarioSimulator, SimResult } from '@/components/scenario/MiniScenarioSimulator';
+import { SimulationImpactCard } from '@/components/scenario/SimulationImpactCard';
 
 // Define types
 interface Prediction {
@@ -175,6 +177,7 @@ const DemandForecast = () => {
   const [dataSummary, setDataSummary] = useState<DataSummary | null>(null);
   const [showDataSummary, setShowDataSummary] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [integratedSimResult, setIntegratedSimResult] = useState<SimResult | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -1242,60 +1245,54 @@ const DemandForecast = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* What-If Panel (Level 3) */}
+      {/* Integrated What-If Simulator */}
       <Sheet open={whatIfOpen} onOpenChange={setWhatIfOpen}>
-        <SheetContent className="w-[400px] sm:w-[540px]">
-          <SheetHeader>
-            <SheetTitle>What-If Analysis</SheetTitle>
+        <SheetContent className="sm:max-w-[600px] overflow-y-auto">
+          <SheetHeader className="pb-6">
+            <SheetTitle className="flex items-center gap-2">
+              <GitBranch className="w-5 h-5 text-primary" />
+              Scenario Stress Test
+            </SheetTitle>
             <SheetDescription>
-              Simulate changes to see impact on demand
+              Simulate disruptions to see how they impact your demand forecasts.
             </SheetDescription>
           </SheetHeader>
-          <div className="py-6 space-y-6">
-            <div className="space-y-4">
-              <h3 className="font-medium">Price Change</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {[-10, -5, 5, 10].map((val) => (
-                  <Button key={`price-${val}`} variant={whatIfScenario.priceChangePct === val ? 'default' : 'outline'} className="justify-start" onClick={() => setWhatIfScenario((prev) => ({ ...prev, priceChangePct: val }))}>{val > 0 ? `+${val}%` : `${val}%`}</Button>
-                ))}
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="font-medium">Discount Scenario</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {[20, 10, 15, 8].map((val) => (
-                  <Button key={`disc-${val}`} variant={whatIfScenario.discountPct === val ? 'default' : 'outline'} className="justify-start" onClick={() => setWhatIfScenario((prev) => ({ ...prev, discountPct: val }))}>{`Discount ${val}%`}</Button>
-                ))}
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="font-medium">Supply Disruption</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { label: 'Delay 3 days', value: 5 },
-                  { label: 'Delay 7 days', value: 12 },
-                  { label: 'Partial shipment', value: 18 },
-                  { label: 'Alternate supplier', value: 3 },
-                ].map((item) => (
-                  <Button key={item.label} variant={whatIfScenario.disruptionImpactPct === item.value ? 'default' : 'outline'} className="justify-start" onClick={() => setWhatIfScenario((prev) => ({ ...prev, disruptionImpactPct: item.value }))}>{item.label}</Button>
-                ))}
-              </div>
-            </div>
-            
-            <div className="pt-4">
-              <Button className="w-full bg-blue-600" onClick={runWhatIfSimulation}>Run Simulation</Button>
-            </div>
+          
+          <div className="space-y-6">
+            <MiniScenarioSimulator 
+              feature="demand" 
+              onResult={(res) => setIntegratedSimResult(res)} 
+            />
 
-            {whatIfResult && (
-              <Card>
-                <CardContent className="p-4 space-y-1 text-sm">
-                  <p><span className="font-medium">Baseline Demand:</span> {formatNumber(whatIfResult.baseline)}</p>
-                  <p><span className="font-medium">Projected Demand:</span> {formatNumber(whatIfResult.projected)}</p>
-                  <p><span className="font-medium">Change:</span> {whatIfResult.deltaPct.toFixed(1)}%</p>
-                </CardContent>
-              </Card>
+            {integratedSimResult && (
+              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
+                  <p className="text-sm font-semibold mb-2 flex items-center gap-2">
+                    <Info className="w-4 h-4 text-primary" />
+                    Scenario Summary
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {integratedSimResult.summary}
+                  </p>
+                </div>
+
+                <SimulationImpactCard 
+                  stage="demand" 
+                  data={integratedSimResult.stages.demand} 
+                  severity={integratedSimResult.severity_score}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl border bg-muted/20">
+                    <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Affected Products</p>
+                    <p className="text-2xl font-black">{integratedSimResult.stages.demand.affected_products}</p>
+                  </div>
+                  <div className="p-4 rounded-xl border bg-muted/20">
+                    <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Global Severity</p>
+                    <p className="text-2xl font-black">{integratedSimResult.severity_score}/100</p>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </SheetContent>

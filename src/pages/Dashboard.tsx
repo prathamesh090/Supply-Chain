@@ -14,6 +14,7 @@ import {
   Package,
   Sparkles,
   MessageCircle,
+  GitBranch,
 } from 'lucide-react';
 import { getCurrentUser, getRiskDistribution, getSupplierRankings, getToken } from '@/lib/api';
 import { fetchGlobalRiskEvents, fetchRecentRiskEvents } from '@/components/supplier-risk/api';
@@ -188,9 +189,20 @@ export default function Dashboard() {
                   <CardContent className="p-6 text-center">
                     <Sparkles className="h-12 w-12 text-purple-500 mx-auto mb-4" />
                     <h4 className="font-semibold text-lg mb-2">Ad Generator</h4>
-                    <p className="text-gray-600 text-sm mb-4">AI-powered advertisements with Groq & Gemini</p>
+                    <p className="text-gray-600 text-sm mb-4">AI-powered advertisements with Groq &amp; Gemini</p>
                     <Button variant="secondary" onClick={() => navigate('/ad-generator')}>
                       Open Generator
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:shadow-lg transition-shadow border-indigo-100 bg-indigo-50/20">
+                  <CardContent className="p-6 text-center">
+                    <MessageCircle className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
+                    <h4 className="font-semibold text-lg mb-2">Smart Procurement Hub</h4>
+                    <p className="text-gray-600 text-sm mb-4">Manage RFQs, negotiate quotes, and compare suppliers</p>
+                    <Button variant="default" className="bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => navigate('/communication-hub')}>
+                      Open Comm Hub
                     </Button>
                   </CardContent>
                 </Card>

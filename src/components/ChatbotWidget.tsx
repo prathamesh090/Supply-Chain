@@ -12,10 +12,12 @@ interface Message {
 }
 
 const SUGGESTIONS = [
-  "How can I reduce supply chain costs?",
-  "What is safety stock?",
-  "How to evaluate a supplier?",
-  "Tips for demand forecasting?",
+  "Show my inventory levels",
+  "Which suppliers are connected?",
+  "What is safety stock formula?",
+  "Show supplier risk scores",
+  "Explain bullwhip effect",
+  "How to reduce supply chain costs?",
 ];
 
 export default function ChatbotWidget() {
@@ -144,7 +146,7 @@ export default function ChatbotWidget() {
                   <p className="text-white text-sm font-semibold">ChainBot</p>
                   <div className="flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <p className="text-white/50 text-xs">Powered by Groq AI</p>
+                    <p className="text-white/50 text-xs">DB + Knowledge + Groq AI</p>
                   </div>
                 </div>
               </div>
@@ -169,11 +171,15 @@ export default function ChatbotWidget() {
                     {msg.role === "bot" ? <Bot className="w-3.5 h-3.5 text-white" /> : <User className="w-3.5 h-3.5 text-white" />}
                   </div>
                   {/* Bubble */}
-                  <div className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed
+                  <div className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap
                     ${msg.role === "user"
                       ? "bg-blue-600 text-white rounded-br-sm"
                       : "bg-white/8 border border-white/10 text-white/90 rounded-bl-sm"}`}>
-                    {msg.text}
+                    {msg.text.split(/\*\*(.*?)\*\*/g).map((part, i) =>
+                      i % 2 === 1
+                        ? <strong key={i} className="font-semibold text-white">{part}</strong>
+                        : <span key={i}>{part}</span>
+                    )}
                   </div>
                 </motion.div>
               ))}

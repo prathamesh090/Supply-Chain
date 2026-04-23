@@ -35,6 +35,8 @@ import RouteOptimizationRunPage from "./pages/route-optimization/RouteOptimizati
 import FulfillmentPlanDetail from "./pages/route-optimization/FulfillmentPlanDetail";
 import RouteOptimizationHistory from "./pages/route-optimization/RouteOptimizationHistory";
 import AdGenerator from "./pages/AdGenerator";
+import CommunicationHub from "./pages/CommunicationHub";
+import SupplierComparison from "./pages/SupplierComparison";
 import ChatbotWidget from "./components/ChatbotWidget";
 
 const queryClient = new QueryClient();
@@ -84,6 +86,8 @@ const App = () => (
               <Route path="/route-optimization/plan/:orderId" element={<ProtectedRoute><FulfillmentPlanDetail /></ProtectedRoute>} />
               <Route path="/route-optimization/history" element={<ProtectedRoute><RouteOptimizationHistory /></ProtectedRoute>} />
               <Route path="/ad-generator" element={<ProtectedRoute><AdGenerator /></ProtectedRoute>} />
+              <Route path="/communication-hub" element={<ProtectedRoute roles={['manufacturer','admin','user','supplier']}><CommunicationHub /></ProtectedRoute>} />
+              <Route path="/suppliers/comparison" element={<ProtectedRoute roles={['manufacturer','admin','user']}><SupplierComparison /></ProtectedRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

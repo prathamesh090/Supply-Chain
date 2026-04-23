@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthenticatedShell } from '@/components/AuthenticatedShell';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import ProcurementModal from '@/components/ProcurementModal';
 import { connectSupplier, getDiscoverySuppliers } from '@/lib/api';
 
 type SupplierRow = {
@@ -16,6 +18,13 @@ type SupplierRow = {
   country?: string;
   categories?: string;
   connection_status: 'active' | 'pending' | 'none';
+  trust_score?: number;
+  trust_breakdown?: {
+    reliability: number;
+    quality: number;
+    response_time: number;
+    verification: number;
+  };
 };
 
 export default function SupplierDiscovery() {
@@ -23,6 +32,10 @@ export default function SupplierDiscovery() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [procurementModal, setProcurementModal] = useState<{ isOpen: boolean; id: number; name: string }>({ 
+    isOpen: false, id: 0, name: '' 
+  });
 
   const load = useCallback(async () => {
     try {
@@ -64,16 +77,54 @@ export default function SupplierDiscovery() {
         {!loading && !error && items.length === 0 && <p className="text-sm text-muted-foreground">No suppliers found.</p>}
 
         {!loading && !error && (
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4 relative pb-20">
             {items.map((s) => (
-              <Card key={s.supplier_id} className="p-4 space-y-3">
-                <Link className="font-semibold text-lg hover:underline" to={`/suppliers/${s.supplier_id}`}>{s.company_legal_name || `Supplier ${s.supplier_id}`}</Link>
+              <Card key={s.supplier_id} className={`p-4 space-y-3 transition-all border-2 ${selectedIds.includes(s.supplier_id) ? 'border-primary bg-primary/5' : 'border-transparent'}`}>
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-3">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      checked={selectedIds.includes(s.supplier_id)}
+                      onChange={(e) => {
+                        if (e.target.checked) setSelectedIds([...selectedIds, s.supplier_id]);
+                        else setSelectedIds(selectedIds.filter(id => id !== s.supplier_id));
+                      }}
+                    />
+                    <Link className="font-semibold text-lg hover:underline" to={`/suppliers/${s.supplier_id}`}>{s.company_legal_name || `Supplier ${s.supplier_id}`}</Link>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-primary">{s.trust_score || 70}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Trust Score</div>
+                  </div>
+                </div>
+                
                 <p className="text-sm text-muted-foreground line-clamp-2">{s.company_overview || 'No description yet.'}</p>
-                <p className="text-xs text-muted-foreground">{[s.city, s.manufacturing_state, s.country].filter(Boolean).join(', ') || 'Location not set'}</p>
-                <p className="text-xs">{s.categories || 'Categories not set'}</p>
-                <div className="flex items-center justify-between">
+                
+                <div className="grid grid-cols-4 gap-1 pt-2">
+                  {Object.entries(s.trust_breakdown || {}).map(([key, val]) => (
+                    <div key={key} className="space-y-1">
+                      <div className="h-1 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary" style={{ width: `${val}%` }} />
+                      </div>
+                      <div className="text-[8px] text-muted-foreground uppercase truncate">{key.replace('_', ' ')}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-xs text-muted-foreground pt-2 font-medium">{[s.city, s.manufacturing_state, s.country].filter(Boolean).join(', ') || 'Location not set'}</p>
+                
+                <div className="flex items-center gap-2 pt-2">
                   <Badge variant={s.connection_status === 'active' ? 'default' : 'outline'}>{s.connection_status === 'active' ? 'Connected' : 'Not Connected'}</Badge>
-                  <Button disabled={s.connection_status === 'active'} onClick={async () => { await connectSupplier(s.supplier_id); await load(); }}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="ml-auto"
+                    onClick={() => setProcurementModal({ isOpen: true, id: s.supplier_id, name: s.company_legal_name })}
+                  >
+                    Request Quote
+                  </Button>
+                  <Button variant={s.connection_status === 'active' ? 'outline' : 'default'} size="sm" disabled={s.connection_status === 'active'} onClick={async () => { await connectSupplier(s.supplier_id); await load(); }}>
                     {s.connection_status === 'active' ? 'Connected' : 'Connect'}
                   </Button>
                 </div>
@@ -81,6 +132,42 @@ export default function SupplierDiscovery() {
             ))}
           </div>
         )}
+
+        <AnimatePresence>
+          {selectedIds.length >= 2 && (
+            <motion.div 
+              initial={{ y: 100 }}
+              animate={{ y: 0 }}
+              exit={{ y: 100 }}
+              className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+            >
+              <Card className="bg-primary text-primary-foreground px-6 py-4 flex items-center gap-6 shadow-2xl rounded-full border-none">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-bold">{selectedIds.length}</span>
+                  <span className="text-sm opacity-80 font-medium">suppliers selected</span>
+                </div>
+                <div className="h-8 w-px bg-white/20" />
+                <Button 
+                  className="bg-white text-primary hover:bg-white/90 rounded-full font-bold"
+                  onClick={() => {
+                    window.location.href = `/communication-hub`;
+                  }}
+                >
+                  View Conversations
+                </Button>
+                <button onClick={() => setSelectedIds([])} className="hover:opacity-70 transition-opacity">
+                  <Badge variant="secondary" className="bg-white/10 border-none">Clear</Badge>
+                </button>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <ProcurementModal 
+          isOpen={procurementModal.isOpen} 
+          onClose={() => setProcurementModal({ ...procurementModal, isOpen: false })}
+          supplierId={procurementModal.id}
+          supplierName={procurementModal.name}
+        />
       </div>
     </AuthenticatedShell>
   );
