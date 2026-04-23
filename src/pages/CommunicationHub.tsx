@@ -29,6 +29,7 @@ import {
   getAuthSession 
 } from '@/lib/api';
 import { format } from 'date-fns';
+import { AuthenticatedShell } from '@/components/AuthenticatedShell';
 
 // --- Sub-components ---
 
@@ -243,35 +244,8 @@ const CommunicationHub = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-[#F8FAFC]">
-      {/* Header */}
-      <div className="flex items-center justify-between px-8 py-5 border-b bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05)] z-10">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
-            <BarChart3 className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Smart Procurement Hub</h1>
-            <p className="text-slate-500 text-sm font-medium flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" /> Efficient SCM Negotiation Engine
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          {!isSupplier && (
-            <Link to="/suppliers/discovery">
-              <Button variant="default" size="sm" className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 shadow-md transition-all hover:translate-y-[-1px]">
-                Create New RFQ
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          )}
-          <Button variant="outline" size="icon" className="rounded-full border-slate-200">
-            <MoreVertical className="w-4 h-4 text-slate-600" />
-          </Button>
-        </div>
-      </div>
-
+    <AuthenticatedShell>
+      <div className="flex flex-col h-full bg-[#F8FAFC] rounded-2xl border overflow-hidden shadow-sm">
       <div className="flex flex-1 overflow-hidden">
         {/* Pane 1: Conversations List */}
         <div className="w-96 border-r bg-white flex flex-col shadow-[1px_0_0_rgba(0,0,0,0.05)]">
@@ -615,7 +589,8 @@ const CommunicationHub = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </AuthenticatedShell>
   );
 };
 

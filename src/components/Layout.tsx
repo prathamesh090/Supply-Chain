@@ -37,6 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     location.pathname.includes('/ad-generator') ||
     location.pathname.includes('/scenario-simulator') ||
     location.pathname.includes('/manufacturer/') ||
+    location.pathname.includes('/communication-hub') ||
     location.pathname.includes('/auth/select') ||
     location.pathname.includes('/signin/') ||
     location.pathname.includes('/signup/');

@@ -20,6 +20,9 @@ import base64
 from dotenv import load_dotenv
 import threading
 
+# Load environment variables FIRST before importing custom modules
+load_dotenv()
+
 # Import plastic inherent risk with error handling
 try:
     from plastic_inherent_risk.database import init_db
@@ -58,8 +61,6 @@ except ImportError as e:
     PLASTIC_INHERENT_RISK_AVAILABLE = False
 
 
-# Load environment variables
-load_dotenv()
 
 app = FastAPI(
     

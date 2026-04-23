@@ -542,8 +542,13 @@ export default function SupplierDashboard() {
                                 <span className="text-xs text-blue-700 font-medium">New request! Open to view details and submit a quote.</span>
                               </div>
                             )}
+                          </Card>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
 
-                
                 {/* Legacy Inquiries as fallback */}
                 {inquiries.length > 0 && (
                   <Card className="opacity-70">
