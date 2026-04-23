@@ -81,8 +81,8 @@ export default function SignIn() {
       <div className="flex-1 flex flex-col justify-center py-12 sm:px-6 lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div>
-            <Link to="/" className="flex items-center space-x-2 mb-8">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600" />
+            <Link to="/" className="flex items-center space-x-3 mb-8">
+              <img src="/logo.png" alt="ChainLink Pro" className="h-10 w-10 object-contain rounded-md mix-blend-multiply dark:mix-blend-normal" />
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 ChainLink Pro
               </span>

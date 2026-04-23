@@ -26,7 +26,7 @@ const contactMethods = [
     icon: PhoneIcon,
     title: 'Call Us',
     description: 'Speak with our experts',
-    contact: '+1 (555) 123-4567',
+    contact: '+91 98765 43210',
     action: 'Call Now'
   },
   {
@@ -47,22 +47,22 @@ const contactMethods = [
 
 const officeLocations = [
   {
-    city: 'San Francisco',
-    address: '123 Tech Street, Suite 400\nSan Francisco, CA 94105',
-    phone: '+1 (555) 123-4567',
-    hours: 'Mon-Fri: 9AM-6PM PST'
+    city: 'Mumbai',
+    address: '101 Cyber City, Bandra Kurla Complex\nMumbai, Maharashtra 400051',
+    phone: '+91 22 1234 5678',
+    hours: 'Mon-Fri: 9AM-6PM IST'
   },
   {
-    city: 'London',
-    address: '456 Business Ave, Floor 12\nLondon EC2A 4BX, UK',
-    phone: '+44 20 1234 5678',
-    hours: 'Mon-Fri: 9AM-6PM GMT'
+    city: 'Delhi NCR',
+    address: 'DLF Cyber Hub, Tower B\nGurugram, Haryana 122002',
+    phone: '+91 11 9876 5432',
+    hours: 'Mon-Fri: 9AM-6PM IST'
   },
   {
-    city: 'Singapore',
-    address: '789 Innovation Hub, Level 25\nSingapore 018956',
-    phone: '+65 6123 4567',
-    hours: 'Mon-Fri: 9AM-6PM SGT'
+    city: 'Bangalore',
+    address: 'Tech Park, Electronic City Phase 1\nBengaluru, Karnataka 560100',
+    phone: '+91 80 4567 8901',
+    hours: 'Mon-Fri: 9AM-6PM IST'
   }
 ];
 

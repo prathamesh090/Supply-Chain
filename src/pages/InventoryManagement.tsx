@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthenticatedShell } from '@/components/AuthenticatedShell';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -257,21 +258,12 @@ export default function InventoryManagement() {
 
   // ── Main Render ─────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-background">
+    <AuthenticatedShell>
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
 
         {/* ── Header ── */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/dashboard')}
-              className="gap-1"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
             <div>
               <h1 className="text-3xl font-bold flex items-center gap-2">
                 <Package className="w-8 h-8 text-primary" />
@@ -1064,6 +1056,6 @@ export default function InventoryManagement() {
           </>
         )}
       </div>
-    </div>
+    </AuthenticatedShell>
   );
 }

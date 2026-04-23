@@ -41,7 +41,10 @@ from route_optimization.router import router as ro_router
 from inventory.router import router as inventory_router
 from ad_generator import router as ad_router
 from scenario_simulator.router import router as scenario_router
+<<<<<<< Updated upstream
 from Supplier_Portal_Dashboard.rfq_router import router as procurement_router
+=======
+>>>>>>> Stashed changes
 
 try:
     from supplier_risk import router as supplier_router
@@ -628,7 +631,7 @@ async def list_supplier_network(search: Optional[str] = None, current_user: User
 async def connect_supplier(payload: SupplierConnectionPayload, current_user: UserResponse = Depends(get_current_user)):
     if current_user.role not in ["manufacturer", "admin", "user"]:
         raise HTTPException(status_code=403, detail="Manufacturer access required")
-    SupplierPortalDB.upsert_connection(current_user.id, payload.supplier_id, "active")
+    SupplierPortalDB.upsert_connection(current_user.id, payload.supplier_id, "pending")
 
     # Register connected suppliers into risk supplier registry for downstream risk monitoring.
     connected = SupplierPortalDB.list_suppliers(current_user.id, active_only=True)

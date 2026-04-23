@@ -206,6 +206,16 @@ export default function Dashboard() {
                     </Button>
                   </CardContent>
                 </Card>
+                <Card className="hover:shadow-lg transition-shadow border-violet-100 dark:border-violet-900">
+                  <CardContent className="p-6 text-center">
+                    <GitBranch className="h-12 w-12 text-violet-500 mx-auto mb-4" />
+                    <h4 className="font-semibold text-lg mb-2">Scenario Simulator</h4>
+                    <p className="text-gray-600 text-sm mb-4">What-if simulations across your entire supply chain pipeline</p>
+                    <Button variant="secondary" className="bg-violet-600 hover:bg-violet-700 text-white" onClick={() => navigate('/scenario-simulator')}>
+                      Open Simulator
+                    </Button>
+                  </CardContent>
+                </Card>
               </div>
             </div>
 

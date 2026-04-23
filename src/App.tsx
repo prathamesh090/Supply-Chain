@@ -37,6 +37,7 @@ import RouteOptimizationHistory from "./pages/route-optimization/RouteOptimizati
 import AdGenerator from "./pages/AdGenerator";
 import CommunicationHub from "./pages/CommunicationHub";
 import SupplierComparison from "./pages/SupplierComparison";
+import ScenarioSimulator from "./pages/ScenarioSimulator";
 import ChatbotWidget from "./components/ChatbotWidget";
 
 const queryClient = new QueryClient();
@@ -88,6 +89,7 @@ const App = () => (
               <Route path="/ad-generator" element={<ProtectedRoute><AdGenerator /></ProtectedRoute>} />
               <Route path="/communication-hub" element={<ProtectedRoute roles={['manufacturer','admin','user','supplier']}><CommunicationHub /></ProtectedRoute>} />
               <Route path="/suppliers/comparison" element={<ProtectedRoute roles={['manufacturer','admin','user']}><SupplierComparison /></ProtectedRoute>} />
+              <Route path="/scenario-simulator" element={<ProtectedRoute><ScenarioSimulator /></ProtectedRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

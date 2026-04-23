@@ -493,6 +493,7 @@ export default function SupplierDashboard() {
                 </Card>
               </TabsContent>
 
+<<<<<<< Updated upstream
               {/* ── Procurement ── */}
               <TabsContent value="procurement" className="space-y-6">
                 <Card>
@@ -541,12 +542,42 @@ export default function SupplierDashboard() {
                                 <span className="text-xs text-blue-700 font-medium">New request! Open to view details and submit a quote.</span>
                               </div>
                             )}
+=======
+              {/* ── Inquiries ── */}
+              <TabsContent value="inquiries" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><ClipboardList className="w-5 h-5" />Incoming Inquiries</CardTitle>
+                    <CardDescription>Direct requests and RFQs from manufacturers.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {inquiries.length === 0 ? (
+                        <p className="text-sm text-muted-foreground text-center py-8">No inquiries received yet.</p>
+                      ) : (
+                        inquiries.map((i) => (
+                          <Card key={i.id} className="border-l-4 border-l-blue-500">
+                            <CardHeader className="py-3 px-4">
+                              <div className="flex items-center justify-between">
+                                <CardTitle className="text-md">{i.subject}</CardTitle>
+                                <Badge variant={i.status === 'open' ? 'default' : 'secondary'}>{i.status}</Badge>
+                              </div>
+                              <CardDescription className="text-xs">From: {i.manufacturer_name} • {new Date(i.created_at).toLocaleDateString()}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="py-2 px-4 pb-4">
+                              <p className="text-sm border-t pt-2 mt-1">{i.message}</p>
+                              <div className="mt-4 flex justify-end">
+                                <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-700 p-0 h-auto">Reply via Email</Button>
+                              </div>
+                            </CardContent>
+>>>>>>> Stashed changes
                           </Card>
                         ))
                       )}
                     </div>
                   </CardContent>
                 </Card>
+<<<<<<< Updated upstream
                 
                 {/* Legacy Inquiries as fallback */}
                 {inquiries.length > 0 && (
@@ -625,6 +656,70 @@ export default function SupplierDashboard() {
                           <p className="font-bold text-lg">Overall Trust Score</p>
                           <p className="text-sm text-muted-foreground">Composite SCM reliability index</p>
                         </div>
+=======
+              </TabsContent>
+
+              {/* ── Scorecard ── */}
+              <TabsContent value="scorecard">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Supplier Scorecard</CardTitle>
+                    <CardDescription>
+                      How manufacturers evaluate you. Improve each metric to rank higher in discovery.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-5">
+                    {/* Profile score */}
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="font-medium">Profile Completeness</span>
+                        <span>{completionPercent}%</span>
+                      </div>
+                      <Progress value={completionPercent} className="h-2" />
+                      <p className="text-xs text-muted-foreground mt-1">Fill all 9 core fields for maximum visibility.</p>
+                    </div>
+
+                    {/* Compliance score */}
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="font-medium">Compliance (Certifications)</span>
+                        <span>{verifiedCount}/4 verified</span>
+                      </div>
+                      <Progress value={(verifiedCount / 4) * 100} className="h-2" />
+                      <p className="text-xs text-muted-foreground mt-1">ISO 9001, BIS, EPR, Pollution Board — aim for all 4.</p>
+                    </div>
+
+                    {/* Catalog depth */}
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="font-medium">Catalog Depth</span>
+                        <span>{materials.length} SKU{materials.length !== 1 ? 's' : ''}</span>
+                      </div>
+                      <Progress value={Math.min(materials.length * 20, 100)} className="h-2" />
+                      <p className="text-xs text-muted-foreground mt-1">Add at least 5 products to reach full score.</p>
+                    </div>
+
+                    {/* Stock health */}
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="font-medium">Stock Health</span>
+                        <span>{materials.length - lowStockCount}/{materials.length} in stock</span>
+                      </div>
+                      <Progress
+                        value={materials.length > 0 ? ((materials.length - lowStockCount) / materials.length) * 100 : 0}
+                        className="h-2"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Keep all products in-stock to avoid manufacturer churn.</p>
+                    </div>
+
+                    {/* Overall Trust Score */}
+                    <div className="rounded-xl bg-gradient-to-r from-blue-50 to-green-50 border p-4 mt-2">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-bold text-lg">Overall Trust Score</p>
+                          <p className="text-sm text-muted-foreground">Composite SCM reliability index</p>
+                        </div>
+>>>>>>> Stashed changes
                         <div className="text-4xl font-black text-blue-700">{trustScore}<span className="text-lg font-normal text-muted-foreground">/100</span></div>
                       </div>
                       <Progress value={trustScore} className="h-3 mt-3" />

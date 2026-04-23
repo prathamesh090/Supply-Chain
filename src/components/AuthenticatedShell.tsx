@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sidebar,
   SidebarContent,
@@ -44,8 +45,11 @@ function AppSidebar() {
 
   return (
     <Sidebar className="w-64 border-r bg-card" collapsible="none">
-      <div className="h-16 px-4 border-b flex items-center">
-        <span className="font-semibold text-sm text-muted-foreground">Navigation</span>
+      <div className="h-16 px-4 border-b flex items-center space-x-3">
+        <Link to="/" className="flex items-center space-x-2 w-full">
+          <img src="/logo.png" alt="ChainLink Pro" className="h-8 w-8 object-contain rounded-md mix-blend-multiply dark:mix-blend-normal" />
+          <span className="font-bold text-lg bg-gradient-primary bg-clip-text text-transparent">ChainLink Pro</span>
+        </Link>
       </div>
       <SidebarContent className="pt-4 px-2">
         <SidebarGroup>
@@ -95,6 +99,7 @@ function AppSidebar() {
 
 export function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { role, session, logout } = useAuth();
   const handleLogout = () => {
     logout();
@@ -117,7 +122,19 @@ export function AuthenticatedShell({ children }: { children: React.ReactNode }) 
               <Button variant="outline" size="sm" onClick={handleLogout}><LogOut className="h-4 w-4 mr-2" />Logout</Button>
             </div>
           </div>
-          <div className="p-6 overflow-auto h-[calc(100vh-4rem)]">{children}</div>
+          <div className="p-6 overflow-auto h-[calc(100vh-4rem)]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={location.pathname}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.3 }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </main>
       </div>
     </SidebarProvider>

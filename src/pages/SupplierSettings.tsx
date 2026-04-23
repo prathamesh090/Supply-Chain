@@ -57,8 +57,7 @@ export default function SupplierSettings({ forceComplete = false }: { forceCompl
   const content = (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold">Supplier Profile Settings</h1>
-        <p className="text-sm text-muted-foreground">Complete and maintain the profile data manufacturers see.</p>
+        <p className="text-sm text-muted-foreground mt-2">Complete and maintain the profile data manufacturers see.</p>
         <p className="text-sm mt-1">Status: <span className={profileCompleted ? 'text-green-600 font-semibold' : 'text-amber-600 font-semibold'}>{profileCompleted ? 'Complete' : 'Incomplete'}</span></p>
       </div>
       <Card className="p-6">

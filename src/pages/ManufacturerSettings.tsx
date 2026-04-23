@@ -39,7 +39,6 @@ export default function ManufacturerSettings() {
   return (
     <AuthenticatedShell>
       <div className="space-y-4">
-        <h1 className="text-2xl font-bold">Manufacturer Settings</h1>
         <Card className="p-6">
           {loading ? <p>Loading profile...</p> : (
             <form className="grid md:grid-cols-2 gap-4" onSubmit={onSubmit}>
