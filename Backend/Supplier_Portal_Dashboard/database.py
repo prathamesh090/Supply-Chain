@@ -1002,7 +1002,7 @@ class SupplierPortalDB:
         finally:
             cursor.close()
             conn.close()
-<<<<<<< Updated upstream
+
     @staticmethod
     def get_comparison_data(manufacturer_id: int, product_name: str) -> List[Dict[str, Any]]:
         conn = SupplierPortalDB.get_connection()
@@ -1039,5 +1039,4 @@ class SupplierPortalDB:
             conn.close()
 
 from datetime import datetime
-=======
->>>>>>> Stashed changes
+

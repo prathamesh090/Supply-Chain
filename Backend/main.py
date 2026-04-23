@@ -41,10 +41,7 @@ from route_optimization.router import router as ro_router
 from inventory.router import router as inventory_router
 from ad_generator import router as ad_router
 from scenario_simulator.router import router as scenario_router
-<<<<<<< Updated upstream
 from Supplier_Portal_Dashboard.rfq_router import router as procurement_router
-=======
->>>>>>> Stashed changes
 
 try:
     from supplier_risk import router as supplier_router

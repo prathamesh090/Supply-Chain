@@ -1,11 +1,8 @@
 import logging
 import hashlib
-<<<<<<< Updated upstream
 import hmac
 import base64
 import json
-=======
->>>>>>> Stashed changes
 from datetime import timedelta
 from datetime import datetime
 import re
@@ -536,7 +533,6 @@ def get_inquiries(supplier_id: int = Depends(get_current_supplier)):
 
 
 @router.post("/inquire")
-<<<<<<< Updated upstream
 def create_inquiry(payload: SupplierInquiryRequest, user_info: tuple = Depends(get_current_user_for_inquiries)):
     """Create an inquiry from a manufacturer to a supplier"""
     manufacturer_id, email, role = user_info
@@ -558,34 +554,4 @@ def create_inquiry(payload: SupplierInquiryRequest, user_info: tuple = Depends(g
         f"You received a new inquiry: {payload.subject}",
         f"/supplier-dashboard?tab=inquiries&inquiry={inquiry_id}"
     )
-    
-=======
-def create_inquiry(payload: SupplierInquiryRequest, authorization: str = Header(None)):
-    # This is called by manufacturers. We should verify manufacturer token.
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Missing authorization header")
-    
-    try:
-        _, token = authorization.split(" ", 1)
-        # Using the existing verification but this router mostly handles suppliers.
-        # However, many systems use a unified token check. 
-        # Let's use the one from main.py if possible or similar logic.
-        from jose import jwt
-        from .config import settings
-        secret = settings.SECRET_KEY
-        payload_data = jwt.decode(token, secret, algorithms=["HS256"])
-        manufacturer_id = int(payload_data.get("sub"))
-        role = payload_data.get("role")
-        if role not in ["manufacturer", "admin", "user"]:
-             raise HTTPException(status_code=403, detail="Only manufacturers can send inquiries")
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    inquiry_id = SupplierPortalDB.create_inquiry(
-        manufacturer_id, 
-        payload.supplier_id, 
-        payload.subject, 
-        payload.message
-    )
->>>>>>> Stashed changes
     return {"success": True, "inquiry_id": inquiry_id}
