@@ -56,7 +56,7 @@ const features = [
 const plans = [
   {
     name: 'Starter',
-    price: '$49',
+    price: '₹3,999',
     period: '/month',
     description: 'Perfect for small businesses getting started',
     features: [
@@ -69,7 +69,7 @@ const plans = [
   },
   {
     name: 'Professional',
-    price: '$149',
+    price: '₹11,999',
     period: '/month',
     description: 'Ideal for growing companies',
     features: [

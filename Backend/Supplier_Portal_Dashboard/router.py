@@ -347,9 +347,17 @@ def supplier_signin(payload: SupplierSigninRequest):
 def get_profile(supplier_id: int = Depends(get_current_supplier)):
     profile = SupplierPortalDB.get_supplier_profile(supplier_id)
     if not profile:
-        raise HTTPException(status_code=404, detail="Supplier profile not found")
-    profile["profile_completed"] = SupplierPortalDB.is_supplier_profile_complete(profile)
-    return profile
+        try:
+            SupplierPortalDB.create_supplier_profile(supplier_id, {})
+            profile = SupplierPortalDB.get_supplier_profile(supplier_id)
+        except Exception as e:
+            logger.error("Failed to auto-create profile: %s", e)
+            return {"supplier_id": supplier_id, "profile_completed": False}
+            
+    if profile:
+        profile["profile_completed"] = SupplierPortalDB.is_supplier_profile_complete(profile)
+        
+    return profile or {"supplier_id": supplier_id, "profile_completed": False}
 
 
 @router.put("/profile")
